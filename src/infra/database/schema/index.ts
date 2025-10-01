@@ -1,4 +1,4 @@
-import { users, accounts, sessions, verifications } from '@src/modules/user/application'
+import { users, accounts, sessions, verifications } from '@src/modules/auth/application'
 
 export const schema = {
   users,

@@ -4,6 +4,7 @@ import { openAPI } from 'better-auth/plugins'
 import { db } from '@src/infra/database/client'
 
 export const auth = betterAuth({
+  basePath: '/auth',
   plugins: [openAPI()],
   database: drizzleAdapter(db, {
     provider: 'pg',
