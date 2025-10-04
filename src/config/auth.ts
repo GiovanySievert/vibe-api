@@ -18,6 +18,13 @@ export const auth = betterAuth({
       verify: ({ password, hash }) => Bun.password.verify(password, hash)
     }
   },
+  user: {
+    additionalFields: {
+      username: {
+        type: 'string',
+      }
+    }
+  },
   session: {
     expiresIn: 60 * 60 * 24 * 90,
     cookieCache: {
