@@ -5,11 +5,13 @@ import cors from '@elysiajs/cors'
 
 import { auth } from '@src/config/auth'
 import { OpenAPI } from './config/open-api'
+import { authRoutes } from './modules/auth/interface/http/routes/auth.routes'
 
 const betterAuthPlugin = new Elysia({ name: 'better-auth' }).mount(auth.handler)
 
 const app = new Elysia()
   .use(betterAuthPlugin)
+  .use(authRoutes)
   .use(
     cors({
       origin: 'http://localhost:3001',
