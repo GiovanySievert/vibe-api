@@ -1,46 +1,85 @@
-import { Elysia } from 'elysia'
+import { Elysia, t } from 'elysia'
 
-import { DrizzleBrandRepository } from '@src/modules/brands/infrastructure/persistence/brands.repository.drizzle'
-import { CreateBrand } from '@src/modules/brands/application/queries/create-brand'
 import { validateCreateAllEntities } from '../dtos'
-import { DrizzleVenuesRepository } from '../../infrastructure/persistence/venues.repository.drizzle'
-import { DrizzleVenueLocationRepository } from '../../infrastructure/persistence/venues-location.repository.drizzle'
-import { CreateVenue } from '../../application/queries/create-venue'
-import { CreateVenueLocation } from '../../application/queries/create-venue-location'
+import {
+  CreateVenue,
+  CreateVenueLocation,
+  CreateBrand,
+  CreateBrandMenus,
+  GetBrand
+} from '@src/modules/brands/application/queries'
+import {
+  DrizzleBrandMenusRepository,
+  DrizzleVenueLocationRepository,
+  DrizzleVenuesRepository,
+  DrizzleBrandRepository
+} from '@src/modules/brands/infrastructure/persistence'
+
+import { Brand } from '@src/modules/brands/domain/mappers'
 
 export const brandsRoutes = (app: Elysia) => {
   const brandRepo = new DrizzleBrandRepository()
   const venueRepo = new DrizzleVenuesRepository()
   const venueLocationRepo = new DrizzleVenueLocationRepository()
+  const brandMenusRepo = new DrizzleBrandMenusRepository()
 
   const createBrandService = new CreateBrand(brandRepo)
+  const createBrandMenusService = new CreateBrandMenus(brandMenusRepo)
   const createVenueService = new CreateVenue(venueRepo)
   const createVenueLocation = new CreateVenueLocation(venueLocationRepo)
 
-  return app.group('/brands', (app) =>
-    app.post(
-      '/',
-      async ({ body }) => {
-        const brand = await createBrandService.execute(body.brand)
+  const getBrandService = new GetBrand(brandRepo)
 
-        const venue = await createVenueService.execute({
-          brandId: brand.id,
-          ...body.venue
-        })
+  return (
+    app.group('/brands', (app) =>
+      app.post(
+        '/',
+        async ({ body }) => {
+          const brand = await createBrandService.execute(body.brand)
 
-        const venueLocation = await createVenueLocation.execute({
-          venueId: venue.id,
-          ...body.venueLocation
-        })
+          const brandMenu = await createBrandMenusService.execute({
+            brandId: brand.id,
+            menus: body.brandMenus
+          })
 
-        return {
-          brand,
-          venue,
-          venueLocation
+          const venue = await createVenueService.execute({
+            brandId: brand.id,
+            ...body.venue
+          })
+
+          const venueLocation = await createVenueLocation.execute({
+            venueId: venue.id,
+            ...body.venueLocation
+          })
+
+          return {
+            brand,
+            venue,
+            venueLocation,
+            brandMenu
+          }
+        },
+        {
+          body: validateCreateAllEntities,
+          detail: {
+            tags: ['brands'],
+            summary: 'Create a new brand with venue and location',
+            description: 'Creates a complete brand entity including venue and location data'
+          }
         }
+      )
+    ),
+    app.get(
+      '/:brandId',
+      async ({ params }) => {
+        const brand = await getBrandService.execute(params.brandId)
+
+        return brand
       },
       {
-        body: validateCreateAllEntities,
+        params: t.Object({
+          brandId: t.Number()
+        }),
         detail: {
           tags: ['brands'],
           summary: 'Create a new brand with venue and location',
