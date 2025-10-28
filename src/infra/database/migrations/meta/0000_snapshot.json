@@ -1,5 +1,5 @@
 {
-  "id": "37f23c7f-7c69-49d3-81a5-14182348b21f",
+  "id": "98a20c43-b575-4766-b51d-5aa4b7dc8ade",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -318,8 +318,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.brands_menu_items": {
-      "name": "brands_menu_items",
+    "public.brand_menus": {
+      "name": "brand_menus",
       "schema": "",
       "columns": {
         "id": {
@@ -329,7 +329,7 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "brands_menu_items_id_seq",
+            "name": "brand_menus_id_seq",
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -374,9 +374,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "brands_menu_items_brand_id_brands_id_fk": {
-          "name": "brands_menu_items_brand_id_brands_id_fk",
-          "tableFrom": "brands_menu_items",
+        "brand_menus_brand_id_brands_id_fk": {
+          "name": "brand_menus_brand_id_brands_id_fk",
+          "tableFrom": "brand_menus",
           "tableTo": "brands",
           "columnsFrom": [
             "brand_id"

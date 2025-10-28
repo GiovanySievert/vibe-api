@@ -28,10 +28,18 @@ export const validateCreateVenueLocationSchema = t.Object({
   lng: t.Number({ minimum: -180, maximum: 180 })
 })
 
+export const validateBrandMenusSchema = t.Array(
+  t.Object({
+    name: t.String({ minLength: 1, maxLength: 255 }),
+    priceCents: t.Number({ minimum: 1, maximum: 100000 })
+  })
+)
+
 export const validateCreateAllEntities = t.Object({
   brand: validateCreateBrandSchema,
   venue: validateCreateVenueSchema,
-  venueLocation: validateCreateVenueLocationSchema
+  venueLocation: validateCreateVenueLocationSchema,
+  brandMenus: validateBrandMenusSchema
 })
 
 export type CreateBrandDTO = Static<typeof validateCreateBrandSchema>

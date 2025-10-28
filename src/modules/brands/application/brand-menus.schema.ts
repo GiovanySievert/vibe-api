@@ -1,7 +1,7 @@
 import { pgTable, integer, varchar, timestamp } from 'drizzle-orm/pg-core'
 import { brands } from './brands.schema'
 
-export const brandsMenus = pgTable('brands_menu_items', {
+export const brandMenus = pgTable('brand_menus', {
   id: integer('id').generatedAlwaysAsIdentity().primaryKey(),
   brandId: integer('brand_id')
     .notNull()
