@@ -8,6 +8,7 @@ import { OpenAPI } from './config/open-api'
 import { authRoutes } from './modules/auth/interface/http/routes/auth.routes'
 import { brandsRoutes } from './modules/brands/http/routes'
 import { errorHandler } from './shared/infra/http/plugins/error-handler'
+import { venuesRoutes } from './modules/brands/http/routes/venues.routes'
 
 const betterAuthPlugin = new Elysia({ name: 'better-auth' }).mount(auth.handler)
 
@@ -16,6 +17,7 @@ const app = new Elysia()
   .use(betterAuthPlugin)
   .use(authRoutes)
   .use(brandsRoutes)
+  .use(venuesRoutes)
   .use(
     cors({
       origin: 'http://localhost:3001',

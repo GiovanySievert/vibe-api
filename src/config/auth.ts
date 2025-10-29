@@ -55,7 +55,7 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    autoSignIn: true,
+    autoSignIn: false,
     requireEmailVerification: true,
     password: {
       hash: (password: string) => Bun.password.hash(password),
