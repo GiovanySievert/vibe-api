@@ -1,10 +1,10 @@
 import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm'
-import { pgTable, integer, varchar, timestamp } from 'drizzle-orm/pg-core'
+import { pgTable, integer, varchar, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { venues } from './venues.schema'
 import { brandMenus } from './brand-menus.schema'
 
 export const brands = pgTable('brands', {
-  id: integer('id').generatedAlwaysAsIdentity().primaryKey(),
+  id: uuid('id').defaultRandom().primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   taxId: varchar('tax_id', { length: 14 }).notNull(),
   type: varchar('type', { length: 255 }),

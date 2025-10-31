@@ -31,7 +31,16 @@ const app = new Elysia()
   .use(
     openapi({
       documentation: {
-        components: await OpenAPI.components,
+        components: {
+          ...(await OpenAPI.components),
+          securitySchemes: {
+            cookieAuth: {
+              type: 'apiKey',
+              in: 'cookie',
+              name: 'better-auth.session_token'
+            }
+          }
+        },
         paths: await OpenAPI.getPaths()
       }
     })

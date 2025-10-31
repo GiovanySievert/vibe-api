@@ -1,10 +1,10 @@
-import { pgTable, integer, varchar, text, timestamp } from 'drizzle-orm/pg-core'
+import { pgTable, integer, varchar, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { brands } from './brands.schema'
 import { relations } from 'drizzle-orm'
 import { venuesLocations } from './venue-locations.schema'
 
 export const venues = pgTable('venues', {
-  id: integer('id').generatedAlwaysAsIdentity().primaryKey(),
+  id: uuid('id').defaultRandom().primaryKey(),
   brandId: integer('brand_id')
     .notNull()
     .references(() => brands.id, { onDelete: 'cascade' }),

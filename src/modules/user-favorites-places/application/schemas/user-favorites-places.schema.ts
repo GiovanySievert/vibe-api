@@ -1,10 +1,10 @@
-import { pgTable, integer, timestamp, unique } from 'drizzle-orm/pg-core'
+import { pgTable, integer, timestamp, unique, uuid } from 'drizzle-orm/pg-core'
 import { users, venues } from '@src/infra/database/schema'
 
 export const userFavoritesPlaces = pgTable(
   'user_favorites_places',
   {
-    id: integer('id').generatedAlwaysAsIdentity().primaryKey(),
+    id: uuid('id').defaultRandom().primaryKey(),
     userId: integer('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
