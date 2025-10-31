@@ -20,9 +20,9 @@ export const venuesRoutes = (app: Elysia) => {
           venueId: t.String()
         }),
         detail: {
-          tags: ['venues'],
-          summary: 'get a new venue',
-          description: 'get a new venue'
+          tags: ['Venues'],
+          summary: 'Get a new venue',
+          description: 'Get a new venue'
         }
       }
     )

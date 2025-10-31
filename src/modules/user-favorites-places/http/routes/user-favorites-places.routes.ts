@@ -24,7 +24,7 @@ export const userFavoritesPlacesRoutes = (app: Elysia) => {
           }
 
           const userId = session.user.id
-          const userFavoritesPlaces = await getUserFavoritesPlaces.execute(+userId)
+          const userFavoritesPlaces = await getUserFavoritesPlaces.execute(userId)
 
           return userFavoritesPlaces
         },
