@@ -1,8 +1,8 @@
 import { VenuesRepository } from '../../domain/repositories/venues.repository'
 import { db } from '@src/infra/database/client'
 import { Venues } from '../../domain/mappers'
-import { brandMenus, brands, venues, venuesLocations } from '../../application'
 import { eq } from 'drizzle-orm'
+import { venues } from '@src/infra/database/schema'
 
 export class DrizzleVenuesRepository implements VenuesRepository {
   async create(data: Venues): Promise<Venues> {

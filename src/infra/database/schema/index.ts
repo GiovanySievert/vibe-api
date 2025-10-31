@@ -1,4 +1,4 @@
-export { users, accounts, sessions, verifications } from '@src/modules/auth/application'
+export { users, accounts, sessions, verifications } from '@src/modules/auth/application/schemas'
 export {
   brands,
   venues,
@@ -7,4 +7,6 @@ export {
   venuesRelations,
   brandsRelations,
   brandMenusRelations
-} from '@src/modules/brands/application'
+} from '@src/modules/brands/application/schemas'
+
+export { userFavoritesPlaces } from '@src/modules/user-favorites-places/application/schemas'
