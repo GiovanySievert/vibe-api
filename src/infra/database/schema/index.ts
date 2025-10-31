@@ -1,8 +1,10 @@
-import { users, accounts, sessions, verifications } from '@src/modules/auth/application'
-
-export const schema = {
-  users,
-  accounts,
-  sessions,
-  verifications
-}
+export { users, accounts, sessions, verifications } from '@src/modules/auth/application'
+export {
+  brands,
+  venues,
+  brandMenus,
+  venuesLocations,
+  venuesRelations,
+  brandsRelations,
+  brandMenusRelations
+} from '@src/modules/brands/application'

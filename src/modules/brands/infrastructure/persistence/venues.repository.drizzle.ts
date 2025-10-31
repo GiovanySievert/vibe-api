@@ -11,17 +11,20 @@ export class DrizzleVenuesRepository implements VenuesRepository {
     return result
   }
 
-  async getById(brandId: number): Promise<Venues> {
-    const [venue] = await db
-      .select()
-      .from(venues)
-      .leftJoin(brands, eq(venues.brandId, brands.id))
-      .leftJoin(brandMenus, eq(venues.brandId, brandMenus.brandId))
-      .leftJoin(venuesLocations, eq(venues.brandId, venues.brandId))
-      .where(eq(venues.brandId, brandId))
-      .limit(1)
+  async getById(brandId: number): Promise<any> {
+    const result = await db.query.venues.findFirst({
+      where: eq(venues.brandId, brandId),
+      with: {
+        brand: {
+          with: {
+            menus: true
+          }
+        },
+        location: true
+      }
+    })
 
-    return venue
+    return result
   }
 
   // async update(data: any): Promise<any> {}

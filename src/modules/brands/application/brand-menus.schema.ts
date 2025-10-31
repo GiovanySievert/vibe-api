@@ -1,5 +1,6 @@
 import { pgTable, integer, varchar, timestamp } from 'drizzle-orm/pg-core'
 import { brands } from './brands.schema'
+import { relations } from 'drizzle-orm'
 
 export const brandMenus = pgTable('brand_menus', {
   id: integer('id').generatedAlwaysAsIdentity().primaryKey(),
@@ -12,3 +13,10 @@ export const brandMenus = pgTable('brand_menus', {
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()
 })
+
+export const brandMenusRelations = relations(brandMenus, ({ one }) => ({
+  brand: one(brands, {
+    fields: [brandMenus.brandId],
+    references: [brands.id]
+  })
+}))
