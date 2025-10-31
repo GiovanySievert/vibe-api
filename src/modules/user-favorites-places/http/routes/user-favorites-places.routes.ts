@@ -32,7 +32,8 @@ export const userFavoritesPlacesRoutes = (app: Elysia) => {
           detail: {
             tags: ['User Favorites Places'],
             summary: 'get user favorite places',
-            description: 'get user favorite places'
+            description: 'get user favorite places',
+            security: [{ cookieAuth: [] }]
           }
         }
       )
@@ -47,12 +48,12 @@ export const userFavoritesPlacesRoutes = (app: Elysia) => {
             return // fix later
           }
 
-          const userId = Number(session.user.id)
+          const userId = session.user.id
           const { placeId } = params
-
+          console.log(userId, placeId)
           const userFavoritesPlaces = await createUserFavoritesPlaces.execute({
             userId,
-            venueId: Number(placeId)
+            venueId: placeId
           })
 
           return userFavoritesPlaces
@@ -64,7 +65,8 @@ export const userFavoritesPlacesRoutes = (app: Elysia) => {
           detail: {
             tags: ['User Favorites Places'],
             summary: 'add favorite place',
-            description: 'add favorite place'
+            description: 'add favorite place',
+            security: [{ cookieAuth: [] }]
           }
         }
       )

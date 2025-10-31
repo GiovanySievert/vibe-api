@@ -17,7 +17,7 @@ export const venuesRoutes = (app: Elysia) => {
       },
       {
         params: t.Object({
-          venueId: t.Number()
+          venueId: t.String()
         }),
         detail: {
           tags: ['venues'],

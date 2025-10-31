@@ -11,7 +11,7 @@ export class DrizzleUserFavoritesPlacesRepository implements UserFavoritesPlaces
     return result
   }
 
-  async getByUser(userId: number): Promise<any> {
+  async getByUser(userId: string): Promise<any> {
     const [result] = await db.select().from(userFavoritesPlaces).where(eq(userFavoritesPlaces.userId, +userId))
 
     return result

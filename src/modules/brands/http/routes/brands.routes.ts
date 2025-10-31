@@ -15,8 +15,6 @@ import {
   DrizzleBrandRepository
 } from '@src/modules/brands/infrastructure/persistence'
 
-import { Brand } from '@src/modules/brands/domain/mappers'
-
 export const brandsRoutes = (app: Elysia) => {
   const brandRepo = new DrizzleBrandRepository()
   const venueRepo = new DrizzleVenuesRepository()
@@ -62,7 +60,7 @@ export const brandsRoutes = (app: Elysia) => {
         {
           body: validateCreateAllEntities,
           detail: {
-            tags: ['brands'],
+            tags: ['Brands'],
             summary: 'Create a new brand with venue and location',
             description: 'Creates a complete brand entity including venue and location data'
           }
@@ -78,10 +76,10 @@ export const brandsRoutes = (app: Elysia) => {
       },
       {
         params: t.Object({
-          brandId: t.Number()
+          brandId: t.String()
         }),
         detail: {
-          tags: ['brands'],
+          tags: ['Brands'],
           summary: 'Create a new brand with venue and location',
           description: 'Creates a complete brand entity including venue and location data'
         }

@@ -11,7 +11,7 @@ export class DrizzleVenuesRepository implements VenuesRepository {
     return result
   }
 
-  async getById(brandId: number): Promise<any> {
+  async getById(brandId: string): Promise<any> {
     const result = await db.query.venues.findFirst({
       where: eq(venues.brandId, brandId),
       with: {

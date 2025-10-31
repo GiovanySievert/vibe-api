@@ -6,7 +6,7 @@ import { Brand } from '../../domain/mappers'
 import { brandMenus, brands, venues, venuesLocations } from '@src/infra/database/schema'
 
 export class DrizzleBrandRepository implements BrandRepository {
-  async getById(brandId: number): Promise<any> {
+  async getById(brandId: string): Promise<any> {
     const [brand] = await db
       .select()
       .from(brands)
