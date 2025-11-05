@@ -3,9 +3,9 @@ import { users } from './users.schema'
 
 export const accounts = pgTable('accounts', {
   id: uuid('id').defaultRandom().primaryKey(),
-  accountId: text('account_id').notNull(),
+  accountId: uuid('account_id').notNull(),
   providerId: text('provider_id').notNull(),
-  userId: text('user_id')
+  userId: uuid('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   accessToken: text('access_token'),

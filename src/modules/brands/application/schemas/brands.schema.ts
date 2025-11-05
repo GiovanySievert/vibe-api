@@ -1,5 +1,5 @@
 import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm'
-import { pgTable, integer, varchar, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { pgTable, varchar, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { venues } from './venues.schema'
 import { brandMenus } from './brand-menus.schema'
 

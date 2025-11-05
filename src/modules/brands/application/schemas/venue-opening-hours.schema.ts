@@ -3,7 +3,7 @@ import { venues } from './venues.schema'
 
 export const venueOpeningHours = pgTable('venue_opening_hours', {
   id: uuid('id').defaultRandom().primaryKey(),
-  venueId: integer('venue_id')
+  venueId: uuid('venue_id')
     .notNull()
     .references(() => venues.id, { onDelete: 'cascade' }),
 

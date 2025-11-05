@@ -13,7 +13,7 @@ export const sessions = pgTable('sessions', {
     .notNull(),
   ipAddress: text('ip_address'),
   userAgent: text('user_agent'),
-  userId: text('user_id')
+  userId: uuid('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' })
 })

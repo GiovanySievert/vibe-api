@@ -5,7 +5,7 @@ import { venuesLocations } from './venue-locations.schema'
 
 export const venues = pgTable('venues', {
   id: uuid('id').defaultRandom().primaryKey(),
-  brandId: integer('brand_id')
+  brandId: uuid('brand_id')
     .notNull()
     .references(() => brands.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 255 }).notNull(),

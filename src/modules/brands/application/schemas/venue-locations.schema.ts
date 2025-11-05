@@ -1,16 +1,16 @@
-import { pgTable, integer, varchar, timestamp, numeric, uuid } from 'drizzle-orm/pg-core'
+import { pgTable, varchar, timestamp, numeric, uuid } from 'drizzle-orm/pg-core'
 import { venues } from './venues.schema'
 
 export const venuesLocations = pgTable('venue_locations', {
   id: uuid('id').defaultRandom().primaryKey(),
-  venueId: integer('venue_id')
+  venueId: uuid('venue_id')
     .notNull()
     .references(() => venues.id, { onDelete: 'cascade' }),
 
   addressLine: varchar('address_line', { length: 255 }).notNull(),
   addressLine2: varchar('address_line_2', { length: 255 }),
   number: varchar('number', { length: 255 }),
-  neighborhood: varchar('number', { length: 255 }),
+  neighborhood: varchar('neighborhood', { length: 255 }),
   city: varchar('city', { length: 255 }).notNull(),
   state: varchar('state', { length: 255 }).notNull(),
   country: varchar('country', { length: 255 }).notNull(),
