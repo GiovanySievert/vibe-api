@@ -19,7 +19,13 @@ export const auth = betterAuth({
   basePath: '/auth',
   trustedOrigins: ['myapp://'],
   advanced: {
-    useSecureCookies: true
+    useSecureCookies: false,
+    crossSubDomainCookies: {
+      enabled: false
+    },
+    database: {
+      generateId: false
+    }
   },
   plugins: [
     expo(),
