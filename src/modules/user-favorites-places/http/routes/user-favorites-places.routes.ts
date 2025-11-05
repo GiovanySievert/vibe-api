@@ -1,74 +1,36 @@
-import { Elysia, t } from 'elysia'
+import Elysia, { t } from 'elysia'
 
-import { DrizzleUserFavoritesPlacesRepository } from '../../infrastructure/persistence'
 import { CreateUserFavoritesPlaces, GetUserFavoritesPlace } from '../../application/queries'
-import { UserFavoritesPlacesRepository } from '../../domain/repositories'
+import { UserFavoritesController } from '../controllers/user-favorites-places.controller'
+import { DrizzleUserFavoritesPlacesRepository } from '../../infrastructure/persistence'
+import { authMiddleware } from '@src/shared/middlewares'
 import { auth } from '@src/config/auth'
 
 export const userFavoritesPlacesRoutes = (app: Elysia) => {
-  const userFavoritesRepo = new DrizzleUserFavoritesPlacesRepository()
-  const getUserFavoritesPlaces = new GetUserFavoritesPlace(userFavoritesRepo)
-  const createUserFavoritesPlaces = new CreateUserFavoritesPlaces(userFavoritesRepo)
+  const repository = new DrizzleUserFavoritesPlacesRepository()
+  const controller = new UserFavoritesController(
+    new GetUserFavoritesPlace(repository),
+    new CreateUserFavoritesPlaces(repository)
+  )
 
-  return app.group('/user-favorites-places', (app) =>
+  return app.use(authMiddleware).group('/user-favorites-places', (app) =>
     app
-      .get(
-        '/',
-        async ({ request }) => {
-          const session = await auth.api.getSession({
-            headers: request.headers
-          })
-
-          if (!session) {
-            return // fix later
-          }
-
-          const userId = session.user.id
-          const userFavoritesPlaces = await getUserFavoritesPlaces.execute(userId)
-
-          return userFavoritesPlaces
-        },
-        {
-          detail: {
-            tags: ['User Favorites Places'],
-            summary: 'get user favorite places',
-            description: 'get user favorite places',
-            security: [{ cookieAuth: [] }]
-          }
+      .get('/', (ctx) => controller.list(ctx), {
+        auth: true,
+        detail: {
+          tags: ['User Favorites Places'],
+          summary: 'get user favorite places',
+          security: [{ cookieAuth: [] }]
         }
-      )
-      .post(
-        '/:placeId',
-        async ({ params, request }) => {
-          const session = await auth.api.getSession({
-            headers: request.headers
-          })
-
-          if (!session) {
-            return // fix later
-          }
-
-          const userId = session.user.id
-          const { placeId } = params
-          console.log(userId, placeId)
-          const userFavoritesPlaces = await createUserFavoritesPlaces.execute({
-            userId,
-            venueId: placeId
-          })
-
-          return userFavoritesPlaces
-        },
-        {
-          params: t.Object({
-            placeId: t.String()
-          }),
-          detail: {
-            tags: ['User Favorites Places'],
-            summary: 'add favorite place',
-            description: 'add favorite place',
-            security: [{ cookieAuth: [] }]
-          }
+      })
+      .post('/:placeId', (ctx) => controller.create(ctx), {
+        auth: true,
+        params: t.Object({ placeId: t.String() }),
+        detail: {
+          tags: ['User Favorites Places'],
+          summary: 'add favorite place',
+          security: [{ cookieAuth: [] }]
         }
-      )
+      })
   )
 }

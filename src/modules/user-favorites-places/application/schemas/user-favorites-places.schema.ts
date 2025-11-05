@@ -5,10 +5,10 @@ export const userFavoritesPlaces = pgTable(
   'user_favorites_places',
   {
     id: uuid('id').defaultRandom().primaryKey(),
-    userId: integer('user_id')
+    userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    venueId: integer('venue_id')
+    venueId: uuid('venue_id')
       .notNull()
       .references(() => venues.id, { onDelete: 'cascade' }),
     createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull()
