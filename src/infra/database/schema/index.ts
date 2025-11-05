@@ -10,3 +10,11 @@ export {
 } from '@src/modules/brands/application/schemas'
 
 export { userFavoritesPlaces } from '@src/modules/user-favorites-places/application/schemas'
+
+export {
+  followRequests,
+  followers,
+  followRequestsRelations,
+  followersRelations,
+  followStats
+} from '@src/modules/follow/application/schemas'
