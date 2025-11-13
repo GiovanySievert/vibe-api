@@ -13,7 +13,7 @@ export class DrizzleFollowStatsRepository implements FollowStatsRepository {
     return result
   }
 
-  async getByUser(userId: string): Promise<GetFollowRequestByUser[]> {
+  async listByUser(userId: string): Promise<GetFollowRequestByUser[]> {
     const result = await db.select().from(followStats).where(eq(followStats.userId, userId))
 
     return GetFollowRequestByUser.fromArray(result)

@@ -5,7 +5,7 @@ export class GetUserFavoritesPlace {
   constructor(private readonly userFavoritesPlaces: UserFavoritesPlacesRepository) {}
 
   async execute(userId: string): Promise<UserFavoritesPlaces> {
-    const userFavoritesPlaces = await this.userFavoritesPlaces.getByUser(userId)
+    const userFavoritesPlaces = await this.userFavoritesPlaces.listByUser(userId)
     return userFavoritesPlaces
   }
 }

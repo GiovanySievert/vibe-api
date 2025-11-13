@@ -10,6 +10,7 @@ import { brandsRoutes } from './modules/brands/http/routes'
 import { errorHandler } from './shared/infra/http/plugins/error-handler'
 import { venuesRoutes } from './modules/brands/http/routes/venues.routes'
 import { userFavoritesPlacesRoutes } from './modules/user-favorites-places/http/routes'
+import { FollowRoutes } from './modules/follow/http/routes'
 
 const betterAuthPlugin = new Elysia({ name: 'better-auth' }).mount(auth.handler)
 
@@ -20,6 +21,7 @@ const app = new Elysia()
   .use(brandsRoutes)
   .use(venuesRoutes)
   .use(userFavoritesPlacesRoutes)
+  .use(FollowRoutes)
   .use(
     cors({
       origin: 'http://localhost:3001',

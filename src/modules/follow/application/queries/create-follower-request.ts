@@ -1,11 +1,15 @@
-import { Followers } from '../../domain/mappers'
-import { FollowersRepository } from '../../domain/repositories'
+import { FollowRequests } from '../../domain/mappers'
+import { FollowRequestsRepository } from '../../domain/repositories'
 
-export class CreateFollowerRequest {
-  constructor(private readonly followerRepo: FollowersRepository) {}
+export class CreateFollowRequest {
+  constructor(private readonly followRequest: FollowRequestsRepository) {}
 
-  async execute(data: any): Promise<Followers> {
-    const follower = await this.followerRepo.create(data)
-    return follower
+  async execute(data: any): Promise<FollowRequests> {
+    const followerRequest = await this.followRequest.create({
+      requestedId: data.requestedId,
+      requesterId: data.requesterId,
+      status: data.status
+    })
+    return followerRequest
   }
 }

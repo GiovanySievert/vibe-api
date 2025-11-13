@@ -13,7 +13,7 @@ export class DrizzleFollowRepository implements FollowersRepository {
     return result
   }
 
-  async getByUser(userId: string): Promise<GetFollowRequestByUser[]> {
+  async listByUser(userId: string): Promise<GetFollowRequestByUser[]> {
     const result = await db.select().from(followers).where(eq(followers.followingId, userId))
 
     return GetFollowRequestByUser.fromArray(result)

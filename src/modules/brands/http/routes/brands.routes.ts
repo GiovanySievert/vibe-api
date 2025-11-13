@@ -25,12 +25,11 @@ export const brandsRoutes = (app: Elysia) => {
   const createBrandMenusService = new CreateBrandMenus(brandMenusRepo)
   const createVenueService = new CreateVenue(venueRepo)
   const createVenueLocation = new CreateVenueLocation(venueLocationRepo)
-
   const getBrandService = new GetBrand(brandRepo)
 
-  return (
-    app.group('/brands', (app) =>
-      app.post(
+  return app.group('/brands', (app) =>
+    app
+      .post(
         '/',
         async ({ body }) => {
           const brand = await createBrandService.execute(body.brand)
@@ -66,24 +65,23 @@ export const brandsRoutes = (app: Elysia) => {
           }
         }
       )
-    ),
-    app.get(
-      '/:brandId',
-      async ({ params }) => {
-        const brand = await getBrandService.execute(params.brandId)
+      .get(
+        '/:brandId',
+        async ({ params }) => {
+          const brand = await getBrandService.execute(params.brandId)
 
-        return brand
-      },
-      {
-        params: t.Object({
-          brandId: t.String()
-        }),
-        detail: {
-          tags: ['Brands'],
-          summary: 'Create a new brand with venue and location',
-          description: 'Creates a complete brand entity including venue and location data'
+          return brand
+        },
+        {
+          params: t.Object({
+            brandId: t.String()
+          }),
+          detail: {
+            tags: ['Brands'],
+            summary: 'Get brand by ID',
+            description: 'Get brand by ID'
+          }
         }
-      }
-    )
+      )
   )
 }

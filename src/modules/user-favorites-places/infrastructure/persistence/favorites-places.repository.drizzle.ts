@@ -13,7 +13,7 @@ export class DrizzleUserFavoritesPlacesRepository implements UserFavoritesPlaces
     return result
   }
 
-  async getByUser(userId: string): Promise<GetUserFavoritesPlacesByIdDto[]> {
+  async listByUser(userId: string): Promise<GetUserFavoritesPlacesByIdDto[]> {
     const result = await db
       .select({
         user_favorites_places: {
