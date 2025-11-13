@@ -1,7 +1,7 @@
 import { users } from '@src/infra/database/schema'
 import { integer, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core'
 
-export const followStats = pgTable('follow-stats', {
+export const followStats = pgTable('follow_stats', {
   userId: uuid('user_id')
     .primaryKey()
     .references(() => users.id, { onDelete: 'cascade' }),
