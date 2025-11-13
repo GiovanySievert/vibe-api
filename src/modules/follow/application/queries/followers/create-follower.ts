@@ -1,5 +1,5 @@
-import { Followers } from '../../domain/mappers'
-import { FollowersRepository } from '../../domain/repositories'
+import { Followers } from '@src/modules/follow/domain/mappers'
+import { FollowersRepository } from '@src/modules/follow/domain/repositories'
 
 export class CreateFollower {
   constructor(private readonly followersRepo: FollowersRepository) {}

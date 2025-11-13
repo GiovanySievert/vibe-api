@@ -1,6 +1,6 @@
-import { FollowRequests } from '../../domain/mappers'
-import { FollowRequestsRepository } from '../../domain/repositories'
-import { UpdateFollowRequestDto } from '../../http/dtos'
+import { FollowRequests } from '@src/modules/follow/domain/mappers'
+import { FollowRequestsRepository } from '@src/modules/follow/domain/repositories'
+import { UpdateFollowRequestDto } from '@src/modules/follow/http/dtos'
 
 export class UpdateFollowRequest {
   constructor(private readonly followRequest: FollowRequestsRepository) {}

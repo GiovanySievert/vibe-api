@@ -21,7 +21,7 @@ export class DrizzleFollowRequestRepository implements FollowRequestsRepository 
     return result
   }
 
-  async listByUser(userId: string): Promise<FollowRequests[]> {
+  async list(userId: string): Promise<FollowRequests[]> {
     const result = await db
       .select()
       .from(followRequests)

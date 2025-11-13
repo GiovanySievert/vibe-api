@@ -1,5 +1,5 @@
-import { FollowRequests } from '../../domain/mappers'
-import { FollowRequestsRepository } from '../../domain/repositories'
+import { FollowRequests } from '../../../domain/mappers'
+import { FollowRequestsRepository } from '../../../domain/repositories'
 
 export class CreateFollowRequest {
   constructor(private readonly followRequest: FollowRequestsRepository) {}

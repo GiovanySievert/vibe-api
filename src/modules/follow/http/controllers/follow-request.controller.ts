@@ -5,7 +5,7 @@ export class FollowRequestController {
   constructor(
     private readonly createFollowRequest: CreateFollowRequest,
     private readonly updateFollowRequest: UpdateFollowRequest,
-    private readonly listByUserFollowRequest: ListFollowRequest
+    private readonly listFollowRequest: ListFollowRequest
   ) {}
 
   async create({ params, user }: { params: { requestedId: string }; user: User }) {
@@ -19,7 +19,7 @@ export class FollowRequestController {
     return await this.updateFollowRequest.execute(params.requestFollowId, body)
   }
 
-  async listByUser({ user }: { user: User }) {
-    return await this.listByUserFollowRequest.execute(user.id)
+  async list({ user }: { user: User }) {
+    return await this.listFollowRequest.execute(user.id)
   }
 }

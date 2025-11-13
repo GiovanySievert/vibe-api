@@ -16,11 +16,11 @@ export const FollowRoutes = (app: Elysia) => {
 
   return app.use(authMiddleware).group('/follow', (app) =>
     app
-      .get('/', (ctx: any) => controller.listByUser(ctx), {
+      .get('/', (ctx: any) => controller.list(ctx), {
         auth: true,
         detail: {
           tags: ['Follow'],
-          summary: 'List all user ollow request',
+          summary: 'List all user Follow request',
           security: [{ cookieAuth: [] }]
         }
       })
@@ -43,7 +43,7 @@ export const FollowRoutes = (app: Elysia) => {
         body: validateUpdateFollowRequest,
         detail: {
           tags: ['Follow'],
-          summary: 'Update a Follow status',
+          summary: 'Update a Follow ',
           security: [{ cookieAuth: [] }]
         }
       })
