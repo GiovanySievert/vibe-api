@@ -1,5 +1,4 @@
-import { eq } from 'drizzle-orm'
-import { sql } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 
 import { followStats } from '../../application/schemas'
 import { db } from '@src/infra/database/client'
@@ -7,49 +6,49 @@ import { FollowStats } from '../../domain/mappers'
 import { FollowStatsRepository } from '../../domain/repositories'
 
 export class DrizzleFollowStatsRepository implements FollowStatsRepository {
-  async createFollow(userId: string): Promise<FollowStats> {
+  async incrementFollowersStats(userId: string): Promise<FollowStats> {
     const [result] = await db
       .insert(followStats)
-      .values({
-        userId,
-        followersCount: sql`${followStats.followersCount} + 1`
+      .values({ userId, followersCount: 1 })
+      .onConflictDoUpdate({
+        target: followStats.userId,
+        set: { followersCount: sql`${followStats.followersCount} + 1` }
       })
       .returning()
 
     return result
   }
 
-  async deleteFollow(userId: string): Promise<void> {
-    await db.insert(followStats).values({
-      userId,
-      followersCount: sql`${followStats.followersCount} - 1`
-    })
+  async decrementFollowersStats(userId: string): Promise<void> {
+    await db
+      .update(followStats)
+      .set({ followersCount: sql`${followStats.followersCount} - 1` })
+      .where(eq(followStats.userId, userId))
   }
 
-  async createFollowing(userId: string): Promise<FollowStats> {
+  async incrementFollowingStats(userId: string): Promise<FollowStats> {
     const [result] = await db
       .insert(followStats)
-      .values({
-        userId,
-        followingCount: sql`${followStats.followersCount} + 1`
+      .values({ userId, followingCount: 1 })
+      .onConflictDoUpdate({
+        target: followStats.userId,
+        set: { followingCount: sql`${followStats.followingCount} + 1` }
       })
       .returning()
 
     return result
   }
 
-  async deleteFollowing(userId: string): Promise<void> {
-    await db.insert(followStats).values({
-      userId,
-      followingCount: sql`${followStats.followersCount} - 1`
-    })
+  async decrementFollowingStats(userId: string): Promise<void> {
+    await db
+      .update(followStats)
+      .set({ followingCount: sql`${followStats.followingCount} - 1` })
+      .where(eq(followStats.userId, userId))
   }
 
-  async list(userId: string): Promise<FollowStats[]> {
+  async listFollowStats(userId: string): Promise<FollowStats[]> {
     const result = await db.select().from(followStats).where(eq(followStats.userId, userId))
 
     return result
   }
-  // async update(data: any): Promise<void> {}
-  // async delete(data: any): Promise<void> {}
 }

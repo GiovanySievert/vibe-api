@@ -1,13 +1,13 @@
 import { FollowStats } from '../mappers'
 
 export interface FollowStatsRepository {
-  createFollow(userId: string): Promise<FollowStats>
-  deleteFollow(userId: string): Promise<void>
+  listFollowStats(userId: string): Promise<FollowStats[]>
 
-  createFollowing(userId: string): Promise<FollowStats>
-  deleteFollowing(userId: string): Promise<void>
+  incrementFollowersStats(userId: string): Promise<FollowStats>
+  decrementFollowersStats(followId: string): Promise<void>
 
-  list(userId: string): Promise<FollowStats[]>
+  incrementFollowingStats(userId: string): Promise<FollowStats>
+  decrementFollowingStats(userId: string): Promise<void>
 
   // update(data: any): Promise<Brand>
   // delete(data: any): Promise<void>

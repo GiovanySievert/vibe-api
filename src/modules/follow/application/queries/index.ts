@@ -1,7 +1,7 @@
-export * from './follow-stats/create-follow-stats'
-export * from './follow-stats/delete-follow-stats'
-export * from './follow-stats/create-following-stats'
-export * from './follow-stats/delete-following-stats'
+export * from './follow-stats/increment-followers-stats'
+export * from './follow-stats/decrement-followers-stats'
+export * from './follow-stats/increment-following-stats'
+export * from './follow-stats/decrement-following-stats'
 
 export * from './follow-stats/list-follow-stats'
 

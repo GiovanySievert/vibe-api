@@ -1,11 +1,11 @@
 import { FollowStats } from '@src/modules/follow/domain/mappers'
 import { FollowStatsRepository } from '@src/modules/follow/domain/repositories'
 
-export class CreateFollowStats {
+export class CreateFollowingStats {
   constructor(private readonly followStatsRepo: FollowStatsRepository) {}
 
   async execute(userId: string): Promise<FollowStats> {
-    const follower = await this.followStatsRepo.createFollow(userId)
+    const follower = await this.followStatsRepo.incrementFollowingStats(userId)
     return follower
   }
 }
