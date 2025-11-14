@@ -11,3 +11,5 @@ export * from './follow-request/list-follow-request'
 
 export * from './followers/create-follower'
 export * from './followers/delete-follower'
+export * from './followers/list-followers'
+export * from './followers/list-followings'
