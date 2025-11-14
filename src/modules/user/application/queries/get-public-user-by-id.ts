@@ -5,7 +5,7 @@ export class GetPublicUserById {
   constructor(private readonly publicUserRepo: PublicUserRepository) {}
 
   async execute(userId: string): Promise<Users> {
-    const user = await this.publicUserRepo.getUser(userId)
+    const user = await this.publicUserRepo.getUserById(userId)
     return user
   }
 }

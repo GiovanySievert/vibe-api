@@ -12,7 +12,7 @@ export class PublicUsersController {
   async getById({ params }: { params: { userId: string } }) {
     const publicUser = await this.getPublicUserById.execute(params.userId)
 
-    return new GetPublicUserByIdDto(publicUser)
+    return GetPublicUserByIdDto.fromData(publicUser)
   }
 
   async getByUsername({ params }: { params: { username: string } }) {
