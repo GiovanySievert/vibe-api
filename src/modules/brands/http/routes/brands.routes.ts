@@ -14,12 +14,14 @@ import {
   DrizzleVenuesRepository,
   DrizzleBrandRepository
 } from '@src/modules/brands/infrastructure/persistence'
+import { RabbitMQProducer } from '@src/shared/infra/messaging'
 
 export const brandsRoutes = (app: Elysia) => {
   const brandRepo = new DrizzleBrandRepository()
   const venueRepo = new DrizzleVenuesRepository()
   const venueLocationRepo = new DrizzleVenueLocationRepository()
   const brandMenusRepo = new DrizzleBrandMenusRepository()
+  const producer = new RabbitMQProducer()
 
   const createBrandService = new CreateBrand(brandRepo)
   const createBrandMenusService = new CreateBrandMenus(brandMenusRepo)
@@ -49,12 +51,25 @@ export const brandsRoutes = (app: Elysia) => {
             ...body.venueLocation
           })
 
-          return {
+          const result = {
             brand,
             venue,
             venueLocation,
             brandMenu
           }
+
+          const resultToBeSendedToConsumer = {
+            id: venue.id,
+            name: venue.name,
+            location: {
+              lat: venueLocation.lat,
+              lon: venueLocation.lng
+            }
+          }
+
+          await producer.publish(resultToBeSendedToConsumer)
+
+          return result
         },
         {
           body: validateCreateAllEntities,
