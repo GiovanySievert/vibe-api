@@ -1,4 +1,4 @@
-import { GetPublicUserById, GetPublicUserByUsername } from '@src/modules/user/application/queries'
+import { GetPublicUserById, GetPublicUserByUsername } from '@src/modules/users/application/queries'
 import { GetPublicUserByIdDto, GetPublicUserByUsernameDto } from '../dto'
 
 export class PublicUsersController {
