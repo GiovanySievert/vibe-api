@@ -11,7 +11,7 @@ import { errorHandler } from './shared/infra/http/plugins/error-handler'
 import { venuesRoutes } from './modules/brands/http/routes/venues.routes'
 import { userFavoritesPlacesRoutes } from './modules/user-favorites-places/http/routes'
 import { FollowRoutes } from './modules/follow/http/routes'
-import { PublicUsersRoute } from './modules/user/infrastructure/http/routes'
+import { PublicUsersRoute } from './modules/users/infrastructure/http/routes'
 
 const betterAuthPlugin = new Elysia({ name: 'better-auth' }).mount(auth.handler)
 
