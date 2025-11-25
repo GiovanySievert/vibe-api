@@ -1,6 +1,6 @@
 import Elysia, { t } from 'elysia'
 
-import { CreateUserFavoritesPlaces, GetUserFavoritesPlace } from '../../application/queries'
+import { CreateUserFavoritesPlaces, GetUserFavoritesPlace, DeleteUserFavoritesPlaces } from '../../application/queries'
 import { UserFavoritesController } from '../controllers/user-favorites-places.controller'
 import { DrizzleUserFavoritesPlacesRepository } from '../../infrastructure/persistence'
 import { authMiddleware } from '@src/shared/middlewares'
@@ -10,7 +10,8 @@ export const userFavoritesPlacesRoutes = (app: Elysia) => {
   const repository = new DrizzleUserFavoritesPlacesRepository()
   const controller = new UserFavoritesController(
     new GetUserFavoritesPlace(repository),
-    new CreateUserFavoritesPlaces(repository)
+    new CreateUserFavoritesPlaces(repository),
+    new DeleteUserFavoritesPlaces(repository)
   )
 
   return app.use(authMiddleware).group('/user-favorites-places', (app) =>
@@ -24,6 +25,15 @@ export const userFavoritesPlacesRoutes = (app: Elysia) => {
         }
       })
       .post('/:placeId', (ctx) => controller.create(ctx), {
+        auth: true,
+        params: t.Object({ placeId: t.String() }),
+        detail: {
+          tags: ['User Favorites Places'],
+          summary: 'add favorite place',
+          security: [{ cookieAuth: [] }]
+        }
+      })
+      .delete('/:placeId', (ctx) => controller.delete(ctx), {
         auth: true,
         params: t.Object({ placeId: t.String() }),
         detail: {

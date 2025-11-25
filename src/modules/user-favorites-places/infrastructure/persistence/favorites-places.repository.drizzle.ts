@@ -2,7 +2,7 @@ import { userFavoritesPlaces } from '../../application/schemas'
 import { db } from '@src/infra/database/client'
 import { UserFavoritesPlaces } from '../../domain/mappers'
 import { UserFavoritesPlacesRepository } from '../../domain/repositories/user-favorites-places.repository'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { GetUserFavoritesPlacesByIdDto } from '../../http/dtos'
 import { brands, venues } from '@src/infra/database/schema'
 
@@ -11,6 +11,12 @@ export class DrizzleUserFavoritesPlacesRepository implements UserFavoritesPlaces
     const [result] = await db.insert(userFavoritesPlaces).values(data).returning()
 
     return result
+  }
+
+  async delete(data: UserFavoritesPlaces): Promise<void> {
+    await db
+      .delete(userFavoritesPlaces)
+      .where(and(eq(userFavoritesPlaces.userId, data.userId), eq(userFavoritesPlaces.venueId, data.venueId)))
   }
 
   async list(userId: string): Promise<GetUserFavoritesPlacesByIdDto[]> {
