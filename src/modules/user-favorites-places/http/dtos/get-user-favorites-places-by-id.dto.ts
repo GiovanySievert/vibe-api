@@ -1,14 +1,14 @@
 export class GetUserFavoritesPlacesByIdDto {
   id: string
-  venueId: string
+  placeId: string
   name: string
   createdAt: Date
   avatar: string
 
   constructor(data: any) {
     this.id = data.user_favorites_places.id
-    this.venueId = data.user_favorites_places.venueId
-    this.name = data.venues?.name || ''
+    this.placeId = data.user_favorites_places.placeId
+    this.name = data.places?.name || ''
     this.createdAt = data.user_favorites_places.createdAt
     this.avatar = data.brand.avatar
   }

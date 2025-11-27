@@ -4,7 +4,7 @@ import { UserFavoritesPlaces } from '../../domain/mappers'
 import { UserFavoritesPlacesRepository } from '../../domain/repositories/user-favorites-places.repository'
 import { and, eq } from 'drizzle-orm'
 import { GetUserFavoritesPlacesByIdDto } from '../../http/dtos'
-import { brands, venues } from '@src/infra/database/schema'
+import { brands, places } from '@src/infra/database/schema'
 
 export class DrizzleUserFavoritesPlacesRepository implements UserFavoritesPlacesRepository {
   async create(data: UserFavoritesPlaces): Promise<UserFavoritesPlaces> {
@@ -16,7 +16,7 @@ export class DrizzleUserFavoritesPlacesRepository implements UserFavoritesPlaces
   async delete(data: UserFavoritesPlaces): Promise<void> {
     await db
       .delete(userFavoritesPlaces)
-      .where(and(eq(userFavoritesPlaces.userId, data.userId), eq(userFavoritesPlaces.venueId, data.venueId)))
+      .where(and(eq(userFavoritesPlaces.userId, data.userId), eq(userFavoritesPlaces.placeId, data.placeId)))
   }
 
   async list(userId: string): Promise<GetUserFavoritesPlacesByIdDto[]> {
@@ -24,12 +24,12 @@ export class DrizzleUserFavoritesPlacesRepository implements UserFavoritesPlaces
       .select({
         user_favorites_places: {
           id: userFavoritesPlaces.id,
-          venueId: userFavoritesPlaces.venueId,
+          placeId: userFavoritesPlaces.placeId,
           createdAt: userFavoritesPlaces.createdAt
         },
-        venues: {
-          id: venues.id,
-          name: venues.name
+        places: {
+          id: places.id,
+          name: places.name
         },
         brand: {
           id: brands.id,
@@ -37,8 +37,8 @@ export class DrizzleUserFavoritesPlacesRepository implements UserFavoritesPlaces
         }
       })
       .from(userFavoritesPlaces)
-      .leftJoin(venues, eq(userFavoritesPlaces.venueId, venues.id))
-      .leftJoin(brands, eq(venues.brandId, brands.id))
+      .leftJoin(places, eq(userFavoritesPlaces.placeId, places.id))
+      .leftJoin(brands, eq(places.brandId, brands.id))
       .where(eq(userFavoritesPlaces.userId, userId))
 
     return GetUserFavoritesPlacesByIdDto.fromArray(result)

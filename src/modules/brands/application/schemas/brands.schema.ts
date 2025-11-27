@@ -1,6 +1,6 @@
 import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm'
 import { pgTable, varchar, timestamp, uuid } from 'drizzle-orm/pg-core'
-import { venues } from './venues.schema'
+import { places } from './places.schema'
 import { brandMenus } from './brand-menus.schema'
 
 export const brands = pgTable('brands', {
@@ -14,7 +14,7 @@ export const brands = pgTable('brands', {
 })
 
 export const brandsRelations = relations(brands, ({ many }) => ({
-  venues: many(venues),
+  places: many(places),
   menus: many(brandMenus)
 }))
 

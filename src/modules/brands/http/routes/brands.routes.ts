@@ -2,16 +2,16 @@ import { Elysia, t } from 'elysia'
 
 import { validateCreateAllEntities } from '../dtos'
 import {
-  CreateVenue,
-  CreateVenueLocation,
+  CreatePlace,
+  CreatePlaceLocation,
   CreateBrand,
   CreateBrandMenus,
   GetBrand
 } from '@src/modules/brands/application/queries'
 import {
   DrizzleBrandMenusRepository,
-  DrizzleVenueLocationRepository,
-  DrizzleVenuesRepository,
+  DrizzlePlaceLocationsRepository,
+  DrizzlePlacesRepository,
   DrizzleBrandRepository
 } from '@src/modules/brands/infrastructure/persistence'
 import { RabbitMQProducer } from '@src/shared/infra/messaging'
@@ -19,16 +19,16 @@ import { BrandsController } from '../controllers/brands.controller'
 
 export const brandsRoutes = (app: Elysia) => {
   const brandRepo = new DrizzleBrandRepository()
-  const venueRepo = new DrizzleVenuesRepository()
-  const venueLocationRepo = new DrizzleVenueLocationRepository()
+  const placeRepo = new DrizzlePlacesRepository()
+  const placeLocationRepo = new DrizzlePlaceLocationsRepository()
   const brandMenusRepo = new DrizzleBrandMenusRepository()
   const producer = new RabbitMQProducer()
 
   const controller = new BrandsController(
     new CreateBrand(brandRepo),
     new CreateBrandMenus(brandMenusRepo),
-    new CreateVenue(venueRepo),
-    new CreateVenueLocation(venueLocationRepo),
+    new CreatePlace(placeRepo),
+    new CreatePlaceLocation(placeLocationRepo),
     new GetBrand(brandRepo),
     producer
   )
@@ -42,8 +42,8 @@ export const brandsRoutes = (app: Elysia) => {
           body: validateCreateAllEntities,
           detail: {
             tags: ['Brands'],
-            summary: 'Create a new brand with venue and location',
-            description: 'Creates a complete brand entity including venue and location data'
+            summary: 'Create a new brand with place and location',
+            description: 'Creates a complete brand entity including place and location data'
           }
         }
       )

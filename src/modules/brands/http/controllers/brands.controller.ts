@@ -1,6 +1,6 @@
 import {
-  CreateVenue,
-  CreateVenueLocation,
+  CreatePlace,
+  CreatePlaceLocation,
   CreateBrand,
   CreateBrandMenus,
   GetBrand
@@ -11,8 +11,8 @@ export class BrandsController {
   constructor(
     private readonly createBrandService: CreateBrand,
     private readonly createBrandMenusService: CreateBrandMenus,
-    private readonly createVenueService: CreateVenue,
-    private readonly createVenueLocationService: CreateVenueLocation,
+    private readonly createPlaceService: CreatePlace,
+    private readonly createPlaceLocationService: CreatePlaceLocation,
     private readonly getBrandService: GetBrand,
     private readonly producer: RabbitMQProducer
   ) {}
@@ -25,29 +25,29 @@ export class BrandsController {
       menus: body.brandMenus
     })
 
-    const venue = await this.createVenueService.execute({
+    const place = await this.createPlaceService.execute({
       brandId: brand.id,
-      ...body.venue
+      ...body.place
     })
 
-    const venueLocation = await this.createVenueLocationService.execute({
-      venueId: venue.id,
-      ...body.venueLocation
+    const placeLocation = await this.createPlaceLocationService.execute({
+      placeId: place.id,
+      ...body.placeLocation
     })
 
     const result = {
       brand,
-      venue,
-      venueLocation,
+      place,
+      placeLocation,
       brandMenu
     }
 
     const resultToBeSendedToConsumer = {
-      id: venue.id,
-      name: venue.name,
+      id: place.id,
+      name: place.name,
       location: {
-        lat: venueLocation.lat,
-        lon: venueLocation.lng
+        lat: placeLocation.lat,
+        lon: placeLocation.lng
       }
     }
 

@@ -6,7 +6,7 @@ export const validateCreateBrandSchema = t.Object({
   type: t.String({ minLength: 3, maxLength: 20 })
 })
 
-export const validateCreateVenueSchema = t.Object({
+export const validateCreatePlaceSchema = t.Object({
   name: t.String({ minLength: 1, maxLength: 255 }),
   priceRange: t.Optional(t.Nullable(t.String({ maxLength: 5 }))),
   paymentMethods: t.Optional(t.Nullable(t.String({ maxLength: 255 }))),
@@ -16,7 +16,7 @@ export const validateCreateVenueSchema = t.Object({
   about: t.Optional(t.Nullable(t.String()))
 })
 
-export const validateCreateVenueLocationSchema = t.Object({
+export const validateCreatePlaceLocationSchema = t.Object({
   addressLine: t.String({ minLength: 1, maxLength: 255 }),
   addressLine2: t.Optional(t.Nullable(t.String({ maxLength: 255 }))),
   number: t.Optional(t.Nullable(t.String({ maxLength: 255 }))),
@@ -42,12 +42,12 @@ export const validateBrandMenusSchema = t.Array(
 
 export const validateCreateAllEntities = t.Object({
   brand: validateCreateBrandSchema,
-  venue: validateCreateVenueSchema,
-  venueLocation: validateCreateVenueLocationSchema,
+  place: validateCreatePlaceSchema,
+  placeLocation: validateCreatePlaceLocationSchema,
   brandMenus: validateBrandMenusSchema
 })
 
 export type CreateBrandDTO = Static<typeof validateCreateBrandSchema>
-export type CreateVenueDTO = Static<typeof validateCreateVenueSchema>
-export type CreateVenueLocationDTO = Static<typeof validateCreateVenueLocationSchema>
+export type CreatePlaceDTO = Static<typeof validateCreatePlaceSchema>
+export type CreatePlaceLocationDTO = Static<typeof validateCreatePlaceLocationSchema>
 export type CreateAllEntitiesDTO = Static<typeof validateCreateAllEntities>

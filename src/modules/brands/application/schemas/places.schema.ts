@@ -1,9 +1,9 @@
 import { pgTable, integer, varchar, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { brands } from './brands.schema'
 import { relations } from 'drizzle-orm'
-import { venuesLocations } from './venue-locations.schema'
+import { placeLocations } from './place-locations.schema'
 
-export const venues = pgTable('venues', {
+export const places = pgTable('venues', {
   id: uuid('id').defaultRandom().primaryKey(),
   brandId: uuid('brand_id')
     .notNull()
@@ -20,13 +20,13 @@ export const venues = pgTable('venues', {
   updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()
 })
 
-export const venuesRelations = relations(venues, ({ one }) => ({
+export const placesRelations = relations(places, ({ one }) => ({
   brand: one(brands, {
-    fields: [venues.brandId],
+    fields: [places.brandId],
     references: [brands.id]
   }),
-  location: one(venuesLocations, {
-    fields: [venues.id],
-    references: [venuesLocations.venueId]
+  location: one(placeLocations, {
+    fields: [places.id],
+    references: [placeLocations.placeId]
   })
 }))
