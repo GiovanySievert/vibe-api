@@ -15,6 +15,7 @@ import {
   DrizzleBrandRepository
 } from '@src/modules/brands/infrastructure/persistence'
 import { RabbitMQProducer } from '@src/shared/infra/messaging'
+import { BrandsController } from '../controllers/brands.controller'
 
 export const brandsRoutes = (app: Elysia) => {
   const brandRepo = new DrizzleBrandRepository()
@@ -23,54 +24,20 @@ export const brandsRoutes = (app: Elysia) => {
   const brandMenusRepo = new DrizzleBrandMenusRepository()
   const producer = new RabbitMQProducer()
 
-  const createBrandService = new CreateBrand(brandRepo)
-  const createBrandMenusService = new CreateBrandMenus(brandMenusRepo)
-  const createVenueService = new CreateVenue(venueRepo)
-  const createVenueLocation = new CreateVenueLocation(venueLocationRepo)
-  const getBrandService = new GetBrand(brandRepo)
+  const controller = new BrandsController(
+    new CreateBrand(brandRepo),
+    new CreateBrandMenus(brandMenusRepo),
+    new CreateVenue(venueRepo),
+    new CreateVenueLocation(venueLocationRepo),
+    new GetBrand(brandRepo),
+    producer
+  )
 
   return app.group('/brands', (app) =>
     app
       .post(
         '/',
-        async ({ body }) => {
-          const brand = await createBrandService.execute(body.brand)
-
-          const brandMenu = await createBrandMenusService.execute({
-            brandId: brand.id,
-            menus: body.brandMenus
-          })
-
-          const venue = await createVenueService.execute({
-            brandId: brand.id,
-            ...body.venue
-          })
-
-          const venueLocation = await createVenueLocation.execute({
-            venueId: venue.id,
-            ...body.venueLocation
-          })
-
-          const result = {
-            brand,
-            venue,
-            venueLocation,
-            brandMenu
-          }
-
-          const resultToBeSendedToConsumer = {
-            id: venue.id,
-            name: venue.name,
-            location: {
-              lat: venueLocation.lat,
-              lon: venueLocation.lng
-            }
-          }
-
-          await producer.publish(resultToBeSendedToConsumer)
-
-          return result
-        },
+        (ctx) => controller.create(ctx),
         {
           body: validateCreateAllEntities,
           detail: {
@@ -82,11 +49,7 @@ export const brandsRoutes = (app: Elysia) => {
       )
       .get(
         '/:brandId',
-        async ({ params }) => {
-          const brand = await getBrandService.execute(params.brandId)
-
-          return brand
-        },
+        (ctx) => controller.getById(ctx),
         {
           params: t.Object({
             brandId: t.String()
