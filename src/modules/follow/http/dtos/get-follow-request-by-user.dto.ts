@@ -1,19 +1,27 @@
-export class GetFollowRequestByUser {
+export interface GetFollowRequestByUserDto {
   id: string
-  venueId: string
-  name: string
-  createdAt: Date
-  avatar: string
+  requesterId: string
+  requesterUsername: string
+  requesterAvatar: string
+  requestedId: string
+  status: 'pending' | 'accepted' | 'rejected'
+  createdAt: string
+}
 
-  constructor(data: any) {
-    this.id = data.user_favorites_places.id
-    this.venueId = data.user_favorites_places.venueId
-    this.name = data.venues?.name || ''
-    this.createdAt = data.user_favorites_places.createdAt
-    this.avatar = data.brand.avatar
+export class GetFollowRequestByUserDtoMapper {
+  static from(data: any): GetFollowRequestByUserDto {
+    return {
+      id: data.followRequests.id,
+      requesterId: data.followRequests.requesterId,
+      requesterUsername: data.users.username,
+      requesterAvatar: data.users.avatar,
+      requestedId: data.followRequests.requestedId,
+      status: data.followRequests.status,
+      createdAt: data.followRequests.createdAt
+    }
   }
 
-  static fromArray(data: any[]): GetFollowRequestByUser[] {
-    return data.map((item) => new GetFollowRequestByUser(item))
+  static fromArray(data: any[]): GetFollowRequestByUserDto[] {
+    return data.map((item) => this.from(item))
   }
 }

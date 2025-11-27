@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 
 import { followers } from '../../application/schemas'
 import { db } from '@src/infra/database/client'
@@ -57,6 +57,16 @@ export class DrizzleFollowRepository implements FollowersRepository {
   async delete(followId: string): Promise<void> {
     await db.delete(followers).where(eq(followers.id, followId))
   }
-  // async update(data: any): Promise<void> {}
-  // async delete(data: any): Promise<void> {}
+
+  async isFollowing(followerId: string, followingId: string): Promise<boolean> {
+    const [follow] = await db
+      .select()
+      .from(followers)
+      .where(and(eq(followers.followerId, followerId), eq(followers.followingId, followingId)))
+      .limit(1)
+
+    const result = !!follow
+
+    return result
+  }
 }

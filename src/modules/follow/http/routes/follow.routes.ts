@@ -16,7 +16,7 @@ export const FollowRoutes = (app: Elysia) => {
 
   return app.use(authMiddleware).group('/follow', (app) =>
     app
-      .get('/', (ctx: any) => controller.list(ctx), {
+      .get('', (ctx: any) => controller.list(ctx), {
         auth: true,
         detail: {
           tags: ['Follow'],
