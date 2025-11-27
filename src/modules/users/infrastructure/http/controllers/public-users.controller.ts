@@ -1,3 +1,5 @@
+import { User } from 'better-auth/types'
+
 import { GetPublicUserById, GetPublicUserByUsername } from '@src/modules/users/application/queries'
 import { GetPublicUserByIdDto, GetPublicUserByUsernameDto } from '../dto'
 
@@ -13,8 +15,8 @@ export class PublicUsersController {
     return GetPublicUserByIdDto.fromData(publicUser)
   }
 
-  async getByUsername({ params }: { params: { username: string } }) {
-    const publicUser = await this.getPublicUserByUsername.execute(params.username)
+  async getByUsername({ params, user }: { params: { username: string; userIdToBeExclude: string }; user: User }) {
+    const publicUser = await this.getPublicUserByUsername.execute(params.username, user.id)
     return GetPublicUserByUsernameDto.fromArray(publicUser)
   }
 }

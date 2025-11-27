@@ -1,4 +1,4 @@
-import { eq, like } from 'drizzle-orm'
+import { and, eq, like, ne } from 'drizzle-orm'
 import { db } from '@src/infra/database/client'
 import { PublicUserRepository } from '../../domain/repositories'
 import { users } from '@src/infra/database/schema'
@@ -11,11 +11,11 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
     return result
   }
 
-  async getUserByUsername(username: string): Promise<Users[]> {
+  async getUserByUsername(username: string, userIdToExclude: string): Promise<Users[]> {
     const result = await db
       .select()
       .from(users)
-      .where(like(users.username, `%${username}%`))
+      .where(and(like(users.username, `%${username}%`), ne(users.id, userIdToExclude)))
       .limit(10)
 
     return result
