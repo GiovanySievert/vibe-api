@@ -1,10 +1,10 @@
 export { users, accounts, sessions, verifications } from '@src/modules/auth/application/schemas'
 export {
   brands,
-  venues,
+  places,
   brandMenus,
-  venuesLocations,
-  venuesRelations,
+  placeLocations,
+  placesRelations,
   brandsRelations,
   brandMenusRelations
 } from '@src/modules/brands/application/schemas'

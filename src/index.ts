@@ -8,7 +8,7 @@ import { OpenAPI } from './config/open-api'
 import { authRoutes } from './modules/auth/interface/http/routes/auth.routes'
 import { brandsRoutes } from './modules/brands/http/routes'
 import { errorHandler } from './shared/infra/http/plugins/error-handler'
-import { venuesRoutes } from './modules/brands/http/routes/venues.routes'
+import { placesRoutes } from './modules/brands/http/routes/places.routes'
 import { userFavoritesPlacesRoutes } from './modules/user-favorites-places/http/routes'
 import { FollowerRoutes, FollowRoutes } from './modules/follow/http/routes'
 import { PublicUsersRoute } from './modules/users/infrastructure/http/routes'
@@ -20,7 +20,7 @@ const app = new Elysia()
   .use(betterAuthPlugin)
   .use(authRoutes)
   .use(brandsRoutes)
-  .use(venuesRoutes)
+  .use(placesRoutes)
   .use(userFavoritesPlacesRoutes)
   .use(PublicUsersRoute)
   .use(FollowRoutes)

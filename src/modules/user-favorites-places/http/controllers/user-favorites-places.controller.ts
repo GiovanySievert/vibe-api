@@ -16,14 +16,14 @@ export class UserFavoritesController {
   async create({ params, user }: { params: { placeId: string }; user: User }) {
     return await this.createUserFavoritesPlaces.execute({
       userId: user.id,
-      venueId: params.placeId
+      placeId: params.placeId
     })
   }
 
   async delete({ params, user }: { params: { placeId: string }; user: User }) {
     return await this.deleteUserFavoritesPlaces.execute({
       userId: user.id,
-      venueId: params.placeId
+      placeId: params.placeId
     })
   }
 }
