@@ -1,3 +1,3 @@
-import { places } from '../../application'
+import { places } from '../../application/schemas'
 
 export type Place = typeof places.$inferSelect

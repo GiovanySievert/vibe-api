@@ -1,6 +1,6 @@
 import { Elysia, t } from 'elysia'
 
-import { GetPlace } from '@src/modules/brands/application/queries'
+import { GetPlace } from '@src/modules/brands/application/use-cases'
 import { DrizzlePlacesRepository } from '@src/modules/brands/infrastructure/persistence'
 
 export const placesRoutes = (app: Elysia) => {

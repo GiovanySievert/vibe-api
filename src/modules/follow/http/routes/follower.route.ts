@@ -9,7 +9,7 @@ export const FollowerRoutes = (app: Elysia) => {
   const controller = new FollowersController(new IsFollowing(repository))
 
   return app.use(authMiddleware).group('/follow', (app) =>
-    app.get('/:userId', (ctx: any) => controller.checkIsFollowing(ctx), {
+    app.get('/:userId', (ctx) => controller.checkIsFollowing(ctx), {
       auth: true,
       detail: {
         tags: ['Follow'],
