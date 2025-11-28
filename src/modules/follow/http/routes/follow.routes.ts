@@ -16,7 +16,7 @@ export const FollowRoutes = (app: Elysia) => {
 
   return app.use(authMiddleware).group('/follow', (app) =>
     app
-      .get('', (ctx: any) => controller.list(ctx), {
+      .get('', (ctx) => controller.list(ctx), {
         auth: true,
         detail: {
           tags: ['Follow'],
@@ -24,7 +24,7 @@ export const FollowRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
-      .post('/:requestedId', (ctx: any) => controller.create(ctx), {
+      .post('/:requestedId', (ctx) => controller.create(ctx), {
         auth: true,
         params: t.Object({
           requestedId: t.String()
@@ -35,7 +35,7 @@ export const FollowRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
-      .patch('/:requestFollowId', (ctx: any) => controller.update(ctx), {
+      .patch('/:requestFollowId', (ctx) => controller.update(ctx), {
         auth: true,
         params: t.Object({
           requestFollowId: t.String()

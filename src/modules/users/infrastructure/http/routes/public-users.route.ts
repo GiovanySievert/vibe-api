@@ -14,7 +14,7 @@ export const PublicUsersRoute = (app: Elysia) => {
 
   return app.use(authMiddleware).group('/public-users', (app) =>
     app
-      .get('/:userId', (ctx: any) => controller.getById(ctx), {
+      .get('/:userId', (ctx) => controller.getById(ctx), {
         auth: true,
         params: t.Object({ userId: t.String() }),
         detail: {
@@ -23,7 +23,7 @@ export const PublicUsersRoute = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
-      .get('/username/:username', (ctx: any) => controller.getByUsername(ctx), {
+      .get('/username/:username', (ctx) => controller.getByUsername(ctx), {
         auth: true,
         params: t.Object({ username: t.String() }),
         detail: {

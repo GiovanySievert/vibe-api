@@ -15,7 +15,7 @@ export class PublicUsersController {
     return GetPublicUserByIdDto.fromData(publicUser)
   }
 
-  async getByUsername({ params, user }: { params: { username: string; userIdToBeExclude: string }; user: User }) {
+  async getByUsername({ params, user }: { params: { username: string }; user: User }) {
     const publicUser = await this.getPublicUserByUsername.execute(params.username, user.id)
     return GetPublicUserByUsernameDto.fromArray(publicUser)
   }
