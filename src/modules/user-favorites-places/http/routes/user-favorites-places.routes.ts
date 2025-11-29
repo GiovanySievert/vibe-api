@@ -1,18 +1,9 @@
 import Elysia, { t } from 'elysia'
-
-import { CreateUserFavoritesPlaces, GetUserFavoritesPlace, DeleteUserFavoritesPlaces } from '../../application/queries'
-import { UserFavoritesController } from '../controllers/user-favorites-places.controller'
-import { DrizzleUserFavoritesPlacesRepository } from '../../infrastructure/persistence'
 import { authMiddleware } from '@src/shared/middlewares'
-import { auth } from '@src/config/auth'
+import { UserFavoritesPlacesModule } from '../../user-favorites-places.module'
 
 export const userFavoritesPlacesRoutes = (app: Elysia) => {
-  const repository = new DrizzleUserFavoritesPlacesRepository()
-  const controller = new UserFavoritesController(
-    new GetUserFavoritesPlace(repository),
-    new CreateUserFavoritesPlaces(repository),
-    new DeleteUserFavoritesPlaces(repository)
-  )
+  const { controller } = new UserFavoritesPlacesModule()
 
   return app.use(authMiddleware).group('/user-favorites-places', (app) =>
     app
