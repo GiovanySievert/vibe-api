@@ -1,6 +1,5 @@
 import openapi from '@elysiajs/openapi'
 import { Elysia } from 'elysia'
-import 'dotenv/config'
 import cors from '@elysiajs/cors'
 
 import { auth } from '@src/config/auth'
@@ -12,11 +11,14 @@ import { placesRoutes } from './modules/brands/http/routes/places.routes'
 import { userFavoritesPlacesRoutes } from './modules/user-favorites-places/http/routes'
 import { FollowerRoutes, FollowRoutes } from './modules/follow/http/routes'
 import { PublicUsersRoute } from './modules/users/infrastructure/http/routes'
+import { appLogger } from './config/logger'
+import { loggingMiddleware } from './shared/middlewares/logging.middleware'
 
 const betterAuthPlugin = new Elysia({ name: 'better-auth' }).mount(auth.handler)
 
 const app = new Elysia()
   .use(errorHandler)
+  .use(loggingMiddleware)
   .use(betterAuthPlugin)
   .use(authRoutes)
   .use(brandsRoutes)
@@ -52,4 +54,8 @@ const app = new Elysia()
   )
   .listen(3000)
 
-console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`)
+appLogger.info('Vibe-api is running', {
+  hostname: app.server?.hostname,
+  port: app.server?.port,
+  environment: process.env.NODE_ENV || 'development'
+})
