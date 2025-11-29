@@ -3,6 +3,7 @@ import {
   GetBrand
 } from '@src/modules/brands/application/use-cases'
 import type { CreateAllEntitiesDTO } from '../dtos/create-brand.dto'
+import { appLogger } from '@src/config/logger'
 
 export class BrandsController {
   constructor(
@@ -11,12 +12,28 @@ export class BrandsController {
   ) {}
 
   async create({ body }: { body: CreateAllEntitiesDTO }) {
-    const result = await this.createBrandWithPlace.execute(body)
-    return result
+    try {
+      const result = await this.createBrandWithPlace.execute(body)
+      return result
+    } catch (error) {
+      appLogger.error('Failed to create brand with place', {
+        brandName: body.brand.name,
+        error
+      })
+      throw error
+    }
   }
 
   async getById({ params }: { params: { brandId: string } }) {
-    const brand = await this.getBrandService.execute(params.brandId)
-    return brand
+    try {
+      const brand = await this.getBrandService.execute(params.brandId)
+      return brand
+    } catch (error) {
+      appLogger.error('Failed to get brand by id', {
+        brandId: params.brandId,
+        error
+      })
+      throw error
+    }
   }
 }
