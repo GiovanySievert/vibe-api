@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test'
-import { DeleteUserFavoritesPlaces } from '../../application/queries/delete-user-favorites-places'
+import { DeleteUserFavoritesPlaces } from '../../application/use-cases/delete-user-favorites-places'
 import { MockUserFavoritesPlacesRepository } from '../mocks/user-favorites-places.repository.mock'
 import { UserFavoritesPlaces } from '../../domain/mappers'
 

@@ -1,7 +1,7 @@
 import {
   GetPublicUserById,
   GetPublicUserByUsername
-} from './application/queries'
+} from './application/use-cases'
 import { DrizzlePublicUserRepository } from './infrastructure/persistence'
 import { PublicUsersController } from './infrastructure/http/controllers/public-users.controller'
 

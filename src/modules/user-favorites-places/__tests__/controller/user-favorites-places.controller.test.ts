@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'bun:test'
 import { UserFavoritesController } from '../../http/controllers/user-favorites-places.controller'
-import { CreateUserFavoritesPlaces } from '../../application/queries/create-user-favorites-places'
-import { GetUserFavoritesPlace } from '../../application/queries/get-user-favorites-places'
-import { DeleteUserFavoritesPlaces } from '../../application/queries/delete-user-favorites-places'
+import { CreateUserFavoritesPlaces } from '../../application/use-cases/create-user-favorites-places'
+import { GetUserFavoritesPlace } from '../../application/use-cases/get-user-favorites-places'
+import { DeleteUserFavoritesPlaces } from '../../application/use-cases/delete-user-favorites-places'
 import { MockUserFavoritesPlacesRepository } from '../mocks/user-favorites-places.repository.mock'
 import { UserFavoritesPlaces } from '../../domain/mappers'
 

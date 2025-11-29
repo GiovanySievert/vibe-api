@@ -2,7 +2,7 @@ import {
   CreateUserFavoritesPlaces,
   GetUserFavoritesPlace,
   DeleteUserFavoritesPlaces
-} from './application/queries'
+} from './application/use-cases'
 import { DrizzleUserFavoritesPlacesRepository } from './infrastructure/persistence'
 import { UserFavoritesController } from './http/controllers/user-favorites-places.controller'
 

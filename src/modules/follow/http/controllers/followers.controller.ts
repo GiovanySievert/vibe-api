@@ -1,5 +1,5 @@
 import { User } from 'better-auth/types'
-import { IsFollowing } from '../../application/queries'
+import { IsFollowing } from '../../application/use-cases'
 import { appLogger } from '@src/config/logger'
 
 export class FollowersController {

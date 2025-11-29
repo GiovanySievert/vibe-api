@@ -12,7 +12,7 @@ import {
   CreateFollowingStats,
   DeleteFollowingStats,
   ListFollowStats
-} from './application/queries'
+} from './application/use-cases'
 import {
   DrizzleFollowRepository,
   DrizzleFollowRequestRepository,

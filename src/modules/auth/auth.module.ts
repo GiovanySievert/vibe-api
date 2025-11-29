@@ -1,4 +1,4 @@
-import { CheckUsernameAvailability } from './application/queries/check-username-availability'
+import { CheckUsernameAvailability } from './application/use-cases/check-username-availability'
 import { DrizzleUserRepository } from './infrastructure/persistence/user-repository.drizzle'
 
 export class AuthModule {

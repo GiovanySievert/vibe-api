@@ -1,5 +1,5 @@
 import { User } from 'better-auth/types'
-import { GetPublicUserById, GetPublicUserByUsername } from '@src/modules/users/application/queries'
+import { GetPublicUserById, GetPublicUserByUsername } from '@src/modules/users/application/use-cases'
 import { GetPublicUserByIdDto, GetPublicUserByUsernameDto } from '../dto'
 import { appLogger } from '@src/config/logger'
 

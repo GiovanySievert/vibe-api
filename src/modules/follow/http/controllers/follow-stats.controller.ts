@@ -5,7 +5,7 @@ import {
   CreateFollowingStats,
   DeleteFollowingStats,
   ListFollowStats
-} from '../../application/queries'
+} from '../../application/use-cases'
 import { appLogger } from '@src/config/logger'
 
 export class FollowStatsController {
