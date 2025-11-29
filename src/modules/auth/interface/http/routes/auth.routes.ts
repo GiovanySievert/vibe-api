@@ -1,12 +1,10 @@
-import { CheckUsernameAvailability } from '@src/modules/auth/application/queries/check-username-availability'
-import { DrizzleUserRepository } from '@src/modules/auth/infrastructure/persistence/user-repository.drizzle'
 import { Elysia, t } from 'elysia'
 import { parse } from 'zod'
 import { checkUsernameQuery } from '../../validators'
+import { AuthModule } from '@src/modules/auth/auth.module'
 
 export const authRoutes = (app: Elysia) => {
-  const userRepo = new DrizzleUserRepository()
-  const checkUsername = new CheckUsernameAvailability(userRepo)
+  const { checkUsernameAvailability: checkUsername } = new AuthModule()
 
   return app.group('/auth', (app) =>
     app.get(

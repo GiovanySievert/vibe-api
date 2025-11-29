@@ -1,16 +1,9 @@
 import { authMiddleware } from '@src/shared/middlewares'
 import { Elysia, t } from 'elysia'
-
-import { PublicUsersController } from '../controllers'
-import { DrizzlePublicUserRepository } from '../../persistence/public-user-repository.drizzle'
-import { GetPublicUserById, GetPublicUserByUsername } from '@src/modules/users/application/queries'
+import { UsersModule } from '@src/modules/users/users.module'
 
 export const PublicUsersRoute = (app: Elysia) => {
-  const repository = new DrizzlePublicUserRepository()
-  const controller = new PublicUsersController(
-    new GetPublicUserById(repository),
-    new GetPublicUserByUsername(repository)
-  )
+  const { controller } = new UsersModule()
 
   return app.use(authMiddleware).group('/public-users', (app) =>
     app

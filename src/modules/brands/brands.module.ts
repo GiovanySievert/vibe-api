@@ -4,6 +4,7 @@ import {
   CreateBrand,
   CreateBrandMenus,
   GetBrand,
+  GetPlace,
   CreateBrandWithPlace
 } from './application/use-cases'
 import {
@@ -18,6 +19,7 @@ import { BrandsController } from './http/controllers/brands.controller'
 
 export class BrandsModule {
   public readonly controller: BrandsController
+  public readonly getPlaceService: GetPlace
 
   constructor() {
     const brandRepo = new DrizzleBrandRepository()
@@ -33,6 +35,7 @@ export class BrandsModule {
     const createPlaceService = new CreatePlace(placeRepo)
     const createPlaceLocationService = new CreatePlaceLocation(placeLocationRepo)
     const getBrandService = new GetBrand(brandRepo)
+    const getPlaceService = new GetPlace(placeRepo)
 
     const createBrandWithPlace = new CreateBrandWithPlace(
       createBrandService,
@@ -43,5 +46,6 @@ export class BrandsModule {
     )
 
     this.controller = new BrandsController(createBrandWithPlace, getBrandService)
+    this.getPlaceService = getPlaceService
   }
 }

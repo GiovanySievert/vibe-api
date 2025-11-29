@@ -1,18 +1,10 @@
 import { authMiddleware } from '@src/shared/middlewares'
 import { Elysia, t } from 'elysia'
-import { DrizzleFollowRequestRepository } from '../../infrastructure/persistence'
-import { FollowRequestController } from '../controllers/follow-request.controller'
-import { CreateFollowRequest, ListFollowRequest, UpdateFollowRequest } from '../../application/queries'
-
 import { validateUpdateFollowRequest } from '../dtos'
+import { FollowModule } from '../../follow.module'
 
 export const FollowRoutes = (app: Elysia) => {
-  const repository = new DrizzleFollowRequestRepository()
-  const controller = new FollowRequestController(
-    new CreateFollowRequest(repository),
-    new UpdateFollowRequest(repository),
-    new ListFollowRequest(repository)
-  )
+  const { followRequestController: controller } = new FollowModule()
 
   return app.use(authMiddleware).group('/follow', (app) =>
     app

@@ -1,11 +1,8 @@
 import { Elysia, t } from 'elysia'
-
-import { GetPlace } from '@src/modules/brands/application/use-cases'
-import { DrizzlePlacesRepository } from '@src/modules/brands/infrastructure/persistence'
+import { BrandsModule } from '../../brands.module'
 
 export const placesRoutes = (app: Elysia) => {
-  const placeRepo = new DrizzlePlacesRepository()
-  const getPlaceService = new GetPlace(placeRepo)
+  const { getPlaceService } = new BrandsModule()
 
   return app.group('/places', (app) =>
     app.get(
