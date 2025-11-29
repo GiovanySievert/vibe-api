@@ -7,6 +7,4 @@ export interface FollowersRepository {
   listFollowings(userId: string): Promise<ListUserFollowResponseDto[]>
   delete(followId: string): Promise<void>
   isFollowing(followerId: string, followingId: string): Promise<boolean>
-  // update(data: any): Promise<Brand>
-  // delete(data: any): Promise<void>
 }

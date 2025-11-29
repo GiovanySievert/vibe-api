@@ -4,6 +4,7 @@ import {
 } from '@src/modules/brands/application/use-cases'
 import type { CreateAllEntitiesDTO } from '../dtos/create-brand.dto'
 import { appLogger } from '@src/config/logger'
+import { TaxIdAlreadyExistsException } from '@src/modules/brands/domain/exceptions'
 
 export class BrandsController {
   constructor(
@@ -16,6 +17,15 @@ export class BrandsController {
       const result = await this.createBrandWithPlace.execute(body)
       return result
     } catch (error) {
+      if (error instanceof TaxIdAlreadyExistsException) {
+        appLogger.error('Tax ID already exists', {
+          taxId: error.taxId,
+          brandName: body.brand.name,
+          error
+        })
+        throw error
+      }
+
       appLogger.error('Failed to create brand with place', {
         brandName: body.brand.name,
         error

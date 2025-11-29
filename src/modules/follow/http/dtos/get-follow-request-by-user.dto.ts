@@ -1,3 +1,5 @@
+import { FollowRequestQueryResult } from './follow-request-query-result.dto'
+
 export interface GetFollowRequestByUserDto {
   id: string
   requesterId: string
@@ -9,7 +11,7 @@ export interface GetFollowRequestByUserDto {
 }
 
 export class GetFollowRequestByUserDtoMapper {
-  static from(data: any): GetFollowRequestByUserDto {
+  static from(data: FollowRequestQueryResult): GetFollowRequestByUserDto {
     return {
       id: data.followRequests.id,
       requesterId: data.followRequests.requesterId,
@@ -21,7 +23,7 @@ export class GetFollowRequestByUserDtoMapper {
     }
   }
 
-  static fromArray(data: any[]): GetFollowRequestByUserDto[] {
+  static fromArray(data: FollowRequestQueryResult[]): GetFollowRequestByUserDto[] {
     return data.map((item) => this.from(item))
   }
 }

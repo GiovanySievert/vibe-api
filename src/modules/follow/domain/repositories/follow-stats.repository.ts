@@ -8,7 +8,4 @@ export interface FollowStatsRepository {
 
   incrementFollowingStats(userId: string): Promise<FollowStats>
   decrementFollowingStats(userId: string): Promise<void>
-
-  // update(data: any): Promise<Brand>
-  // delete(data: any): Promise<void>
 }

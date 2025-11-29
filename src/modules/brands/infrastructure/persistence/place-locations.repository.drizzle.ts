@@ -9,7 +9,4 @@ export class DrizzlePlaceLocationsRepository implements PlaceLocationsRepository
 
     return result
   }
-
-  // async update(data: any): Promise<void> {}
-  // async delete(data: any): Promise<void> {}
 }

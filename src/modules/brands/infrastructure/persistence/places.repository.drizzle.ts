@@ -26,7 +26,4 @@ export class DrizzlePlacesRepository implements PlacesRepository {
 
     return result
   }
-
-  // async update(data: any): Promise<any> {}
-  // async delete(data: any): Promise<any> {}
 }

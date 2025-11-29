@@ -1,7 +1,8 @@
 import { UserFavoritesPlaces } from '../mappers'
+import { GetUserFavoritesPlacesByIdDto } from '../../http/dtos'
 
 export interface UserFavoritesPlacesRepository {
-  create(data: UserFavoritesPlaces): Promise<UserFavoritesPlaces>
-  delete(data: UserFavoritesPlaces): Promise<void>
-  list(userId: string): Promise<any>
+  create(data: Omit<UserFavoritesPlaces, 'id' | 'createdAt'>): Promise<UserFavoritesPlaces>
+  delete(data: Pick<UserFavoritesPlaces, 'userId' | 'placeId'>): Promise<void>
+  list(userId: string): Promise<GetUserFavoritesPlacesByIdDto[]>
 }

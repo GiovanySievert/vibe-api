@@ -7,13 +7,13 @@ import { GetUserFavoritesPlacesByIdDto } from '../../http/dtos'
 import { brands, places } from '@src/infra/database/schema'
 
 export class DrizzleUserFavoritesPlacesRepository implements UserFavoritesPlacesRepository {
-  async create(data: UserFavoritesPlaces): Promise<UserFavoritesPlaces> {
+  async create(data: Omit<UserFavoritesPlaces, 'id' | 'createdAt'>): Promise<UserFavoritesPlaces> {
     const [result] = await db.insert(userFavoritesPlaces).values(data).returning()
 
     return result
   }
 
-  async delete(data: UserFavoritesPlaces): Promise<void> {
+  async delete(data: Pick<UserFavoritesPlaces, 'userId' | 'placeId'>): Promise<void> {
     await db
       .delete(userFavoritesPlaces)
       .where(and(eq(userFavoritesPlaces.userId, data.userId), eq(userFavoritesPlaces.placeId, data.placeId)))
@@ -43,7 +43,4 @@ export class DrizzleUserFavoritesPlacesRepository implements UserFavoritesPlaces
 
     return GetUserFavoritesPlacesByIdDto.fromArray(result)
   }
-
-  // async update(data: any): Promise<void> {}
-  // async delete(data: any): Promise<void> {}
 }

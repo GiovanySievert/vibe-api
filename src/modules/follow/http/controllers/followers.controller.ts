@@ -1,11 +1,15 @@
-import { User } from 'better-auth/types'
 import { IsFollowing } from '../../application/use-cases'
 import { appLogger } from '@src/config/logger'
+
+interface CheckIsFollowingData {
+  followingId: string
+  followerId: string
+}
 
 export class FollowersController {
   constructor(private readonly isFollowing: IsFollowing) {}
 
-  async checkIsFollowing(data: any) {
+  async checkIsFollowing(data: CheckIsFollowingData) {
     try {
       return await this.isFollowing.execute(data.followingId, data.followerId)
     } catch (error) {

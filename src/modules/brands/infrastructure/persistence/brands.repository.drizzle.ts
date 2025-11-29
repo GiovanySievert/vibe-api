@@ -19,12 +19,15 @@ export class DrizzleBrandRepository implements BrandRepository {
     return brand
   }
 
+  async findByTaxId(taxId: string): Promise<Brand | null> {
+    const [brand] = await db.select().from(brands).where(eq(brands.taxId, taxId)).limit(1)
+
+    return brand || null
+  }
+
   async create(data: Brand): Promise<Brand> {
     const [result] = await db.insert(brands).values(data).returning()
 
     return result
   }
-
-  // async update(data: any): Promise<void> {}
-  // async delete(data: any): Promise<void> {}
 }
