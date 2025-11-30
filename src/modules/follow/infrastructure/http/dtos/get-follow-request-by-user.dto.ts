@@ -16,10 +16,10 @@ export class GetFollowRequestByUserDtoMapper {
       id: data.followRequests.id,
       requesterId: data.followRequests.requesterId,
       requesterUsername: data.users.username,
-      requesterAvatar: data.users.avatar,
+      requesterAvatar: '',
       requestedId: data.followRequests.requestedId,
-      status: data.followRequests.status,
-      createdAt: data.followRequests.createdAt
+      status: data.followRequests.status as 'pending' | 'accepted' | 'rejected',
+      createdAt: data.followRequests.createdAt.toISOString()
     }
   }
 

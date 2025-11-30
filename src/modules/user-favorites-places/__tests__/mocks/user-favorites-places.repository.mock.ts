@@ -1,10 +1,11 @@
 import { UserFavoritesPlaces } from '../../domain/mappers'
 import { UserFavoritesPlacesRepository } from '../../domain/repositories/user-favorites-places.repository'
+import { GetUserFavoritesPlacesByIdDto } from '../../infrastructure/http/dtos'
 
 export class MockUserFavoritesPlacesRepository implements UserFavoritesPlacesRepository {
   private favorites: UserFavoritesPlaces[] = []
 
-  async create(data: UserFavoritesPlaces): Promise<UserFavoritesPlaces> {
+  async create(data: Omit<UserFavoritesPlaces, 'id' | 'createdAt'>): Promise<UserFavoritesPlaces> {
     const newFavorite: UserFavoritesPlaces = {
       id: crypto.randomUUID(),
       userId: data.userId,
@@ -15,12 +16,20 @@ export class MockUserFavoritesPlacesRepository implements UserFavoritesPlacesRep
     return newFavorite
   }
 
-  async delete(data: UserFavoritesPlaces): Promise<void> {
+  async delete(data: Pick<UserFavoritesPlaces, 'userId' | 'placeId'>): Promise<void> {
     this.favorites = this.favorites.filter((fav) => !(fav.userId === data.userId && fav.placeId === data.placeId))
   }
 
-  async list(userId: string): Promise<UserFavoritesPlaces[]> {
-    return this.favorites.filter((fav) => fav.userId === userId)
+  async list(userId: string): Promise<GetUserFavoritesPlacesByIdDto[]> {
+    return this.favorites
+      .filter((fav) => fav.userId === userId)
+      .map((fav) => ({
+        id: fav.id,
+        placeId: fav.placeId,
+        name: 'Mock Place',
+        createdAt: fav.createdAt,
+        avatar: 'mock-avatar.png'
+      }))
   }
 
   reset() {

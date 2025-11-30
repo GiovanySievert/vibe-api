@@ -15,7 +15,10 @@ export class CreateBrandWithPlace {
   ) {}
 
   async execute(data: CreateAllEntitiesDTO) {
-    const brand = await this.createBrandService.execute(data.brand)
+    const brand = await this.createBrandService.execute({
+      ...data.brand,
+      avatar: null
+    })
 
     const brandMenu = await this.createBrandMenusService.execute({
       brandId: brand.id,
@@ -24,12 +27,27 @@ export class CreateBrandWithPlace {
 
     const place = await this.createPlaceService.execute({
       brandId: brand.id,
-      ...data.place
+      priceRange: data.place.priceRange ?? null,
+      paymentMethods: data.place.paymentMethods ?? null,
+      socialInstagram: data.place.socialInstagram ?? null,
+      socialTiktok: data.place.socialTiktok ?? null,
+      contactPhone: data.place.contactPhone ?? null,
+      about: data.place.about ?? null,
+      name: data.place.name
     })
 
     const placeLocation = await this.createPlaceLocationService.execute({
       placeId: place.id,
-      ...data.placeLocation
+      addressLine: data.placeLocation.addressLine,
+      addressLine2: data.placeLocation.addressLine2 ?? null,
+      number: data.placeLocation.number ?? null,
+      neighborhood: data.placeLocation.neighborhood,
+      city: data.placeLocation.city,
+      state: data.placeLocation.state,
+      country: data.placeLocation.country,
+      postalCode: data.placeLocation.postalCode,
+      lat: data.placeLocation.lat,
+      lng: data.placeLocation.lng
     })
 
     await this.eventBus.publish('brand.created', {

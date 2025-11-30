@@ -3,11 +3,10 @@ export interface FollowRequestQueryResult {
     id: string
     requesterId: string
     requestedId: string
-    status: 'pending' | 'accepted' | 'rejected'
-    createdAt: string
+    status: string
+    createdAt: Date
   }
   users: {
     username: string
-    avatar: string
   }
 }

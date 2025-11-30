@@ -45,8 +45,8 @@ describe('UserFavoritesController', () => {
       const result = await controller.list({ user })
 
       expect(result).toHaveLength(2)
-      expect(result[0].userId).toBe(user.id)
-      expect(result[1].userId).toBe(user.id)
+      expect(result[0].placeId).toBe('place-1')
+      expect(result[1].placeId).toBe('place-2')
     })
   })
 

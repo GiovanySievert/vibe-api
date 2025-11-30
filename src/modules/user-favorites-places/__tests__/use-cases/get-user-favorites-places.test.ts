@@ -31,9 +31,9 @@ describe('GetUserFavoritesPlace', () => {
     const result = await useCase.execute(userId)
 
     expect(result).toHaveLength(3)
-    expect(result[0].userId).toBe(userId)
-    expect(result[1].userId).toBe(userId)
-    expect(result[2].userId).toBe(userId)
+    expect(result[0].placeId).toBe('place-1')
+    expect(result[1].placeId).toBe('place-2')
+    expect(result[2].placeId).toBe('place-3')
   })
 
   it('should only return favorites for the specified user', async () => {
@@ -48,6 +48,7 @@ describe('GetUserFavoritesPlace', () => {
     const result = await useCase.execute('user-1')
 
     expect(result).toHaveLength(2)
-    expect(result.every((fav) => fav.userId === 'user-1')).toBe(true)
+    expect(result[0].placeId).toBe('place-1')
+    expect(result[1].placeId).toBe('place-3')
   })
 })

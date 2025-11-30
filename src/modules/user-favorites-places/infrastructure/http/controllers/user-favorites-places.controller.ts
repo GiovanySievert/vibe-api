@@ -1,4 +1,4 @@
-import { CreateUserFavoritesPlaces, GetUserFavoritesPlace, DeleteUserFavoritesPlaces } from '../../application/use-cases'
+import { CreateUserFavoritesPlaces, GetUserFavoritesPlace, DeleteUserFavoritesPlaces } from '../../../application/use-cases'
 import { User } from 'better-auth/types'
 import { appLogger } from '@src/config/logger'
 

@@ -1,5 +1,5 @@
 import { User } from 'better-auth/types'
-import { CreateFollowRequest, UpdateFollowRequest, ListFollowRequest } from '../../application/use-cases'
+import { CreateFollowRequest, UpdateFollowRequest, ListFollowRequest } from '../../../application/use-cases'
 import { appLogger } from '@src/config/logger'
 
 export class FollowRequestController {

@@ -1,21 +1,16 @@
-import { IsFollowing } from '../../application/use-cases'
+import { IsFollowing } from '../../../application/use-cases'
 import { appLogger } from '@src/config/logger'
-
-interface CheckIsFollowingData {
-  followingId: string
-  followerId: string
-}
 
 export class FollowersController {
   constructor(private readonly isFollowing: IsFollowing) {}
 
-  async checkIsFollowing(data: CheckIsFollowingData) {
+  async checkIsFollowing({ params, session }: { params: { userId: string }; session: { userId: string } }) {
     try {
-      return await this.isFollowing.execute(data.followingId, data.followerId)
+      return await this.isFollowing.execute(params.userId, session.userId)
     } catch (error) {
       appLogger.error('Failed to check if user is following', {
-        followingId: data.followingId,
-        followerId: data.followerId,
+        followingId: params.userId,
+        followerId: session.userId,
         error
       })
       throw error

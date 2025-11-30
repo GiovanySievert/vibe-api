@@ -4,7 +4,7 @@ import { FollowRequests } from '../../domain/mappers'
 import { and, eq } from 'drizzle-orm'
 import { FollowRequestsRepository } from '../../domain/repositories'
 import { users } from '@src/infra/database/schema'
-import { GetFollowRequestByUserDto, GetFollowRequestByUserDtoMapper } from '../../infrastructure/http/dtos'
+import { GetFollowRequestByUserDtoMapper } from '../../infrastructure/http/dtos'
 
 export class DrizzleFollowRequestRepository implements FollowRequestsRepository {
   async create(data: FollowRequests): Promise<FollowRequests> {
@@ -30,7 +30,8 @@ export class DrizzleFollowRequestRepository implements FollowRequestsRepository 
           id: followRequests.id,
           requesterId: followRequests.requesterId,
           requestedId: followRequests.requestedId,
-          status: followRequests.status
+          status: followRequests.status,
+          createdAt: followRequests.createdAt
         },
         users: {
           username: users.username
@@ -38,7 +39,7 @@ export class DrizzleFollowRequestRepository implements FollowRequestsRepository 
         }
       })
       .from(followRequests)
-      .leftJoin(users, eq(followRequests.requesterId, users.id))
+      .innerJoin(users, eq(followRequests.requesterId, users.id))
       .where(and(eq(followRequests.requestedId, userId), eq(followRequests.status, 'pending')))
 
     return GetFollowRequestByUserDtoMapper.fromArray(result)

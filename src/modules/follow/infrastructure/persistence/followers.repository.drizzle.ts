@@ -8,7 +8,7 @@ import { FollowersRepository } from '../../domain/repositories'
 import { users } from '@src/infra/database/schema'
 
 export class DrizzleFollowRepository implements FollowersRepository {
-  async create(data: Followers): Promise<Followers> {
+  async create(data: Omit<Followers, 'id' | 'createdAt'>): Promise<Followers> {
     const [result] = await db.insert(followers).values(data).returning()
 
     return result
@@ -26,7 +26,7 @@ export class DrizzleFollowRepository implements FollowersRepository {
         image: users.image
       })
       .from(followers)
-      .leftJoin(users, eq(followers.followerId, users.id))
+      .innerJoin(users, eq(followers.followerId, users.id))
       .where(eq(followers.followingId, userId))
       .limit(limit)
       .offset(offset)
@@ -46,7 +46,7 @@ export class DrizzleFollowRepository implements FollowersRepository {
         image: users.image
       })
       .from(followers)
-      .leftJoin(users, eq(followers.followingId, users.id))
+      .innerJoin(users, eq(followers.followingId, users.id))
       .where(eq(followers.followerId, userId))
       .limit(limit)
       .offset(offset)
