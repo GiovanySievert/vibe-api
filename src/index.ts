@@ -7,19 +7,23 @@ import { OpenAPI } from './config/open-api'
 import { authRoutes } from './modules/auth/interface/http/routes/auth.routes'
 import { brandsRoutes } from './modules/brands/http/routes'
 import { errorHandler } from './shared/infra/http/plugins/error-handler'
+import { helmetPlugin } from './shared/infra/http/plugins/helmet'
 import { placesRoutes } from './modules/brands/http/routes/places.routes'
 import { userFavoritesPlacesRoutes } from './modules/user-favorites-places/http/routes'
 import { FollowerRoutes, FollowRoutes } from './modules/follow/http/routes'
 import { PublicUsersRoute } from './modules/users/infrastructure/http/routes'
+import { healthRoutes } from './modules/health/http/routes/health.routes'
 import { appLogger } from './config/logger'
 import { loggingMiddleware } from './shared/middlewares/logging.middleware'
 
 const betterAuthPlugin = new Elysia({ name: 'better-auth' }).mount(auth.handler)
 
 const app = new Elysia()
+  .use(helmetPlugin)
   .use(errorHandler)
   .use(loggingMiddleware)
   .use(betterAuthPlugin)
+  .use(healthRoutes)
   .use(authRoutes)
   .use(brandsRoutes)
   .use(placesRoutes)
