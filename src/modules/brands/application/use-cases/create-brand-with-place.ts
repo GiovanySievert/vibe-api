@@ -3,7 +3,7 @@ import { CreateBrand } from './create-brands'
 import { CreateBrandMenus } from './create-brand-menus'
 import { CreatePlace } from './create-places'
 import { CreatePlaceLocation } from './create-place-location'
-import type { CreateAllEntitiesDTO } from '../../http/dtos/create-brand.dto'
+import type { CreateAllEntitiesDTO } from '../../infrastructure/http/dtos/create-brand.dto'
 
 export class CreateBrandWithPlace {
   constructor(

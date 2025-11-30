@@ -1,5 +1,5 @@
 import { Elysia, t } from 'elysia'
-import { BrandsModule } from '../../brands.module'
+import { BrandsModule } from '../../../brands.module'
 
 export const placesRoutes = (app: Elysia) => {
   const { getPlaceService } = new BrandsModule()

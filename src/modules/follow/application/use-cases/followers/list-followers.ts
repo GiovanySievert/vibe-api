@@ -1,5 +1,5 @@
 import { FollowersRepository } from '@src/modules/follow/domain/repositories'
-import { ListUserFollowResponseDto } from '@src/modules/follow/http/dtos'
+import { ListUserFollowResponseDto } from '@src/modules/follow/infrastructure/http/dtos'
 
 export class ListFollowers {
   constructor(private readonly followersRepo: FollowersRepository) {}

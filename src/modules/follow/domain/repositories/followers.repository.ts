@@ -1,4 +1,4 @@
-import { ListUserFollowResponseDto } from '../../http/dtos'
+import { ListUserFollowResponseDto } from '../../infrastructure/http/dtos'
 import { Followers } from '../mappers'
 
 export interface FollowersRepository {

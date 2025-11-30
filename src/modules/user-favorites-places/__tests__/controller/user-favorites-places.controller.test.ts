@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test'
-import { UserFavoritesController } from '../../http/controllers/user-favorites-places.controller'
+import { UserFavoritesController } from '../../infrastructure/http/controllers/user-favorites-places.controller'
 import { CreateUserFavoritesPlaces } from '../../application/use-cases/create-user-favorites-places'
 import { GetUserFavoritesPlace } from '../../application/use-cases/get-user-favorites-places'
 import { DeleteUserFavoritesPlaces } from '../../application/use-cases/delete-user-favorites-places'

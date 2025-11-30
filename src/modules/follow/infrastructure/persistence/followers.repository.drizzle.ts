@@ -3,7 +3,7 @@ import { and, eq } from 'drizzle-orm'
 import { followers } from '../../application/schemas'
 import { db } from '@src/infra/database/client'
 import { Followers } from '../../domain/mappers'
-import { ListUserFollowResponseDto } from '../../http/dtos'
+import { ListUserFollowResponseDto } from '../../infrastructure/http/dtos'
 import { FollowersRepository } from '../../domain/repositories'
 import { users } from '@src/infra/database/schema'
 

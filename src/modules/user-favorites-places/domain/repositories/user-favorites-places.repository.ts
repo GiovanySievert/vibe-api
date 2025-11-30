@@ -1,5 +1,5 @@
 import { UserFavoritesPlaces } from '../mappers'
-import { GetUserFavoritesPlacesByIdDto } from '../../http/dtos'
+import { GetUserFavoritesPlacesByIdDto } from '../../infrastructure/http/dtos'
 
 export interface UserFavoritesPlacesRepository {
   create(data: Omit<UserFavoritesPlaces, 'id' | 'createdAt'>): Promise<UserFavoritesPlaces>

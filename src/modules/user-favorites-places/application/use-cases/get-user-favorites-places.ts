@@ -1,4 +1,4 @@
-import { GetUserFavoritesPlacesByIdDto } from '../../http/dtos'
+import { GetUserFavoritesPlacesByIdDto } from '../../infrastructure/http/dtos'
 import { UserFavoritesPlacesRepository } from '../../domain/repositories'
 
 export class GetUserFavoritesPlace {

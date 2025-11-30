@@ -4,7 +4,7 @@ import {
   DeleteUserFavoritesPlaces
 } from './application/use-cases'
 import { DrizzleUserFavoritesPlacesRepository } from './infrastructure/persistence'
-import { UserFavoritesController } from './http/controllers/user-favorites-places.controller'
+import { UserFavoritesController } from './infrastructure/http/controllers/user-favorites-places.controller'
 
 export class UserFavoritesPlacesModule {
   public readonly controller: UserFavoritesController

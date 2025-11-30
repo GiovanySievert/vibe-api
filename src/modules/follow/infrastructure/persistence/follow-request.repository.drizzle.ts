@@ -4,7 +4,7 @@ import { FollowRequests } from '../../domain/mappers'
 import { and, eq } from 'drizzle-orm'
 import { FollowRequestsRepository } from '../../domain/repositories'
 import { users } from '@src/infra/database/schema'
-import { GetFollowRequestByUserDto, GetFollowRequestByUserDtoMapper } from '../../http/dtos'
+import { GetFollowRequestByUserDto, GetFollowRequestByUserDtoMapper } from '../../infrastructure/http/dtos'
 
 export class DrizzleFollowRequestRepository implements FollowRequestsRepository {
   async create(data: FollowRequests): Promise<FollowRequests> {

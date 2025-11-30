@@ -1,5 +1,5 @@
 import { Elysia, t } from 'elysia'
-import { BrandsModule } from '../../brands.module'
+import { BrandsModule } from '../../../brands.module'
 import { validateCreateAllEntities } from '../dtos'
 
 export const brandsRoutes = (app: Elysia) => {

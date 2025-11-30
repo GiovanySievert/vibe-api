@@ -1,4 +1,4 @@
-import { GetFollowRequestByUserDtoMapper } from '../../http/dtos'
+import { GetFollowRequestByUserDtoMapper } from '../../infrastructure/http/dtos'
 import { FollowRequests } from '../mappers'
 
 export interface FollowRequestsRepository {

@@ -18,9 +18,9 @@ import {
   DrizzleFollowRequestRepository,
   DrizzleFollowStatsRepository
 } from './infrastructure/persistence'
-import { FollowersController } from './http/controllers/followers.controller'
-import { FollowRequestController } from './http/controllers/follow-request.controller'
-import { FollowStatsController } from './http/controllers/follow-stats.controller'
+import { FollowersController } from './infrastructure/http/controllers/followers.controller'
+import { FollowRequestController } from './infrastructure/http/controllers/follow-request.controller'
+import { FollowStatsController } from './infrastructure/http/controllers/follow-stats.controller'
 
 export class FollowModule {
   public readonly followersController: FollowersController

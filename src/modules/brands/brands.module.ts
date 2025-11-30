@@ -15,7 +15,7 @@ import {
 } from './infrastructure/persistence'
 import { RabbitMQProducer } from '@src/shared/infra/messaging'
 import { RabbitMQEventBus } from '@src/shared/infrastructure/rabbitmq-event-bus'
-import { BrandsController } from './http/controllers/brands.controller'
+import { BrandsController } from './infrastructure/http/controllers/brands.controller'
 
 export class BrandsModule {
   public readonly controller: BrandsController

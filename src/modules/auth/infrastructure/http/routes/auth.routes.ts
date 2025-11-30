@@ -1,7 +1,7 @@
 import { Elysia, t } from 'elysia'
 import { parse } from 'zod'
-import { checkUsernameQuery } from '../../validators'
 import { AuthModule } from '@src/modules/auth/auth.module'
+import { checkUsernameQuery } from '@src/modules/auth/interface/validators'
 
 export const authRoutes = (app: Elysia) => {
   const { checkUsernameAvailability: checkUsername } = new AuthModule()

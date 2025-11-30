@@ -1,6 +1,6 @@
 import Elysia, { t } from 'elysia'
 import { authMiddleware } from '@src/shared/middlewares'
-import { UserFavoritesPlacesModule } from '../../user-favorites-places.module'
+import { UserFavoritesPlacesModule } from '../../../user-favorites-places.module'
 
 export const userFavoritesPlacesRoutes = (app: Elysia) => {
   const { controller } = new UserFavoritesPlacesModule()

@@ -1,7 +1,7 @@
 import { authMiddleware } from '@src/shared/middlewares'
 import { Elysia, t } from 'elysia'
 import { validateUpdateFollowRequest } from '../dtos'
-import { FollowModule } from '../../follow.module'
+import { FollowModule } from '../../../follow.module'
 
 export const FollowRoutes = (app: Elysia) => {
   const { followRequestController: controller } = new FollowModule()

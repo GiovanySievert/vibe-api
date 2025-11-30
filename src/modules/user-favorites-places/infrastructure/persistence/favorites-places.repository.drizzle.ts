@@ -3,7 +3,7 @@ import { db } from '@src/infra/database/client'
 import { UserFavoritesPlaces } from '../../domain/mappers'
 import { UserFavoritesPlacesRepository } from '../../domain/repositories/user-favorites-places.repository'
 import { and, eq } from 'drizzle-orm'
-import { GetUserFavoritesPlacesByIdDto } from '../../http/dtos'
+import { GetUserFavoritesPlacesByIdDto } from '../../infrastructure/http/dtos'
 import { brands, places } from '@src/infra/database/schema'
 
 export class DrizzleUserFavoritesPlacesRepository implements UserFavoritesPlacesRepository {
