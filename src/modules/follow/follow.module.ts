@@ -39,6 +39,8 @@ export class FollowModule {
     const createFollowerService = new CreateFollower(followersRepo)
     const deleteFollowerService = new DeleteFollower(followersRepo)
     const isFollowingService = new IsFollowing(followersRepo)
+    const listFollowersService = new ListFollowers(followersRepo)
+    const listFollowingsService = new ListFollowings(followersRepo)
 
     const incrementFollowingStatsService = new IncrementFollowingStats(followStatsRepo)
     const incrementFollowersStatsService = new IncrementFollowersStats(followStatsRepo)
@@ -69,10 +71,14 @@ export class FollowModule {
 
     const listFollowStatsService = new ListFollowStats(followStatsRepo)
 
-    this.followersController = new FollowersController(isFollowingService, unfollowService)
+    this.followersController = new FollowersController(
+      isFollowingService,
+      unfollowService,
+      listFollowersService,
+      listFollowingsService
+    )
     this.followRequestController = new FollowRequestController(
       createFollowRequestService,
-      updateFollowRequestService,
       listFollowRequestService,
       acceptFollowRequestService,
       rejectFollowRequestService,

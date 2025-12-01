@@ -1,7 +1,6 @@
 import { User } from 'better-auth/types'
 import {
   CreateFollowRequest,
-  UpdateFollowRequest,
   ListFollowRequest,
   AcceptFollowRequest,
   RejectFollowRequest,
@@ -11,22 +10,17 @@ import {
 export class FollowRequestController {
   constructor(
     private readonly createFollowRequest: CreateFollowRequest,
-    private readonly updateFollowRequest: UpdateFollowRequest,
     private readonly listFollowRequest: ListFollowRequest,
     private readonly acceptFollowRequest: AcceptFollowRequest,
     private readonly rejectFollowRequest: RejectFollowRequest,
     private readonly cancelFollowRequest: CancelFollowRequest
   ) {}
 
-  async create({ params, user }: { params: { requestedId: string }; user: User }) {
+  async create({ params, user }: { params: { userId: string }; user: User }) {
     return await this.createFollowRequest.execute({
       requesterId: user.id,
-      requestedId: params.requestedId
+      requestedId: params.userId
     })
-  }
-
-  async update({ params, body }: { params: { requestFollowId: string }; body: { status: string } }) {
-    return await this.updateFollowRequest.execute(params.requestFollowId, body)
   }
 
   async list({ user }: { user: User }) {
