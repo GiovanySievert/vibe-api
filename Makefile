@@ -16,6 +16,8 @@ dev-up:
 	@echo "Development environment started!"
 	@echo "App: http://localhost:3000"
 	@echo "PostgreSQL: localhost:5423"
+	@echo "RabbitMQ: localhost:5672"
+	@echo "RabbitMQ Management: http://localhost:15672 (admin/admin)"
 
 dev-down:
 	docker-compose -f docker-compose.dev.yml down

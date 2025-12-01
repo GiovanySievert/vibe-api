@@ -1,6 +1,6 @@
 import amqp from 'amqplib'
 
-export const RABBITMQ_URL = 'amqp://admin:admin@localhost:5672'
+export const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://admin:admin@localhost:5672'
 export const ELASTICSEARCH_QUEUE = 'elasticsearch_queue'
 export const EXCHANGE_NAME = 'elasticsearch_exchange'
 
