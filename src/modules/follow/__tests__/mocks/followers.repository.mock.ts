@@ -46,6 +46,10 @@ export class MockFollowersRepository implements FollowersRepository {
     return this.followers.some((f) => f.followerId === followerId && f.followingId === followingId)
   }
 
+  async getByFollowerAndFollowing(followerId: string, followingId: string): Promise<Followers | null> {
+    return this.followers.find((f) => f.followerId === followerId && f.followingId === followingId) || null
+  }
+
   reset() {
     this.followers = []
   }
