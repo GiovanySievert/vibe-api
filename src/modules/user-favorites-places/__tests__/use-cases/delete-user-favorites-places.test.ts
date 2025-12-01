@@ -62,7 +62,6 @@ describe('DeleteUserFavoritesPlaces', () => {
   })
 
   it('should handle deleting non-existent favorite gracefully', async () => {
-    // Should not throw an error when deleting non-existent favorite
     await useCase.execute({ userId: 'user-123', placeId: 'place-999' })
 
     const favorites = repository.getAll()

@@ -17,7 +17,6 @@ describe('CreateBrandWithPlace', () => {
   let mockEventBus: EventBus
 
   beforeEach(() => {
-    // Mock CreateBrand
     mockCreateBrand = {
       execute: mock(async (data) => ({
         id: 'brand-123',
@@ -30,7 +29,6 @@ describe('CreateBrandWithPlace', () => {
       }))
     } as unknown as CreateBrand
 
-    // Mock CreateBrandMenus
     mockCreateBrandMenus = {
       execute: mock(async (data) => ({
         id: 'menu-123',
@@ -39,7 +37,6 @@ describe('CreateBrandWithPlace', () => {
       }))
     } as unknown as CreateBrandMenus
 
-    // Mock CreatePlace
     mockCreatePlace = {
       execute: mock(async (data) => ({
         id: 'place-123',
@@ -56,7 +53,6 @@ describe('CreateBrandWithPlace', () => {
       }))
     } as unknown as CreatePlace
 
-    // Mock CreatePlaceLocation
     mockCreatePlaceLocation = {
       execute: mock(async (data) => ({
         id: 'location-123',
@@ -76,7 +72,6 @@ describe('CreateBrandWithPlace', () => {
       }))
     } as unknown as CreatePlaceLocation
 
-    // Mock EventBus
     mockEventBus = {
       publish: mock(async () => {})
     } as unknown as EventBus
