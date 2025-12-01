@@ -13,6 +13,28 @@ export class DrizzleFollowRequestRepository implements FollowRequestsRepository 
     return result
   }
 
+  async getById(requestFollowId: string): Promise<FollowRequests | null> {
+    const [result] = await db.select().from(followRequests).where(eq(followRequests.id, requestFollowId)).limit(1)
+
+    return result || null
+  }
+
+  async getPendingRequest(requesterId: string, requestedId: string): Promise<FollowRequests | null> {
+    const [result] = await db
+      .select()
+      .from(followRequests)
+      .where(
+        and(
+          eq(followRequests.requesterId, requesterId),
+          eq(followRequests.requestedId, requestedId),
+          eq(followRequests.status, 'pending')
+        )
+      )
+      .limit(1)
+
+    return result || null
+  }
+
   async update(requestFollowId: string, status: string): Promise<FollowRequests> {
     const [result] = await db
       .update(followRequests)

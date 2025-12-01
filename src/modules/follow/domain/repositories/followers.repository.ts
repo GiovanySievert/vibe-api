@@ -3,6 +3,7 @@ import { Followers } from '../mappers'
 
 export interface FollowersRepository {
   create(data: Omit<Followers, 'id' | 'createdAt'>): Promise<Followers>
+  getByFollowerAndFollowing(followerId: string, followingId: string): Promise<Followers | null>
   listFollowers(userId: string): Promise<ListUserFollowResponseDto[]>
   listFollowings(userId: string): Promise<ListUserFollowResponseDto[]>
   delete(followId: string): Promise<void>

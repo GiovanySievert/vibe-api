@@ -14,6 +14,16 @@ export class DrizzleFollowRepository implements FollowersRepository {
     return result
   }
 
+  async getByFollowerAndFollowing(followerId: string, followingId: string): Promise<Followers | null> {
+    const [result] = await db
+      .select()
+      .from(followers)
+      .where(and(eq(followers.followerId, followerId), eq(followers.followingId, followingId)))
+      .limit(1)
+
+    return result || null
+  }
+
   async listFollowers(userId: string, page: number = 1): Promise<ListUserFollowResponseDto[]> {
     const limit = 10
     const offset = (page - 1) * limit
