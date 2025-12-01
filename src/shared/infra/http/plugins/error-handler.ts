@@ -1,4 +1,5 @@
 import type { Elysia } from 'elysia'
+import { appLogger } from '@src/config/logger'
 
 enum HttpStatus {
   BAD_REQUEST = 400,
@@ -14,7 +15,15 @@ enum ErrorCode {
 }
 
 export const errorHandler = (app: Elysia) =>
-  app.onError(({ code, error, set }) => {
+  app.onError(({ code, error, set, request, path, params }) => {
+    appLogger.error(`HTTP ${code} Error`, {
+      code,
+      method: request.method,
+      path,
+      params,
+      error
+    })
+
     if (code === 'VALIDATION') {
       set.status = HttpStatus.BAD_REQUEST
       return {

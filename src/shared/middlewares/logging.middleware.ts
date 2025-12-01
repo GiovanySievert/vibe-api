@@ -32,15 +32,17 @@ export const loggingMiddleware = new Elysia({ name: 'logging' })
       status: 'success'
     })
   })
-  .onError(({ request, error, requestId, startTime }) => {
-    const duration = startTime ? Date.now() - startTime : 0
+  .onAfterResponse(({ request, set, requestId, startTime }) => {
+    const duration = Date.now() - startTime
 
-    appLogger.error('HTTP Error', error, {
-      requestId,
-      method: request.method,
-      url: request.url,
-      duration_ms: duration,
-      event: 'request_failed',
-      status: 'error'
-    })
+    if (set.status && Number(set.status) >= 400) {
+      appLogger.error('HTTP Error Response', {
+        requestId,
+        method: request.method,
+        url: request.url,
+        duration_ms: duration,
+        status: set.status,
+        event: 'request_failed'
+      })
+    }
   })

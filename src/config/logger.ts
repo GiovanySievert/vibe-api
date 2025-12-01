@@ -57,12 +57,24 @@ export const logger = winston.createLogger({
   rejectionHandlers: [new winston.transports.Console({ format: consoleFormat })]
 })
 
-const logError = (message: string, error: unknown, metadata?: Record<string, any>) => {
-  logger.error(message, {
-    error: error instanceof Error ? error.message : String(error),
-    stack: error instanceof Error ? error.stack : undefined,
-    ...metadata
-  })
+const logError = (message: string, metadata?: Record<string, any>) => {
+  const { error, ...rest } = metadata || {}
+
+  if (error instanceof Error) {
+    logger.error(message, {
+      error: error.message,
+      stack: error.stack,
+      name: error.name,
+      ...rest
+    })
+  } else if (error) {
+    logger.error(message, {
+      error: String(error),
+      ...rest
+    })
+  } else {
+    logger.error(message, rest)
+  }
 }
 
 const logInfo = (message: string, metadata?: Record<string, any>) => {

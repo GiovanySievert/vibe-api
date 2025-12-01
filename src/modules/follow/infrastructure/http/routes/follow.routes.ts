@@ -16,7 +16,7 @@ export const FollowRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
-      .post('/send/:requestedId', (ctx) => controller.create(ctx), {
+      .post('/follow/:requestedId', (ctx) => controller.create(ctx), {
         auth: true,
         params: t.Object({
           requestedId: t.String()
