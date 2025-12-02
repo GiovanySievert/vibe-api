@@ -16,13 +16,17 @@ enum ErrorCode {
 
 export const errorHandler = (app: Elysia) =>
   app.onError(({ code, error, set, request, path, params }) => {
-    appLogger.error(`HTTP ${code} Error`, {
+    const errorDetails = {
       code,
       method: request.method,
       path,
       params,
-      error
-    })
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined
+    }
+
+    appLogger.error('Request failed', errorDetails)
 
     if (code === 'VALIDATION') {
       set.status = HttpStatus.BAD_REQUEST
