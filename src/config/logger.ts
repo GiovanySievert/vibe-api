@@ -58,22 +58,27 @@ export const logger = winston.createLogger({
 })
 
 const logError = (message: string, metadata?: Record<string, any>) => {
-  const { error, ...rest } = metadata || {}
+  if (!metadata) {
+    logger.error(message)
+    return
+  }
 
-  if (error instanceof Error) {
+  const hasStack = metadata.stack !== undefined
+  const hasMessage = metadata.message !== undefined
+  const hasName = metadata.name !== undefined
+
+  if (hasStack && hasMessage) {
+    logger.error(message, metadata)
+  } else if (metadata.error instanceof Error) {
+    const { error, ...rest } = metadata
     logger.error(message, {
-      error: error.message,
+      message: error.message,
       stack: error.stack,
       name: error.name,
       ...rest
     })
-  } else if (error) {
-    logger.error(message, {
-      error: String(error),
-      ...rest
-    })
   } else {
-    logger.error(message, rest)
+    logger.error(message, metadata)
   }
 }
 
