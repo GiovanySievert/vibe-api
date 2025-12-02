@@ -32,7 +32,7 @@ export class FollowStatsController {
     return await this.deleteFollowingStats.execute(user.id)
   }
 
-  async list({ user }: { user: User }) {
-    return await this.listFollowStats.execute(user.id)
+  async list({ params }: { params: { userId: string } }) {
+    return await this.listFollowStats.execute(params.userId)
   }
 }

@@ -1,7 +1,7 @@
 import { FollowStats } from '../mappers'
 
 export interface FollowStatsRepository {
-  listFollowStats(userId: string): Promise<FollowStats[]>
+  listFollowStats(userId: string): Promise<FollowStats>
 
   incrementFollowersStats(userId: string): Promise<FollowStats>
   decrementFollowersStats(followId: string): Promise<void>

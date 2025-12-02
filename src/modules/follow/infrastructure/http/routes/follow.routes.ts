@@ -70,16 +70,22 @@ export const FollowRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
-      .get('/followers', (ctx) => followersController.getFollowers(ctx), {
+      .get('/followers/:userId', (ctx) => followersController.getFollowers(ctx), {
         auth: true,
+        params: t.Object({
+          userId: t.String()
+        }),
         detail: {
           tags: ['Follow'],
           summary: 'List user followers',
           security: [{ cookieAuth: [] }]
         }
       })
-      .get('/following', (ctx) => followersController.getFollowings(ctx), {
+      .get('/following/:userId', (ctx) => followersController.getFollowings(ctx), {
         auth: true,
+        params: t.Object({
+          userId: t.String()
+        }),
         detail: {
           tags: ['Follow'],
           summary: 'List users being followed',

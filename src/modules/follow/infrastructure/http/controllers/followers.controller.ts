@@ -18,11 +18,11 @@ export class FollowersController {
     return { success: true }
   }
 
-  async getFollowers({ user }: { user: User }) {
-    return await this.listFollowers.execute(user.id)
+  async getFollowers({ params }: { params: { userId: string } }) {
+    return await this.listFollowers.execute(params.userId)
   }
 
-  async getFollowings({ user }: { user: User }) {
-    return await this.listFollowings.execute(user.id)
+  async getFollowings({ params }: { params: { userId: string } }) {
+    return await this.listFollowings.execute(params.userId)
   }
 }

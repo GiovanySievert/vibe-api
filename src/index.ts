@@ -10,7 +10,7 @@ import { errorHandler } from './shared/infra/http/plugins/error-handler'
 import { helmetPlugin } from './shared/infra/http/plugins/helmet'
 import { placesRoutes } from './modules/brands/infrastructure/http/routes/places.routes'
 import { userFavoritesPlacesRoutes } from './modules/user-favorites-places/infrastructure/http/routes'
-import { FollowerRoutes, FollowRoutes } from './modules/follow/infrastructure/http/routes'
+import { FollowerRoutes, FollowRoutes, FollowStatsRoutes } from './modules/follow/infrastructure/http/routes'
 import { PublicUsersRoute } from './modules/users/infrastructure/http/routes'
 import { healthRoutes } from './modules/health/infrastructure/http/routes/health.routes'
 import { appLogger } from './config/logger'
@@ -31,6 +31,7 @@ const app = new Elysia()
   .use(PublicUsersRoute)
   .use(FollowRoutes)
   .use(FollowerRoutes)
+  .use(FollowStatsRoutes)
   .use(
     cors({
       origin: 'http://localhost:3001',
