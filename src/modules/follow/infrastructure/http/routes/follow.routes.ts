@@ -75,6 +75,9 @@ export const FollowRoutes = (app: Elysia) => {
         params: t.Object({
           userId: t.String()
         }),
+        query: t.Object({
+          page: t.Optional(t.Numeric({ minimum: 1 }))
+        }),
         detail: {
           tags: ['Follow'],
           summary: 'List user followers',
@@ -85,6 +88,9 @@ export const FollowRoutes = (app: Elysia) => {
         auth: true,
         params: t.Object({
           userId: t.String()
+        }),
+        query: t.Object({
+          page: t.Optional(t.Numeric({ minimum: 1 }))
         }),
         detail: {
           tags: ['Follow'],

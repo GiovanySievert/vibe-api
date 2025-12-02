@@ -24,9 +24,10 @@ export class DrizzleFollowRepository implements FollowersRepository {
     return result || null
   }
 
-  async listFollowers(userId: string, page: number = 1): Promise<ListUserFollowResponseDto[]> {
-    const limit = 10
-    const offset = (page - 1) * limit
+  async listFollowers(userId: string, page?: number): Promise<ListUserFollowResponseDto[]> {
+    const limit = 5
+    const currentPage = page || 1
+    const offset = (currentPage - 1) * limit
 
     const result = await db
       .select({
@@ -44,9 +45,10 @@ export class DrizzleFollowRepository implements FollowersRepository {
     return ListUserFollowResponseDto.fromArray(result)
   }
 
-  async listFollowings(userId: string, page: number = 1): Promise<ListUserFollowResponseDto[]> {
-    const limit = 10
-    const offset = (page - 1) * limit
+  async listFollowings(userId: string, page?: number): Promise<ListUserFollowResponseDto[]> {
+    const limit = 5
+    const currentPage = page || 1
+    const offset = (currentPage - 1) * limit
 
     const result = await db
       .select({
