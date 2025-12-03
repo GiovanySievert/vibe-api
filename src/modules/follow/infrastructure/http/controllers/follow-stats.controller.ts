@@ -1,27 +1,27 @@
 import { User } from 'better-auth/types'
 import {
-  CreateFollowStats,
+  IncrementFollowersStats,
+  IncrementFollowingStats,
   DeleteFollowStats,
-  CreateFollowingStats,
   DeleteFollowingStats,
   ListFollowStats
 } from '../../../application/use-cases'
 
 export class FollowStatsController {
   constructor(
-    private readonly createFollowStats: CreateFollowStats,
+    private readonly incrementFollowersStats: IncrementFollowersStats,
     private readonly deleteFollowStats: DeleteFollowStats,
-    private readonly createFolloingStats: CreateFollowingStats,
+    private readonly incrementFollowingStats: IncrementFollowingStats,
     private readonly deleteFollowingStats: DeleteFollowingStats,
     private readonly listFollowStats: ListFollowStats
   ) {}
 
   async createFollow({ user }: { user: User }) {
-    return await this.createFollowStats.execute(user.id)
+    return await this.incrementFollowersStats.execute(user.id)
   }
 
   async createFollowing({ user }: { user: User }) {
-    return await this.createFolloingStats.execute(user.id)
+    return await this.incrementFollowingStats.execute(user.id)
   }
 
   async deleteFollow({ user }: { user: User }) {
