@@ -6,6 +6,7 @@ import {
   FollowRequestAlreadyProcessedException,
   UnauthorizedFollowRequestActionException
 } from '@src/modules/follow/domain/exceptions'
+import { FollowRequestStatus } from '@src/modules/follow/domain/types'
 
 export class CancelFollowRequest {
   constructor(
@@ -24,11 +25,11 @@ export class CancelFollowRequest {
       throw new UnauthorizedFollowRequestActionException(requesterId, 'cancel')
     }
 
-    if (followRequest.status !== 'pending') {
+    if (followRequest.status !== FollowRequestStatus.PENDING) {
       throw new FollowRequestAlreadyProcessedException(requestFollowId)
     }
 
-    const updatedRequest = await this.updateFollowRequest.execute(requestFollowId, { status: 'cancelled' })
+    const updatedRequest = await this.updateFollowRequest.execute(requestFollowId, { status: FollowRequestStatus.CANCELLED })
 
     return updatedRequest
   }

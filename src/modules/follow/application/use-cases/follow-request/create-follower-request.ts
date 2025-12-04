@@ -5,6 +5,7 @@ import {
   AlreadyFollowingException,
   FollowRequestAlreadyExistsException
 } from '../../../domain/exceptions'
+import { FollowStatus } from '../../../domain/types'
 
 export interface CreateFollowRequestData {
   requestedId: string
@@ -23,15 +24,13 @@ export class CreateFollowRequest {
       throw new CannotFollowYourselfException(data.requesterId)
     }
 
-    const alreadyFollowing = await this.followersRepo.isFollowing(data.requesterId, data.requestedId)
+    const { status: followStatus } = await this.followersRepo.getFollowStatus(data.requesterId, data.requestedId)
 
-    if (alreadyFollowing) {
+    if (followStatus === FollowStatus.FOLLOWING) {
       throw new AlreadyFollowingException(data.requesterId, data.requestedId)
     }
 
-    const existingRequest = await this.followRequestRepo.getPendingRequest(data.requesterId, data.requestedId)
-
-    if (existingRequest) {
+    if (followStatus === FollowStatus.PENDING) {
       throw new FollowRequestAlreadyExistsException(data.requesterId, data.requestedId)
     }
 

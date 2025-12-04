@@ -1,16 +1,16 @@
-import { IsFollowing, Unfollow, ListFollowers, ListFollowings } from '../../../application/use-cases'
+import { GetFollowStatus, Unfollow, ListFollowers, ListFollowings } from '../../../application/use-cases'
 import { User } from 'better-auth/types'
 
 export class FollowersController {
   constructor(
-    private readonly isFollowing: IsFollowing,
+    private readonly getFollowStatus: GetFollowStatus,
     private readonly unfollow: Unfollow,
     private readonly listFollowers: ListFollowers,
     private readonly listFollowings: ListFollowings
   ) {}
 
-  async checkIsFollowing({ params, session }: { params: { userId: string }; session: { userId: string } }) {
-    return await this.isFollowing.execute(params.userId, session.userId)
+  async checkFollowStatus({ params, session }: { params: { userId: string }; session: { userId: string } }) {
+    return await this.getFollowStatus.execute(session.userId, params.userId)
   }
 
   async unfollowUser({ params, user }: { params: { userId: string }; user: User }) {

@@ -9,6 +9,7 @@ import {
   FollowRequestAlreadyProcessedException,
   AlreadyFollowingException
 } from '@src/modules/follow/domain/exceptions'
+import { FollowRequestStatus } from '@src/modules/follow/domain/types'
 
 export class AcceptFollowRequest {
   constructor(
@@ -27,17 +28,17 @@ export class AcceptFollowRequest {
       throw new FollowRequestNotFoundException(requestFollowId)
     }
 
-    if (followRequest.status !== 'pending') {
-      throw new FollowRequestAlreadyProcessedException(requestFollowId)
-    }
-
-    const alreadyFollowing = await this.followersRepo.isFollowing(followRequest.requesterId, followRequest.requestedId)
-
-    if (alreadyFollowing) {
+    if (followRequest.status === FollowRequestStatus.ACCEPTED) {
       throw new AlreadyFollowingException(followRequest.requesterId, followRequest.requestedId)
     }
 
-    const updatedRequest = await this.updateFollowRequest.execute(requestFollowId, { status: 'accepted' })
+    if (followRequest.status !== FollowRequestStatus.PENDING) {
+      throw new FollowRequestAlreadyProcessedException(requestFollowId)
+    }
+
+    const updatedRequest = await this.updateFollowRequest.execute(requestFollowId, {
+      status: FollowRequestStatus.ACCEPTED
+    })
 
     await this.createFollow.execute({
       followerId: followRequest.requesterId,

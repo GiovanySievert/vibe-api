@@ -1,4 +1,4 @@
-import { ListUserFollowResponseDto } from '../../infrastructure/http/dtos'
+import { ListUserFollowResponseDto, FollowStatusResponseDto } from '../../infrastructure/http/dtos'
 import { Followers } from '../mappers'
 
 export interface FollowersRepository {
@@ -7,5 +7,5 @@ export interface FollowersRepository {
   listFollowers(userId: string, page?: number): Promise<ListUserFollowResponseDto[]>
   listFollowings(userId: string, page?: number): Promise<ListUserFollowResponseDto[]>
   delete(followId: string): Promise<void>
-  isFollowing(followerId: string, followingId: string): Promise<boolean>
+  getFollowStatus(followerId: string, followingId: string): Promise<FollowStatusResponseDto>
 }

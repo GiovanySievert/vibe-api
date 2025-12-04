@@ -5,6 +5,7 @@ import {
   FollowRequestNotFoundException,
   FollowRequestAlreadyProcessedException
 } from '@src/modules/follow/domain/exceptions'
+import { FollowRequestStatus } from '@src/modules/follow/domain/types'
 
 export class RejectFollowRequest {
   constructor(
@@ -19,11 +20,11 @@ export class RejectFollowRequest {
       throw new FollowRequestNotFoundException(requestFollowId)
     }
 
-    if (followRequest.status !== 'pending') {
+    if (followRequest.status !== FollowRequestStatus.PENDING) {
       throw new FollowRequestAlreadyProcessedException(requestFollowId)
     }
 
-    const updatedRequest = await this.updateFollowRequest.execute(requestFollowId, { status: 'rejected' })
+    const updatedRequest = await this.updateFollowRequest.execute(requestFollowId, { status: FollowRequestStatus.REJECTED })
 
     return updatedRequest
   }
