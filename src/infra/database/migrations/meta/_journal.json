@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1762179825265,
-      "tag": "0000_polite_karnak",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1763048700952,
-      "tag": "0001_magical_vulcan",
+      "when": 1764861100777,
+      "tag": "0000_clever_alice",
       "breakpoints": true
     }
   ]
