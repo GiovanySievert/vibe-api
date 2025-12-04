@@ -1,24 +1,25 @@
 import { describe, it, expect, beforeEach } from 'bun:test'
-import { IsFollowing } from '../../application/use-cases/followers/is-following'
+import { GetFollowStatus } from '../../application/use-cases/followers/get-follow-status'
 import { MockFollowersRepository } from '../mocks/followers.repository.mock'
 import { Followers } from '../../domain/mappers'
 
-describe('IsFollowing', () => {
+describe('GetFollowStatus', () => {
   let repository: MockFollowersRepository
-  let useCase: IsFollowing
+  let useCase: GetFollowStatus
 
   beforeEach(() => {
     repository = new MockFollowersRepository()
-    useCase = new IsFollowing(repository)
+    useCase = new GetFollowStatus(repository)
   })
 
-  it('should return false when user is not following', async () => {
+  it('should return status none when user is not following', async () => {
     const result = await useCase.execute('user-1', 'user-2')
 
-    expect(result).toBe(false)
+    expect(result.status).toBe('none')
+    expect(result.id).toBeUndefined()
   })
 
-  it('should return true when user is following', async () => {
+  it('should return status following with id when user is following', async () => {
     const follower: Followers = {
       id: crypto.randomUUID(),
       followerId: 'user-1',
@@ -30,10 +31,11 @@ describe('IsFollowing', () => {
 
     const result = await useCase.execute(follower.followerId, follower.followingId)
 
-    expect(result).toBe(true)
+    expect(result.status).toBe('following')
+    expect(result.id).toBe(follower.id)
   })
 
-  it('should return false when checking reverse relationship', async () => {
+  it('should return status none without id when checking reverse relationship', async () => {
     const follower: Followers = {
       id: crypto.randomUUID(),
       followerId: 'user-1',
@@ -45,7 +47,8 @@ describe('IsFollowing', () => {
 
     const result = await useCase.execute(follower.followingId, follower.followerId)
 
-    expect(result).toBe(false)
+    expect(result.status).toBe('none')
+    expect(result.id).toBeUndefined()
   })
 
   it('should handle multiple follow relationships correctly', async () => {
@@ -72,9 +75,9 @@ describe('IsFollowing', () => {
 
     repository.seed(followers)
 
-    expect(await useCase.execute('user-1', 'user-2')).toBe(true)
-    expect(await useCase.execute('user-1', 'user-3')).toBe(true)
-    expect(await useCase.execute('user-2', 'user-3')).toBe(true)
-    expect(await useCase.execute('user-2', 'user-1')).toBe(false)
+    expect((await useCase.execute('user-1', 'user-2')).status).toBe('following')
+    expect((await useCase.execute('user-1', 'user-3')).status).toBe('following')
+    expect((await useCase.execute('user-2', 'user-3')).status).toBe('following')
+    expect((await useCase.execute('user-2', 'user-1')).status).toBe('none')
   })
 })

@@ -1,6 +1,7 @@
 import { FollowRequests } from '../../domain/mappers'
 import { FollowRequestsRepository } from '../../domain/repositories'
 import { GetFollowRequestByUserDtoMapper } from '../../infrastructure/http/dtos'
+import { FollowRequestStatus } from '../../domain/types'
 
 export class MockFollowRequestRepository implements FollowRequestsRepository {
   private followRequests: FollowRequests[] = []
@@ -25,9 +26,13 @@ export class MockFollowRequestRepository implements FollowRequestsRepository {
   async getPendingRequest(requesterId: string, requestedId: string): Promise<FollowRequests | null> {
     return (
       this.followRequests.find(
-        (fr) => fr.requesterId === requesterId && fr.requestedId === requestedId && fr.status === 'pending'
+        (fr) => fr.requesterId === requesterId && fr.requestedId === requestedId && fr.status === FollowRequestStatus.PENDING
       ) || null
     )
+  }
+
+  async getByRequesterAndRequested(requesterId: string, requestedId: string): Promise<FollowRequests | null> {
+    return this.followRequests.find((fr) => fr.requesterId === requesterId && fr.requestedId === requestedId) || null
   }
 
   async update(requestFollowId: string, status: string): Promise<FollowRequests> {

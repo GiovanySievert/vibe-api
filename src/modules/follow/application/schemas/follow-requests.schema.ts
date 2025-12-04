@@ -16,10 +16,7 @@ export const followRequests = pgTable(
     createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()
   },
-  (table) => [
-    unique().on(table.requesterId, table.requestedId),
-    index('requested_status_idx').on(table.requestedId, table.status)
-  ]
+  (table) => [index('requested_status_idx').on(table.requestedId, table.status)]
 )
 
 export const followRequestsRelations = relations(followRequests, ({ one }) => ({

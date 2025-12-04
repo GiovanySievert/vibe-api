@@ -1,9 +1,15 @@
 import { Followers } from '../../domain/mappers'
-import { FollowersRepository } from '../../domain/repositories'
-import { ListUserFollowResponseDto } from '../../infrastructure/http/dtos'
+import { FollowersRepository, FollowRequestsRepository } from '../../domain/repositories'
+import { ListUserFollowResponseDto, FollowStatusResponseDto, FollowStatusResponseDtoMapper } from '../../infrastructure/http/dtos'
+import { FollowStatus, FollowRequestStatus } from '../../domain/types'
 
 export class MockFollowersRepository implements FollowersRepository {
   private followers: Followers[] = []
+  private followRequestRepo?: FollowRequestsRepository
+
+  constructor(followRequestRepo?: FollowRequestsRepository) {
+    this.followRequestRepo = followRequestRepo
+  }
 
   async create(data: Omit<Followers, 'id' | 'createdAt'>): Promise<Followers> {
     const newFollower: Followers = {
@@ -42,8 +48,25 @@ export class MockFollowersRepository implements FollowersRepository {
     this.followers = this.followers.filter((f) => f.id !== followId)
   }
 
-  async isFollowing(followerId: string, followingId: string): Promise<boolean> {
-    return this.followers.some((f) => f.followerId === followerId && f.followingId === followingId)
+  async getFollowStatus(followerId: string, followingId: string): Promise<FollowStatusResponseDto> {
+    if (this.followRequestRepo) {
+      const request = await this.followRequestRepo.getByRequesterAndRequested(followerId, followingId)
+
+      if (request) {
+        if (request.status === FollowRequestStatus.ACCEPTED) {
+          return FollowStatusResponseDtoMapper.create(FollowStatus.FOLLOWING, request.id)
+        }
+        if (request.status === FollowRequestStatus.PENDING) {
+          return FollowStatusResponseDtoMapper.create(FollowStatus.PENDING, request.id)
+        }
+      }
+    }
+
+    const follower = this.followers.find((f) => f.followerId === followerId && f.followingId === followingId)
+    if (follower) {
+      return FollowStatusResponseDtoMapper.create(FollowStatus.FOLLOWING, follower.id)
+    }
+    return FollowStatusResponseDtoMapper.create(FollowStatus.NONE)
   }
 
   async getByFollowerAndFollowing(followerId: string, followingId: string): Promise<Followers | null> {

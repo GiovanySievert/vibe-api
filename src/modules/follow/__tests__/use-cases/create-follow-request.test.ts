@@ -13,7 +13,7 @@ describe('CreateFollowRequest', () => {
 
   beforeEach(() => {
     followRequestRepo = new MockFollowRequestRepository()
-    followersRepo = new MockFollowersRepository()
+    followersRepo = new MockFollowersRepository(followRequestRepo)
     useCase = new CreateFollowRequest(followRequestRepo, followersRepo)
   })
 
