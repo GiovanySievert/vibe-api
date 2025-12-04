@@ -3,29 +3,57 @@ import { Elysia, t } from 'elysia'
 import { FollowModule } from '../../../follow.module'
 
 export const FollowerRoutes = (app: Elysia) => {
-  const { followersController: controller } = new FollowModule()
+  const { followersController } = new FollowModule()
 
-  return app.use(authMiddleware).group('/follow', (app) =>
+  return app.use(authMiddleware).group('/followers', (app) =>
     app
-      .get('/:userId', (ctx) => controller.checkIsFollowing(ctx), {
+      .get('/status/:userId', (ctx) => followersController.checkFollowStatus(ctx), {
         auth: true,
         params: t.Object({
           userId: t.String()
         }),
         detail: {
-          tags: ['Follow'],
-          summary: 'Check if a user follows another',
+          tags: ['Followers'],
+          summary: 'Check follow status with a user',
           security: [{ cookieAuth: [] }]
         }
       })
-      .delete('/:userId', (ctx) => controller.unfollowUser(ctx), {
+      .delete('/:userId', (ctx) => followersController.unfollowUser(ctx), {
         auth: true,
         params: t.Object({
           userId: t.String()
         }),
         detail: {
-          tags: ['Follow'],
+          tags: ['Followers'],
           summary: 'Unfollow a user',
+          security: [{ cookieAuth: [] }]
+        }
+      })
+      .get('/:userId', (ctx) => followersController.getFollowers(ctx), {
+        auth: true,
+        params: t.Object({
+          userId: t.String()
+        }),
+        query: t.Object({
+          page: t.Optional(t.Numeric({ minimum: 1 }))
+        }),
+        detail: {
+          tags: ['Followers'],
+          summary: 'List user followers',
+          security: [{ cookieAuth: [] }]
+        }
+      })
+      .get('/following/:userId', (ctx) => followersController.getFollowings(ctx), {
+        auth: true,
+        params: t.Object({
+          userId: t.String()
+        }),
+        query: t.Object({
+          page: t.Optional(t.Numeric({ minimum: 1 }))
+        }),
+        detail: {
+          tags: ['Followers'],
+          summary: 'List users being followed',
           security: [{ cookieAuth: [] }]
         }
       })
