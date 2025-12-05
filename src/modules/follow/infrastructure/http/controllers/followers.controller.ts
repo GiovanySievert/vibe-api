@@ -1,10 +1,17 @@
-import { GetFollowStatus, Unfollow, ListFollowers, ListFollowings } from '../../../application/use-cases'
+import {
+  GetFollowStatus,
+  Unfollow,
+  RemoveFollower,
+  ListFollowers,
+  ListFollowings
+} from '../../../application/use-cases'
 import { User } from 'better-auth/types'
 
 export class FollowersController {
   constructor(
     private readonly getFollowStatus: GetFollowStatus,
     private readonly unfollow: Unfollow,
+    private readonly removeFollower: RemoveFollower,
     private readonly listFollowers: ListFollowers,
     private readonly listFollowings: ListFollowings
   ) {}
@@ -15,7 +22,10 @@ export class FollowersController {
 
   async unfollowUser({ params, user }: { params: { userId: string }; user: User }) {
     await this.unfollow.execute(user.id, params.userId)
-    return { success: true }
+  }
+
+  async removeFollowerUser({ params, user }: { params: { followId: string }; user: User }) {
+    await this.removeFollower.execute(user.id, params.followId)
   }
 
   async getFollowers({ params, query }: { params: { userId: string }; query: { page?: number } }) {

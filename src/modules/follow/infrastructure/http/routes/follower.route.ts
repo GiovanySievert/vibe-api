@@ -29,6 +29,17 @@ export const FollowerRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
+      .delete('/remove/:followId', (ctx) => followersController.removeFollowerUser(ctx), {
+        auth: true,
+        params: t.Object({
+          followId: t.String()
+        }),
+        detail: {
+          tags: ['Followers'],
+          summary: 'Remove a follower',
+          security: [{ cookieAuth: [] }]
+        }
+      })
       .get('/:userId', (ctx) => followersController.getFollowers(ctx), {
         auth: true,
         params: t.Object({

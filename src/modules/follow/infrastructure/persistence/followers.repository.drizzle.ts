@@ -3,7 +3,11 @@ import { and, desc, eq } from 'drizzle-orm'
 import { followers, followRequests } from '../../application/schemas'
 import { db } from '@src/infra/database/client'
 import { Followers } from '../../domain/mappers'
-import { ListUserFollowResponseDto, FollowStatusResponseDto, FollowStatusResponseDtoMapper } from '../../infrastructure/http/dtos'
+import {
+  ListUserFollowResponseDto,
+  FollowStatusResponseDto,
+  FollowStatusResponseDtoMapper
+} from '../../infrastructure/http/dtos'
 import { FollowersRepository } from '../../domain/repositories'
 import { users } from '@src/infra/database/schema'
 import { FollowStatus, FollowRequestStatus } from '../../domain/types'
@@ -15,13 +19,14 @@ export class DrizzleFollowRepository implements FollowersRepository {
     return result
   }
 
+  async getById(followId: string): Promise<Followers | null> {
+    const [result] = await db.select().from(followers).where(eq(followers.id, followId)).limit(1)
+
+    return result || null
+  }
 
   async delete(followId: string): Promise<void> {
-    const [follow] = await db
-      .select()
-      .from(followers)
-      .where(eq(followers.id, followId))
-      .limit(1)
+    const [follow] = await db.select().from(followers).where(eq(followers.id, followId)).limit(1)
 
     if (follow) {
       await db.delete(followers).where(eq(followers.id, followId))
@@ -29,10 +34,7 @@ export class DrizzleFollowRepository implements FollowersRepository {
       await db
         .delete(followRequests)
         .where(
-          and(
-            eq(followRequests.requesterId, follow.followerId),
-            eq(followRequests.requestedId, follow.followingId)
-          )
+          and(eq(followRequests.requesterId, follow.followerId), eq(followRequests.requestedId, follow.followingId))
         )
     }
   }
@@ -72,7 +74,6 @@ export class DrizzleFollowRepository implements FollowersRepository {
     const limit = 5
     const currentPage = page || 1
     const offset = (currentPage - 1) * limit
-
     const result = await db
       .select({
         id: followers.id,

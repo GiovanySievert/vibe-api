@@ -5,6 +5,7 @@ import {
   ListFollowings,
   GetFollowStatus,
   Unfollow,
+  RemoveFollower,
   CreateFollowRequest,
   UpdateFollowRequest,
   ListFollowRequest,
@@ -54,6 +55,13 @@ export class FollowModule {
       deleteFollowStatsService
     )
 
+    const removeFollowerService = new RemoveFollower(
+      followersRepo,
+      deleteFollowerService,
+      deleteFollowingStatsService,
+      deleteFollowStatsService
+    )
+
     const createFollowRequestService = new CreateFollowRequest(followRequestRepo, followersRepo)
     const updateFollowRequestService = new UpdateFollowRequest(followRequestRepo)
     const listFollowRequestService = new ListFollowRequest(followRequestRepo)
@@ -74,6 +82,7 @@ export class FollowModule {
     this.followersController = new FollowersController(
       getFollowStatusService,
       unfollowService,
+      removeFollowerService,
       listFollowersService,
       listFollowingsService
     )
