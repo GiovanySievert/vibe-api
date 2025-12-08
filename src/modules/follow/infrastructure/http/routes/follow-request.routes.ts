@@ -15,6 +15,14 @@ export const FollowRequestRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
+      .get('/requested', (ctx) => followRequestController.listRequested(ctx), {
+        auth: true,
+        detail: {
+          tags: ['Follow Request'],
+          summary: 'List all user follow requests from logged user',
+          security: [{ cookieAuth: [] }]
+        }
+      })
       .post('/send/:userId', (ctx) => followRequestController.create(ctx), {
         auth: true,
         params: t.Object({

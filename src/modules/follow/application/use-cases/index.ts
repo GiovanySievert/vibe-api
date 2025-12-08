@@ -10,6 +10,7 @@ export * from './follow-request/reject-follow-request'
 export * from './follow-request/cancel-follow-request'
 export * from './follow-request/update-follow-request'
 export * from './follow-request/list-follow-request'
+export * from './follow-request/list-requested-follow-request'
 
 export * from './followers/create-follower'
 export * from './followers/delete-follower'

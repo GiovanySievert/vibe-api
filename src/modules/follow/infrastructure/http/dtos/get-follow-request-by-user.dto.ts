@@ -2,10 +2,9 @@ import { FollowRequestQueryResult } from './follow-request-query-result.dto'
 
 export interface GetFollowRequestByUserDto {
   id: string
-  requesterId: string
-  requesterUsername: string
-  requesterAvatar: string
-  requestedId: string
+  userId: string
+  username: string
+  avatar: string | null
   status: 'pending' | 'accepted' | 'rejected'
   createdAt: string
 }
@@ -14,10 +13,9 @@ export class GetFollowRequestByUserDtoMapper {
   static from(data: FollowRequestQueryResult): GetFollowRequestByUserDto {
     return {
       id: data.followRequests.id,
-      requesterId: data.followRequests.requesterId,
-      requesterUsername: data.users.username,
-      requesterAvatar: '',
-      requestedId: data.followRequests.requestedId,
+      userId: data.users.id,
+      username: data.users.username,
+      avatar: data.users.avatar || null,
       status: data.followRequests.status as 'pending' | 'accepted' | 'rejected',
       createdAt: data.followRequests.createdAt.toISOString()
     }

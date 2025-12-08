@@ -16,7 +16,8 @@ import {
   DeleteFollowingStats,
   ListFollowStats,
   IncrementFollowingStats,
-  IncrementFollowersStats
+  IncrementFollowersStats,
+  ListRequestedFollowRequest
 } from './application/use-cases'
 import {
   DrizzleFollowRepository,
@@ -65,6 +66,7 @@ export class FollowModule {
     const createFollowRequestService = new CreateFollowRequest(followRequestRepo, followersRepo)
     const updateFollowRequestService = new UpdateFollowRequest(followRequestRepo)
     const listFollowRequestService = new ListFollowRequest(followRequestRepo)
+    const listRequestedFollowRequestService = new ListRequestedFollowRequest(followRequestRepo)
 
     const acceptFollowRequestService = new AcceptFollowRequest(
       followRequestRepo,
@@ -89,6 +91,7 @@ export class FollowModule {
     this.followRequestController = new FollowRequestController(
       createFollowRequestService,
       listFollowRequestService,
+      listRequestedFollowRequestService,
       acceptFollowRequestService,
       rejectFollowRequestService,
       cancelFollowRequestService

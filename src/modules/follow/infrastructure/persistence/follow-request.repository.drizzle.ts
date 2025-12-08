@@ -5,6 +5,7 @@ import { and, eq } from 'drizzle-orm'
 import { FollowRequestsRepository } from '../../domain/repositories'
 import { users } from '@src/infra/database/schema'
 import { GetFollowRequestByUserDtoMapper } from '../../infrastructure/http/dtos'
+import { FollowRequestListType, FollowRequestStatus } from '../../domain/types'
 
 export class DrizzleFollowRequestRepository implements FollowRequestsRepository {
   async create(data: FollowRequests): Promise<FollowRequests> {
@@ -27,7 +28,7 @@ export class DrizzleFollowRequestRepository implements FollowRequestsRepository 
         and(
           eq(followRequests.requesterId, requesterId),
           eq(followRequests.requestedId, requestedId),
-          eq(followRequests.status, 'pending')
+          eq(followRequests.status, FollowRequestStatus.PENDING)
         )
       )
       .limit(1)
@@ -55,7 +56,11 @@ export class DrizzleFollowRequestRepository implements FollowRequestsRepository 
     return result
   }
 
-  async list(userId: string): Promise<GetFollowRequestByUserDtoMapper[]> {
+  async listByType(type: FollowRequestListType, userId: string): Promise<GetFollowRequestByUserDtoMapper[]> {
+    const isReceived = type === FollowRequestListType.RECEIVED
+    const whereField = isReceived ? followRequests.requestedId : followRequests.requesterId
+    const joinField = isReceived ? followRequests.requesterId : followRequests.requestedId
+
     const result = await db
       .select({
         followRequests: {
@@ -66,13 +71,14 @@ export class DrizzleFollowRequestRepository implements FollowRequestsRepository 
           createdAt: followRequests.createdAt
         },
         users: {
-          username: users.username
-          // avatar: users.avatar
+          id: users.id,
+          username: users.username,
+          avatar: users.image
         }
       })
       .from(followRequests)
-      .innerJoin(users, eq(followRequests.requesterId, users.id))
-      .where(and(eq(followRequests.requestedId, userId), eq(followRequests.status, 'pending')))
+      .innerJoin(users, eq(joinField, users.id))
+      .where(and(eq(whereField, userId), eq(followRequests.status, FollowRequestStatus.PENDING)))
 
     return GetFollowRequestByUserDtoMapper.fromArray(result)
   }

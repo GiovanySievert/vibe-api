@@ -7,6 +7,8 @@ export interface FollowRequestQueryResult {
     createdAt: Date
   }
   users: {
+    id: string
     username: string
+    avatar?: string | null
   }
 }

@@ -4,13 +4,15 @@ import {
   ListFollowRequest,
   AcceptFollowRequest,
   RejectFollowRequest,
-  CancelFollowRequest
+  CancelFollowRequest,
+  ListRequestedFollowRequest
 } from '../../../application/use-cases'
 
 export class FollowRequestController {
   constructor(
     private readonly createFollowRequest: CreateFollowRequest,
     private readonly listFollowRequest: ListFollowRequest,
+    private readonly listRequestedFollowRequest: ListRequestedFollowRequest,
     private readonly acceptFollowRequest: AcceptFollowRequest,
     private readonly rejectFollowRequest: RejectFollowRequest,
     private readonly cancelFollowRequest: CancelFollowRequest
@@ -25,6 +27,10 @@ export class FollowRequestController {
 
   async list({ user }: { user: User }) {
     return await this.listFollowRequest.execute(user.id)
+  }
+
+  async listRequested({ user }: { user: User }) {
+    return await this.listRequestedFollowRequest.execute(user.id)
   }
 
   async accept({ params }: { params: { requestFollowId: string } }) {

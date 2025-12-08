@@ -1,7 +1,7 @@
 import { FollowRequests } from '../../domain/mappers'
 import { FollowRequestsRepository } from '../../domain/repositories'
 import { GetFollowRequestByUserDtoMapper } from '../../infrastructure/http/dtos'
-import { FollowRequestStatus } from '../../domain/types'
+import { FollowRequestStatus, FollowRequestListType } from '../../domain/types'
 
 export class MockFollowRequestRepository implements FollowRequestsRepository {
   private followRequests: FollowRequests[] = []
@@ -45,26 +45,20 @@ export class MockFollowRequestRepository implements FollowRequestsRepository {
     return this.followRequests[index]
   }
 
-  async list(userId: string): Promise<GetFollowRequestByUserDtoMapper[]> {
+  async listByType(type: FollowRequestListType, userId: string): Promise<GetFollowRequestByUserDtoMapper[]> {
+    const isReceived = type === FollowRequestListType.RECEIVED
+    const filterField = isReceived ? 'requestedId' : 'requesterId'
+    const userIdField = isReceived ? 'requesterId' : 'requestedId'
+
     return this.followRequests
-      .filter((fr) => fr.requestedId === userId || fr.requesterId === userId)
+      .filter((fr) => fr[filterField] === userId && fr.status === FollowRequestStatus.PENDING)
       .map((fr) => ({
         id: fr.id,
-        requesterId: fr.requesterId,
-        requestedId: fr.requestedId,
+        userId: fr[userIdField],
+        username: `user-${fr[userIdField]}`,
+        avatar: null,
         status: fr.status,
-        createdAt: fr.createdAt,
-        updatedAt: fr.updatedAt,
-        requester: {
-          id: fr.requesterId,
-          username: `user-${fr.requesterId}`,
-          image: null
-        },
-        requested: {
-          id: fr.requestedId,
-          username: `user-${fr.requestedId}`,
-          image: null
-        }
+        createdAt: (fr.createdAt || new Date()).toISOString()
       }))
   }
 
