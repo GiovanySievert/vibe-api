@@ -27,6 +27,7 @@ import {
 import { FollowersController } from './infrastructure/http/controllers/followers.controller'
 import { FollowRequestController } from './infrastructure/http/controllers/follow-request.controller'
 import { FollowStatsController } from './infrastructure/http/controllers/follow-stats.controller'
+import { DrizzleUserBlockRepository } from '@src/modules/blocks/infrastructure/persistence'
 
 export class FollowModule {
   public readonly followersController: FollowersController
@@ -37,6 +38,7 @@ export class FollowModule {
     const followersRepo = new DrizzleFollowRepository()
     const followRequestRepo = new DrizzleFollowRequestRepository()
     const followStatsRepo = new DrizzleFollowStatsRepository()
+    const userBlockRepo = new DrizzleUserBlockRepository()
 
     const createFollowerService = new CreateFollower(followersRepo)
     const deleteFollowerService = new DeleteFollower(followersRepo)
@@ -63,7 +65,7 @@ export class FollowModule {
       deleteFollowStatsService
     )
 
-    const createFollowRequestService = new CreateFollowRequest(followRequestRepo, followersRepo)
+    const createFollowRequestService = new CreateFollowRequest(followRequestRepo, followersRepo, userBlockRepo)
     const updateFollowRequestService = new UpdateFollowRequest(followRequestRepo)
     const listFollowRequestService = new ListFollowRequest(followRequestRepo)
     const listRequestedFollowRequestService = new ListRequestedFollowRequest(followRequestRepo)

@@ -26,19 +26,21 @@ describe('GetPublicUserById', () => {
 
     repository.seed([user])
 
-    const result = await useCase.execute(user.id)
+    const result = await useCase.execute(user.id, 'logged-user-id')
 
     expect(result).toBeDefined()
-    expect(result.id).toBe(user.id)
-    expect(result.name).toBe('John Doe')
-    expect(result.username).toBe('johndoe')
-    expect(result.email).toBe('john@example.com')
+    expect(result?.id).toBe(user.id)
+    expect(result?.name).toBe('John Doe')
+    expect(result?.username).toBe('johndoe')
+    expect(result?.email).toBe('john@example.com')
   })
 
-  it('should throw error when user does not exist', async () => {
+  it('should return null when user does not exist', async () => {
     const nonExistentId = crypto.randomUUID()
 
-    expect(useCase.execute(nonExistentId)).rejects.toThrow('User not found')
+    const result = await useCase.execute(nonExistentId, 'logged-user-id')
+
+    expect(result).toBeNull()
   })
 
   it('should return correct user when multiple users exist', async () => {
@@ -77,11 +79,11 @@ describe('GetPublicUserById', () => {
 
     repository.seed(users)
 
-    const result = await useCase.execute(users[1].id)
+    const result = await useCase.execute(users[1].id, 'logged-user-id')
 
-    expect(result.id).toBe(users[1].id)
-    expect(result.name).toBe('User Two')
-    expect(result.username).toBe('user2')
+    expect(result?.id).toBe(users[1].id)
+    expect(result?.name).toBe('User Two')
+    expect(result?.username).toBe('user2')
   })
 
   it('should handle user with null image', async () => {
@@ -98,9 +100,9 @@ describe('GetPublicUserById', () => {
 
     repository.seed([user])
 
-    const result = await useCase.execute(user.id)
+    const result = await useCase.execute(user.id, 'logged-user-id')
 
-    expect(result.image).toBeNull()
+    expect(result?.image).toBeNull()
   })
 
   it('should return user with all correct properties', async () => {
@@ -118,8 +120,50 @@ describe('GetPublicUserById', () => {
 
     repository.seed([user])
 
-    const result = await useCase.execute(user.id)
+    const result = await useCase.execute(user.id, 'logged-user-id')
 
     expect(result).toEqual(user)
+  })
+
+  it('should return null when user has blocked the logged user', async () => {
+    const user: Users = {
+      id: 'user-1',
+      name: 'Blocker User',
+      username: 'blocker',
+      email: 'blocker@example.com',
+      emailVerified: true,
+      image: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+    repository.seed([user])
+    repository.addBlock('user-1', 'logged-user-id')
+
+    const result = await useCase.execute('user-1', 'logged-user-id')
+
+    expect(result).toBeNull()
+  })
+
+  it('should return user when logged user has blocked the target user', async () => {
+    const user: Users = {
+      id: 'user-1',
+      name: 'Blocked User',
+      username: 'blocked',
+      email: 'blocked@example.com',
+      emailVerified: true,
+      image: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+
+    repository.seed([user])
+    repository.addBlock('logged-user-id', 'user-1')
+
+    const result = await useCase.execute('user-1', 'logged-user-id')
+
+    expect(result).toBeDefined()
+    expect(result?.id).toBe('user-1')
+    expect(result?.username).toBe('blocked')
   })
 })

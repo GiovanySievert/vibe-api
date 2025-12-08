@@ -204,4 +204,116 @@ describe('GetPublicUserByUsername', () => {
     expect(result[0].emailVerified).toBe(true)
     expect(result[0].image).toBe('https://example.com/avatar.jpg')
   })
+
+  it('should exclude users who have blocked the logged user', async () => {
+    const users: Users[] = [
+      {
+        id: 'user-1',
+        name: 'User One',
+        username: 'userone',
+        email: 'user1@example.com',
+        emailVerified: true,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 'user-2',
+        name: 'User Two',
+        username: 'usertwo',
+        email: 'user2@example.com',
+        emailVerified: true,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ]
+
+    repository.seed(users)
+    repository.addBlock('user-1', 'logged-user-id')
+
+    const result = await useCase.execute('user', 'logged-user-id')
+
+    expect(result).toHaveLength(1)
+    expect(result[0].id).toBe('user-2')
+    expect(result[0].username).toBe('usertwo')
+  })
+
+  it('should include users that logged user has blocked', async () => {
+    const users: Users[] = [
+      {
+        id: 'user-1',
+        name: 'User One',
+        username: 'userone',
+        email: 'user1@example.com',
+        emailVerified: true,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 'user-2',
+        name: 'User Two',
+        username: 'usertwo',
+        email: 'user2@example.com',
+        emailVerified: true,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ]
+
+    repository.seed(users)
+    repository.addBlock('logged-user-id', 'user-1')
+
+    const result = await useCase.execute('user', 'logged-user-id')
+
+    expect(result).toHaveLength(2)
+    expect(result.some((u) => u.id === 'user-1')).toBe(true)
+    expect(result.some((u) => u.id === 'user-2')).toBe(true)
+  })
+
+  it('should handle multiple blocks correctly', async () => {
+    const users: Users[] = [
+      {
+        id: 'user-1',
+        name: 'User One',
+        username: 'userone',
+        email: 'user1@example.com',
+        emailVerified: true,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 'user-2',
+        name: 'User Two',
+        username: 'usertwo',
+        email: 'user2@example.com',
+        emailVerified: true,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 'user-3',
+        name: 'User Three',
+        username: 'userthree',
+        email: 'user3@example.com',
+        emailVerified: true,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ]
+
+    repository.seed(users)
+    repository.addBlock('user-1', 'logged-user-id')
+    repository.addBlock('user-3', 'logged-user-id')
+
+    const result = await useCase.execute('user', 'logged-user-id')
+
+    expect(result).toHaveLength(1)
+    expect(result[0].id).toBe('user-2')
+  })
 })

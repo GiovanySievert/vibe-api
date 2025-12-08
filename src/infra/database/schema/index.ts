@@ -18,3 +18,5 @@ export {
   followersRelations,
   followStats
 } from '@src/modules/follow/application/schemas'
+
+export { userBlocks } from '@src/modules/blocks/application/schemas'

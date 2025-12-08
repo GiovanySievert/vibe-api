@@ -13,6 +13,7 @@ import { userFavoritesPlacesRoutes } from './modules/user-favorites-places/infra
 import { FollowerRoutes, FollowRequestRoutes, FollowStatsRoutes } from './modules/follow/infrastructure/http/routes'
 import { PublicUsersRoute } from './modules/users/infrastructure/http/routes'
 import { healthRoutes } from './modules/health/infrastructure/http/routes/health.routes'
+import { UserBlockRoutes } from './modules/blocks/infrastructure/http/routes'
 import { appLogger } from './config/logger'
 import { loggingMiddleware } from './shared/middlewares/logging.middleware'
 
@@ -32,6 +33,7 @@ const app = new Elysia()
   .use(FollowerRoutes)
   .use(FollowRequestRoutes)
   .use(FollowStatsRoutes)
+  .use(UserBlockRoutes)
   .use(
     cors({
       origin: 'http://localhost:3001',

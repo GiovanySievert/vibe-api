@@ -1,6 +1,7 @@
 import { User } from 'better-auth/types'
 import { GetPublicUserById, GetPublicUserByUsername } from '@src/modules/users/application/use-cases'
 import { GetPublicUserByIdDto, GetPublicUserByUsernameDto } from '../dto'
+import { UserNotFoundException } from '@src/modules/users/domain/exceptions'
 
 export class PublicUsersController {
   constructor(
@@ -8,8 +9,13 @@ export class PublicUsersController {
     private readonly getPublicUserByUsername: GetPublicUserByUsername
   ) {}
 
-  async getById({ params }: { params: { userId: string } }) {
-    const publicUser = await this.getPublicUserById.execute(params.userId)
+  async getById({ params, user }: { params: { userId: string }; user: User }) {
+    const publicUser = await this.getPublicUserById.execute(params.userId, user.id)
+
+    if (!publicUser) {
+      throw new UserNotFoundException()
+    }
+
     return GetPublicUserByIdDto.fromData(publicUser)
   }
 

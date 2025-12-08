@@ -6,6 +6,8 @@ import {
   FollowRequestAlreadyExistsException
 } from '../../../domain/exceptions'
 import { FollowStatus } from '../../../domain/types'
+import { UserBlockRepository } from '@src/modules/blocks/domain/repositories'
+import { UserIsBlockedException } from '@src/modules/blocks/domain/exceptions'
 
 export interface CreateFollowRequestData {
   requestedId: string
@@ -16,12 +18,19 @@ export interface CreateFollowRequestData {
 export class CreateFollowRequest {
   constructor(
     private readonly followRequestRepo: FollowRequestsRepository,
-    private readonly followersRepo: FollowersRepository
+    private readonly followersRepo: FollowersRepository,
+    private readonly userBlockRepo: UserBlockRepository
   ) {}
 
   async execute(data: CreateFollowRequestData): Promise<FollowRequests> {
     if (data.requesterId === data.requestedId) {
       throw new CannotFollowYourselfException(data.requesterId)
+    }
+
+    const isBlockedByRequested = await this.userBlockRepo.isBlocked(data.requestedId, data.requesterId)
+
+    if (isBlockedByRequested) {
+      throw new UserIsBlockedException()
     }
 
     const { status: followStatus } = await this.followersRepo.getFollowStatus(data.requesterId, data.requestedId)
