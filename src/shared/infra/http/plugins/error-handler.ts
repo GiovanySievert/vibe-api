@@ -26,11 +26,11 @@ export const errorHandler = (app: Elysia) =>
       name: error instanceof Error ? error.name : undefined
     }
 
-    if (process.env.NODE_ENV === 'development') {
-      console.error('ERROR:', errorDetails)
-    } else {
-      appLogger.error('Request failed', errorDetails)
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    console.error('ERROR:', errorDetails)
+    // } else {
+    // appLogger.error('Request failed', errorDetails)
+    // }
 
     if (code === 'VALIDATION') {
       set.status = HttpStatus.BAD_REQUEST

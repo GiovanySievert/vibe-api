@@ -1,10 +1,10 @@
 import { UserBlockRepository } from '../../../domain/repositories'
-import { UserBlock } from '../../../domain/mappers'
+import { GetBlockedUserDto } from '../../../infrastructure/http/dtos'
 
 export class ListBlockedUsers {
   constructor(private readonly userBlockRepository: UserBlockRepository) {}
 
-  async execute(blockerId: string): Promise<UserBlock[]> {
+  async execute(blockerId: string): Promise<GetBlockedUserDto[]> {
     return await this.userBlockRepository.listBlockedUsers(blockerId)
   }
 }
