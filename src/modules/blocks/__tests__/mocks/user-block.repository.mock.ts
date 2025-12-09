@@ -1,5 +1,6 @@
 import { UserBlock } from '../../domain/mappers'
 import { UserBlockRepository } from '../../domain/repositories'
+import { GetBlockedUserDto } from '../../infrastructure/http/dtos'
 
 export class MockUserBlockRepository implements UserBlockRepository {
   private blocks: UserBlock[] = []
@@ -28,8 +29,15 @@ export class MockUserBlockRepository implements UserBlockRepository {
     return !!block
   }
 
-  async listBlockedUsers(blockerId: string): Promise<UserBlock[]> {
-    return this.blocks.filter((b) => b.blockerId === blockerId)
+  async listBlockedUsers(blockerId: string): Promise<GetBlockedUserDto[]> {
+    return this.blocks
+      .filter((b) => b.blockerId === blockerId)
+      .map((b) => ({
+        id: b.id,
+        userId: b.blockedId,
+        username: `user-${b.blockedId}`,
+        avatar: null
+      }))
   }
 
   reset() {

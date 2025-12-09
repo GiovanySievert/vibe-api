@@ -22,8 +22,10 @@ describe('ListBlockedUsers', () => {
     const result = await listBlockedUsers.execute(blockerId)
 
     expect(result).toHaveLength(2)
-    expect(result[0].blockedId).toBe(blockedId1)
-    expect(result[1].blockedId).toBe(blockedId2)
+    expect(result[0].userId).toBe(blockedId1)
+    expect(result[0].username).toBe(`user-${blockedId1}`)
+    expect(result[1].userId).toBe(blockedId2)
+    expect(result[1].username).toBe(`user-${blockedId2}`)
   })
 
   it('should return empty array when no users are blocked', async () => {
@@ -45,6 +47,6 @@ describe('ListBlockedUsers', () => {
     const result = await listBlockedUsers.execute(blockerId1)
 
     expect(result).toHaveLength(1)
-    expect(result[0].blockerId).toBe(blockerId1)
+    expect(result[0].userId).toBe(blockedId)
   })
 })
