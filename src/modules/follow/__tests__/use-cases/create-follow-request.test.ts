@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'bun:test'
 import { CreateFollowRequest } from '../../application/use-cases/follow-request/create-follower-request'
 import { MockFollowRequestRepository } from '../mocks/follow-request.repository.mock'
 import { MockFollowersRepository } from '../mocks/followers.repository.mock'
+import { MockUserBlockRepository } from '@src/modules/blocks/__tests__/mocks/user-block.repository.mock'
 import { CannotFollowYourselfException } from '../../domain/exceptions/cannot-follow-yourself.exception'
 import { AlreadyFollowingException } from '../../domain/exceptions/already-following.exception'
 import { FollowRequestAlreadyExistsException } from '../../domain/exceptions/follow-request-already-exists.exception'
@@ -9,12 +10,14 @@ import { FollowRequestAlreadyExistsException } from '../../domain/exceptions/fol
 describe('CreateFollowRequest', () => {
   let followRequestRepo: MockFollowRequestRepository
   let followersRepo: MockFollowersRepository
+  let userBlockRepo: MockUserBlockRepository
   let useCase: CreateFollowRequest
 
   beforeEach(() => {
     followRequestRepo = new MockFollowRequestRepository()
     followersRepo = new MockFollowersRepository(followRequestRepo)
-    useCase = new CreateFollowRequest(followRequestRepo, followersRepo)
+    userBlockRepo = new MockUserBlockRepository()
+    useCase = new CreateFollowRequest(followRequestRepo, followersRepo, userBlockRepo)
   })
 
   it('should create a follow request successfully', async () => {

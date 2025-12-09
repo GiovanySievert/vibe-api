@@ -71,7 +71,7 @@ describe('AcceptFollowRequest', () => {
     }).toThrow(FollowRequestNotFoundException)
   })
 
-  it('should throw FollowRequestAlreadyProcessedException when request is not pending', async () => {
+  it('should throw AlreadyFollowingException when request is already accepted', async () => {
     const followRequest = await followRequestRepo.create({
       id: 'request-1',
       requesterId: 'user-1',
@@ -83,27 +83,22 @@ describe('AcceptFollowRequest', () => {
 
     expect(async () => {
       await useCase.execute(followRequest.id!)
-    }).toThrow(FollowRequestAlreadyProcessedException)
+    }).toThrow(AlreadyFollowingException)
   })
 
-  it('should throw AlreadyFollowingException when already following', async () => {
+  it('should throw FollowRequestAlreadyProcessedException when request is rejected', async () => {
     const followRequest = await followRequestRepo.create({
       id: 'request-1',
       requesterId: 'user-1',
       requestedId: 'user-2',
-      status: 'pending',
+      status: 'rejected',
       createdAt: new Date(),
       updatedAt: new Date()
     })
 
-    await followersRepo.create({
-      followerId: 'user-1',
-      followingId: 'user-2'
-    })
-
     expect(async () => {
       await useCase.execute(followRequest.id!)
-    }).toThrow(AlreadyFollowingException)
+    }).toThrow(FollowRequestAlreadyProcessedException)
   })
 
   it('should increment stats correctly when accepting', async () => {

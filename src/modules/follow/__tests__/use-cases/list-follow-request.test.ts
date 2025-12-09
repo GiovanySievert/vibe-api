@@ -41,7 +41,7 @@ describe('ListFollowRequest', () => {
     expect(result).toHaveLength(0)
   })
 
-  it('should list requests where user is requester', async () => {
+  it('should only list requests where user is requested (received)', async () => {
     await repository.create({
       id: 'request-1',
       requesterId: 'user-1',
@@ -53,11 +53,10 @@ describe('ListFollowRequest', () => {
 
     const result = await useCase.execute('user-1')
 
-    expect(result).toHaveLength(1)
-    expect(result[0].requesterId).toBe('user-1')
+    expect(result).toHaveLength(0)
   })
 
-  it('should list requests where user is requested', async () => {
+  it('should list requests where user is requested and return requester userId', async () => {
     await repository.create({
       id: 'request-1',
       requesterId: 'user-2',
@@ -70,14 +69,14 @@ describe('ListFollowRequest', () => {
     const result = await useCase.execute('user-1')
 
     expect(result).toHaveLength(1)
-    expect(result[0].requestedId).toBe('user-1')
+    expect(result[0].userId).toBe('user-2')
   })
 
-  it('should include all request statuses', async () => {
+  it('should only include pending status requests', async () => {
     await repository.create({
       id: 'request-1',
-      requesterId: 'user-1',
-      requestedId: 'user-2',
+      requesterId: 'user-2',
+      requestedId: 'user-1',
       status: 'pending',
       createdAt: new Date(),
       updatedAt: new Date()
@@ -85,8 +84,8 @@ describe('ListFollowRequest', () => {
 
     await repository.create({
       id: 'request-2',
-      requesterId: 'user-1',
-      requestedId: 'user-3',
+      requesterId: 'user-3',
+      requestedId: 'user-1',
       status: 'accepted',
       createdAt: new Date(),
       updatedAt: new Date()
@@ -94,8 +93,8 @@ describe('ListFollowRequest', () => {
 
     await repository.create({
       id: 'request-3',
-      requesterId: 'user-1',
-      requestedId: 'user-4',
+      requesterId: 'user-4',
+      requestedId: 'user-1',
       status: 'rejected',
       createdAt: new Date(),
       updatedAt: new Date()
@@ -103,6 +102,7 @@ describe('ListFollowRequest', () => {
 
     const result = await useCase.execute('user-1')
 
-    expect(result).toHaveLength(3)
+    expect(result).toHaveLength(1)
+    expect(result[0].status).toBe('pending')
   })
 })
