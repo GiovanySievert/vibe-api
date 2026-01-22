@@ -1,5 +1,5 @@
 {
-  "id": "8eaff0e6-12b5-4d08-a66c-a2fc5ebdd0cc",
+  "id": "3dd5de59-1d39-41a2-a97f-92ef53de4220",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -322,6 +322,45 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.user_blocks": {
+      "name": "user_blocks",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "blocker_id": {
+          "name": "blocker_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "blocked_id": {
+          "name": "blocked_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.brand_menus": {
       "name": "brand_menus",
       "schema": "",
@@ -452,8 +491,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.venue_locations": {
-      "name": "venue_locations",
+    "public.place_locations": {
+      "name": "place_locations",
       "schema": "",
       "columns": {
         "id": {
@@ -463,8 +502,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "venue_id": {
-          "name": "venue_id",
+        "place_id": {
+          "name": "place_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -546,12 +585,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "venue_locations_venue_id_venues_id_fk": {
-          "name": "venue_locations_venue_id_venues_id_fk",
-          "tableFrom": "venue_locations",
-          "tableTo": "venues",
+        "place_locations_place_id_places_id_fk": {
+          "name": "place_locations_place_id_places_id_fk",
+          "tableFrom": "place_locations",
+          "tableTo": "places",
           "columnsFrom": [
-            "venue_id"
+            "place_id"
           ],
           "columnsTo": [
             "id"
@@ -566,8 +605,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.venue_opening_hours": {
-      "name": "venue_opening_hours",
+    "public.place_opening_hours": {
+      "name": "place_opening_hours",
       "schema": "",
       "columns": {
         "id": {
@@ -577,8 +616,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "venue_id": {
-          "name": "venue_id",
+        "place_id": {
+          "name": "place_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -625,12 +664,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "venue_opening_hours_venue_id_venues_id_fk": {
-          "name": "venue_opening_hours_venue_id_venues_id_fk",
-          "tableFrom": "venue_opening_hours",
-          "tableTo": "venues",
+        "place_opening_hours_place_id_places_id_fk": {
+          "name": "place_opening_hours_place_id_places_id_fk",
+          "tableFrom": "place_opening_hours",
+          "tableTo": "places",
           "columnsFrom": [
-            "venue_id"
+            "place_id"
           ],
           "columnsTo": [
             "id"
@@ -645,8 +684,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.venues": {
-      "name": "venues",
+    "public.places": {
+      "name": "places",
       "schema": "",
       "columns": {
         "id": {
@@ -704,6 +743,13 @@
           "primaryKey": false,
           "notNull": false
         },
+        "status": {
+          "name": "status",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -721,9 +767,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "venues_brand_id_brands_id_fk": {
-          "name": "venues_brand_id_brands_id_fk",
-          "tableFrom": "venues",
+        "places_brand_id_brands_id_fk": {
+          "name": "places_brand_id_brands_id_fk",
+          "tableFrom": "places",
           "tableTo": "brands",
           "columnsFrom": [
             "brand_id"
@@ -1020,8 +1066,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "venue_id": {
-          "name": "venue_id",
+        "place_id": {
+          "name": "place_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -1049,12 +1095,12 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "user_favorites_places_venue_id_venues_id_fk": {
-          "name": "user_favorites_places_venue_id_venues_id_fk",
+        "user_favorites_places_place_id_places_id_fk": {
+          "name": "user_favorites_places_place_id_places_id_fk",
           "tableFrom": "user_favorites_places",
-          "tableTo": "venues",
+          "tableTo": "places",
           "columnsFrom": [
-            "venue_id"
+            "place_id"
           ],
           "columnsTo": [
             "id"
@@ -1065,12 +1111,12 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "user_favorites_places_user_id_venue_id_unique": {
-          "name": "user_favorites_places_user_id_venue_id_unique",
+        "user_favorites_places_user_id_place_id_unique": {
+          "name": "user_favorites_places_user_id_place_id_unique",
           "nullsNotDistinct": false,
           "columns": [
             "user_id",
-            "venue_id"
+            "place_id"
           ]
         }
       },

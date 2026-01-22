@@ -48,6 +48,13 @@ CREATE TABLE "verifications" (
 	"updated_at" timestamp NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "user_blocks" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"blocker_id" uuid NOT NULL,
+	"blocked_id" uuid NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "brand_menus" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"brand_id" uuid NOT NULL,
@@ -68,9 +75,9 @@ CREATE TABLE "brands" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "venue_locations" (
+CREATE TABLE "place_locations" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"venue_id" uuid NOT NULL,
+	"place_id" uuid NOT NULL,
 	"address_line" varchar(255) NOT NULL,
 	"address_line_2" varchar(255),
 	"number" varchar(255),
@@ -85,9 +92,9 @@ CREATE TABLE "venue_locations" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "venue_opening_hours" (
+CREATE TABLE "place_opening_hours" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"venue_id" uuid NOT NULL,
+	"place_id" uuid NOT NULL,
 	"weekday" integer NOT NULL,
 	"opens_at" time NOT NULL,
 	"closes_at" time NOT NULL,
@@ -96,7 +103,7 @@ CREATE TABLE "venue_opening_hours" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "venues" (
+CREATE TABLE "places" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"brand_id" uuid NOT NULL,
 	"name" varchar(255) NOT NULL,
@@ -106,6 +113,7 @@ CREATE TABLE "venues" (
 	"social_tiktok" varchar(255),
 	"contact_phone" varchar(50),
 	"about" text,
+	"status" varchar(20) DEFAULT 'pending' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -137,24 +145,24 @@ CREATE TABLE "followers" (
 CREATE TABLE "user_favorites_places" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
-	"venue_id" uuid NOT NULL,
+	"place_id" uuid NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "user_favorites_places_user_id_venue_id_unique" UNIQUE("user_id","venue_id")
+	CONSTRAINT "user_favorites_places_user_id_place_id_unique" UNIQUE("user_id","place_id")
 );
 --> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "brand_menus" ADD CONSTRAINT "brand_menus_brand_id_brands_id_fk" FOREIGN KEY ("brand_id") REFERENCES "public"."brands"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "venue_locations" ADD CONSTRAINT "venue_locations_venue_id_venues_id_fk" FOREIGN KEY ("venue_id") REFERENCES "public"."venues"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "venue_opening_hours" ADD CONSTRAINT "venue_opening_hours_venue_id_venues_id_fk" FOREIGN KEY ("venue_id") REFERENCES "public"."venues"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "venues" ADD CONSTRAINT "venues_brand_id_brands_id_fk" FOREIGN KEY ("brand_id") REFERENCES "public"."brands"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "place_locations" ADD CONSTRAINT "place_locations_place_id_places_id_fk" FOREIGN KEY ("place_id") REFERENCES "public"."places"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "place_opening_hours" ADD CONSTRAINT "place_opening_hours_place_id_places_id_fk" FOREIGN KEY ("place_id") REFERENCES "public"."places"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "places" ADD CONSTRAINT "places_brand_id_brands_id_fk" FOREIGN KEY ("brand_id") REFERENCES "public"."brands"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "follow_requests" ADD CONSTRAINT "follow_requests_requester_id_users_id_fk" FOREIGN KEY ("requester_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "follow_requests" ADD CONSTRAINT "follow_requests_requested_id_users_id_fk" FOREIGN KEY ("requested_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "follow_stats" ADD CONSTRAINT "follow_stats_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "followers" ADD CONSTRAINT "followers_follower_id_users_id_fk" FOREIGN KEY ("follower_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "followers" ADD CONSTRAINT "followers_following_id_users_id_fk" FOREIGN KEY ("following_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_favorites_places" ADD CONSTRAINT "user_favorites_places_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "user_favorites_places" ADD CONSTRAINT "user_favorites_places_venue_id_venues_id_fk" FOREIGN KEY ("venue_id") REFERENCES "public"."venues"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_favorites_places" ADD CONSTRAINT "user_favorites_places_place_id_places_id_fk" FOREIGN KEY ("place_id") REFERENCES "public"."places"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "requested_status_idx" ON "follow_requests" USING btree ("requested_id","status");--> statement-breakpoint
 CREATE INDEX "follower_idx" ON "followers" USING btree ("follower_id");--> statement-breakpoint
 CREATE INDEX "following_idx" ON "followers" USING btree ("following_id");

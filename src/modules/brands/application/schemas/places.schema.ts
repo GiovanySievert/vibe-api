@@ -3,7 +3,7 @@ import { brands } from './brands.schema'
 import { relations } from 'drizzle-orm'
 import { placeLocations } from './place-locations.schema'
 
-export const places = pgTable('venues', {
+export const places = pgTable('places', {
   id: uuid('id').defaultRandom().primaryKey(),
   brandId: uuid('brand_id')
     .notNull()
@@ -15,6 +15,7 @@ export const places = pgTable('venues', {
   socialTiktok: varchar('social_tiktok', { length: 255 }),
   contactPhone: varchar('contact_phone', { length: 50 }),
   about: text('about'),
+  status: varchar('status', { length: 20 }).notNull().default('pending'),
 
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()

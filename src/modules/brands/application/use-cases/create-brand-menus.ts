@@ -10,6 +10,10 @@ export class CreateBrandMenus {
   constructor(private readonly brandMenusRepo: BrandMenusRepository) {}
 
   async execute(data: CreateBrandMenusData): Promise<BrandMenus[]> {
+    if (data.menus.length === 0) {
+      return []
+    }
+
     const mappedBrandMenus = data.menus.map((brandMenu) => ({
       ...brandMenu,
       brandId: data.brandId

@@ -1,9 +1,9 @@
 import { pgTable, integer, timestamp, time, boolean, uuid } from 'drizzle-orm/pg-core'
 import { places } from './places.schema'
 
-export const placeOpeningHours = pgTable('venue_opening_hours', {
+export const placeOpeningHours = pgTable('place_opening_hours', {
   id: uuid('id').defaultRandom().primaryKey(),
-  placeId: uuid('venue_id')
+  placeId: uuid('place_id')
     .notNull()
     .references(() => places.id, { onDelete: 'cascade' }),
 

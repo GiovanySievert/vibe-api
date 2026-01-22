@@ -8,7 +8,7 @@ export const userFavoritesPlaces = pgTable(
     userId: uuid('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
-    placeId: uuid('venue_id')
+    placeId: uuid('place_id')
       .notNull()
       .references(() => places.id, { onDelete: 'cascade' }),
     createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull()
