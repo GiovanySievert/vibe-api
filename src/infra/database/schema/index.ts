@@ -20,3 +20,5 @@ export {
 } from '@src/modules/follow/application/schemas'
 
 export { userBlocks } from '@src/modules/blocks/application/schemas'
+
+export { placeReviews, placeReviewsRelations } from '@src/modules/place-review/application/schemas'
