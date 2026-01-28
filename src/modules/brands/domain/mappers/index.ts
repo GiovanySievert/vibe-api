@@ -1,4 +1,6 @@
 export * from './brands'
+export * from './brand-with-relations'
+export * from './place-with-relations'
 export * from './brand-menus'
 export * from './places'
 export * from './place-locations'

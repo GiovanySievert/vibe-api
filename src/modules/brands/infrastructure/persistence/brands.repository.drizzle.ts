@@ -2,11 +2,11 @@ import { eq } from 'drizzle-orm'
 
 import { BrandRepository } from '@src/modules/brands/domain/repositories/brands.repository'
 import { db } from '@src/infra/database/client'
-import { Brand } from '../../domain/mappers'
+import { Brand, BrandWithRelations } from '../../domain/mappers'
 import { brandMenus, brands, places, placeLocations } from '@src/infra/database/schema'
 
 export class DrizzleBrandRepository implements BrandRepository {
-  async getById(brandId: string): Promise<any> {
+  async getById(brandId: string): Promise<BrandWithRelations> {
     const [brand] = await db
       .select()
       .from(brands)
