@@ -22,6 +22,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
       .from(placeReviews)
       .where(and(eq(placeReviews.userId, userId), eq(placeReviews.placeId, placeId)))
       .limit(1)
+
     return result || null
   }
 

@@ -25,5 +25,23 @@ export const brandsRoutes = (app: Elysia) => {
           description: 'Get brand by ID'
         }
       })
+      .post('/places/reindex', () => controller.reindexPlaces(), {
+        detail: {
+          tags: ['Brands'],
+          summary: 'Start reindex job for all places',
+          description:
+            'Starts a background job that fetches all places in batches of 100 and publishes them to the Elasticsearch queue. Returns immediately with a job ID for tracking progress.'
+        }
+      })
+      .get('/places/reindex/:jobId', (ctx) => controller.getReindexStatus(ctx), {
+        params: t.Object({
+          jobId: t.String()
+        }),
+        detail: {
+          tags: ['Brands'],
+          summary: 'Get reindex job status',
+          description: 'Returns the current status and progress of a reindex job'
+        }
+      })
   )
 }
