@@ -14,15 +14,15 @@ export class EventCommentController {
     private readonly listEventComments: ListEventComments
   ) {}
 
-  async list({ params, query }: { params: { eventId: string }; query: { page?: string } }) {
+  async list({ params, query }: { params: { id: string }; query: { page?: string } }) {
     const page = Math.max(1, Number(query.page) || 1)
-    const result = await this.listEventComments.execute({ eventId: params.eventId, page, limit: 20 })
+    const result = await this.listEventComments.execute({ eventId: params.id, page, limit: 20 })
     return EventCommentDtoMapper.fromList(result)
   }
 
-  async create({ params, body, user }: { params: { eventId: string }; body: { content: string }; user: User }) {
+  async create({ params, body, user }: { params: { id: string }; body: { content: string }; user: User }) {
     const comment = await this.createEventComment.execute({
-      eventId: params.eventId,
+      eventId: params.id,
       userId: user.id,
       content: body.content
     })
@@ -33,10 +33,10 @@ export class EventCommentController {
     params,
     user
   }: {
-    params: { eventId: string; commentId: string }
+    params: { id: string; commentId: string }
     user: User
   }) {
-    const event = await this.eventRepository.findById(params.eventId)
+    const event = await this.eventRepository.findById(params.id)
     if (!event) throw new EventNotFoundException()
 
     await this.deleteEventComment.execute({

@@ -7,14 +7,14 @@ import { EventCommentsModule } from '../../../event-comments.module'
 export const EventCommentRoutes = (app: Elysia) => {
   const { eventCommentController } = new EventCommentsModule()
 
-  return app.use(authMiddleware).group('/events/:eventId/comments', (app) =>
+  return app.use(authMiddleware).group('/events/:id/comments', (app) =>
     app
       .get(
         '/',
         (ctx) => eventCommentController.list(ctx),
         {
           auth: true,
-          params: t.Object({ eventId: t.String() }),
+          params: t.Object({ id: t.String() }),
           query: t.Object({ page: t.Optional(t.String()) }),
           detail: {
             tags: ['Event Comments'],
@@ -28,7 +28,7 @@ export const EventCommentRoutes = (app: Elysia) => {
         (ctx) => eventCommentController.create(ctx),
         {
           auth: true,
-          params: t.Object({ eventId: t.String() }),
+          params: t.Object({ id: t.String() }),
           body: t.Object({ content: t.String({ minLength: 1, maxLength: 500 }) }),
           detail: {
             tags: ['Event Comments'],
@@ -42,7 +42,7 @@ export const EventCommentRoutes = (app: Elysia) => {
         (ctx) => eventCommentController.delete(ctx),
         {
           auth: true,
-          params: t.Object({ eventId: t.String(), commentId: t.String() }),
+          params: t.Object({ id: t.String(), commentId: t.String() }),
           detail: {
             tags: ['Event Comments'],
             summary: 'Delete a comment',

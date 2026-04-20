@@ -1,5 +1,5 @@
 import { db } from '@src/infra/database/client'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, ne } from 'drizzle-orm'
 import { users } from '@src/modules/auth/application/schemas'
 import { events, eventParticipants } from '../../application/schemas'
 import { EventRepository, CreateEventInput } from '../../domain/repositories'
@@ -57,7 +57,7 @@ export class DrizzleEventRepository implements EventRepository {
 
   async listByParticipant(userId: string): Promise<Event[]> {
     const myParticipations = await db.query.eventParticipants.findMany({
-      where: eq(eventParticipants.userId, userId),
+      where: and(eq(eventParticipants.userId, userId), ne(eventParticipants.status, EventParticipantStatus.DECLINED)),
       with: {
         event: {
           with: {
