@@ -22,3 +22,7 @@ export {
 export { userBlocks } from '@src/modules/blocks/application/schemas'
 
 export { placeReviews, placeReviewsRelations } from '@src/modules/place-review/application/schemas'
+
+export { events, eventsRelations, eventParticipants, eventParticipantsRelations } from '@src/modules/events/application/schemas'
+
+export { eventComments, eventCommentsRelations } from '@src/modules/event-comments/application/schemas'

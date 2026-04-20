@@ -5,6 +5,7 @@ export interface GetBlockedUserDto {
   userId: string
   username: string
   avatar: string | null
+  blockedAt: string
 }
 
 export class GetBlockedUserDtoMapper {
@@ -13,7 +14,8 @@ export class GetBlockedUserDtoMapper {
       id: data.userBlocks.id,
       userId: data.users.id,
       username: data.users.username,
-      avatar: data.users.avatar || null
+      avatar: data.users.avatar || null,
+      blockedAt: data.userBlocks.createdAt.toISOString()
     }
   }
 

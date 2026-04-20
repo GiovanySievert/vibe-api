@@ -14,6 +14,8 @@ import { FollowerRoutes, FollowRequestRoutes, FollowStatsRoutes } from './module
 import { PublicUsersRoute } from './modules/users/infrastructure/http/routes'
 import { healthRoutes } from './modules/health/infrastructure/http/routes/health.routes'
 import { UserBlockRoutes } from './modules/blocks/infrastructure/http/routes'
+import { EventRoutes } from './modules/events/infrastructure/http/routes'
+import { EventCommentRoutes } from './modules/event-comments/infrastructure/http/routes'
 import { appLogger } from './config/logger'
 import { loggingMiddleware } from './shared/middlewares/logging.middleware'
 
@@ -34,6 +36,8 @@ const app = new Elysia()
   .use(FollowRequestRoutes)
   .use(FollowStatsRoutes)
   .use(UserBlockRoutes)
+  .use(EventRoutes)
+  .use(EventCommentRoutes)
   .use(
     cors({
       origin: 'http://localhost:3001',
