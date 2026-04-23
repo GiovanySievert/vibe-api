@@ -22,7 +22,10 @@ const DOMAIN_ERRORS: Record<string, { status: number; code: string }> = {
   EventNotFoundException: { status: HttpStatus.NOT_FOUND, code: ErrorCode.NOT_FOUND },
   EventParticipantNotFoundException: { status: HttpStatus.NOT_FOUND, code: ErrorCode.NOT_FOUND },
   EventNotOwnerException: { status: HttpStatus.FORBIDDEN, code: ErrorCode.FORBIDDEN },
-  EventInvitationAlreadyRespondedException: { status: HttpStatus.CONFLICT, code: ErrorCode.CONFLICT }
+  EventInvitationAlreadyRespondedException: { status: HttpStatus.CONFLICT, code: ErrorCode.CONFLICT },
+  PlaceReviewNotFoundException: { status: HttpStatus.NOT_FOUND, code: ErrorCode.NOT_FOUND },
+  UnauthorizedPlaceReviewActionException: { status: HttpStatus.FORBIDDEN, code: ErrorCode.FORBIDDEN },
+  PlaceReviewAlreadyExistsException: { status: HttpStatus.CONFLICT, code: ErrorCode.CONFLICT }
 }
 
 export const errorHandler = (app: Elysia) =>

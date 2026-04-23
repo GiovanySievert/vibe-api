@@ -1,4 +1,4 @@
 export interface UpdatePlaceReviewDto {
-  rating?: number
+  rating?: 'crowded' | 'dead'
   comment?: string
 }

@@ -423,49 +423,51 @@ async function seed() {
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.burgerPaulista,
-      rating: 5,
+      rating: 'crowded',
       comment: 'Melhor Whopper que ja comi! Atendimento rapido.'
     },
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.burgerPaulista,
-      rating: 4,
+      rating: 'crowded',
+
       comment: 'Muito bom, mas as vezes demora um pouco.'
     },
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.pizzaJardins,
-      rating: 5,
+      rating: 'crowded',
+
       comment: 'Pizza deliciosa, ambiente agradavel.'
     },
     {
       userId: USER_IDS.ana,
       placeId: PLACE_IDS.starbucksFaria,
-      rating: 4,
+      rating: 'dead',
       comment: 'Cafe otimo, mas preco salgado.'
     },
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.outbackMoema,
-      rating: 5,
+      rating: 'crowded',
       comment: 'Ribeye perfeito! Bloomin Onion sensacional.'
     },
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.mcdonaldsIbirapuera,
-      rating: 3,
+      rating: 'crowded',
       comment: 'Basico, mas cumpre o que promete.'
     },
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.outbackMoema,
-      rating: 5,
+      rating: 'dead',
       comment: 'Adorei! Perfeito para ocasioes especiais.'
     },
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.starbucksFaria,
-      rating: 4,
+      rating: 'dead',
       comment: 'Bom para trabalhar, wifi excelente.'
     }
   ])

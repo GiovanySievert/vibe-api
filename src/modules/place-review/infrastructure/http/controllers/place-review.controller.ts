@@ -22,6 +22,7 @@ export class PlaceReviewController {
       userId: user.id,
       placeId: body.placeId,
       rating: body.rating,
+      imageUrl: body.imageUrl ?? null,
       comment: body.comment ?? null
     })
   }

@@ -1,6 +1,8 @@
 import { users, places } from '@src/infra/database/schema'
 import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm'
-import { pgTable, timestamp, uuid, text, integer, index } from 'drizzle-orm/pg-core'
+import { pgTable, timestamp, uuid, text, index, pgEnum } from 'drizzle-orm/pg-core'
+
+export const placeReviewTypeEnum = pgEnum('place_review_type', ['crowded', 'dead'])
 
 export const placeReviews = pgTable(
   'place_reviews',
@@ -12,7 +14,8 @@ export const placeReviews = pgTable(
     placeId: uuid('place_id')
       .notNull()
       .references(() => places.id, { onDelete: 'cascade' }),
-    rating: integer('rating').notNull(),
+    rating: placeReviewTypeEnum('rating').notNull(),
+    imageUrl: text('image_url'),
     comment: text('comment'),
     createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()

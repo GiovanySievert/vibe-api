@@ -11,7 +11,8 @@ export const PlaceReviewRoutes = (app: Elysia) => {
         auth: true,
         body: t.Object({
           placeId: t.String(),
-          rating: t.Number({ minimum: 1, maximum: 5 }),
+          rating: t.Union([t.Literal('crowded'), t.Literal('dead')]),
+          imageUrl: t.Optional(t.String()),
           comment: t.Optional(t.String())
         }),
         detail: {
@@ -65,7 +66,7 @@ export const PlaceReviewRoutes = (app: Elysia) => {
           reviewId: t.String()
         }),
         body: t.Object({
-          rating: t.Optional(t.Number({ minimum: 1, maximum: 5 })),
+          rating: t.Optional(t.Union([t.Literal('crowded'), t.Literal('dead')])),
           comment: t.Optional(t.String())
         }),
         detail: {

@@ -16,6 +16,7 @@ import { healthRoutes } from './modules/health/infrastructure/http/routes/health
 import { UserBlockRoutes } from './modules/blocks/infrastructure/http/routes'
 import { EventRoutes } from './modules/events/infrastructure/http/routes'
 import { EventCommentRoutes } from './modules/event-comments/infrastructure/http/routes'
+import { PlaceReviewRoutes } from './modules/place-review/infrastructure/http/routes'
 import { appLogger } from './config/logger'
 import { loggingMiddleware } from './shared/middlewares/logging.middleware'
 
@@ -38,6 +39,7 @@ const app = new Elysia()
   .use(UserBlockRoutes)
   .use(EventRoutes)
   .use(EventCommentRoutes)
+  .use(PlaceReviewRoutes)
   .use(
     cors({
       origin: 'http://localhost:3001',
