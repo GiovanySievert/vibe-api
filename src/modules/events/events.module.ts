@@ -1,5 +1,6 @@
 import {
   CreateEvent,
+  DeleteEvent,
   GetEventById,
   ListEventInvitations,
   ListUserEvents,
@@ -21,6 +22,7 @@ export class EventsModule {
     const getEventByIdService = new GetEventById(eventRepository)
     const respondToEventInvitationService = new RespondToEventInvitation(eventRepository)
     const updateEventDescriptionService = new UpdateEventDescription(eventRepository)
+    const deleteEventService = new DeleteEvent(eventRepository)
 
     this.eventController = new EventController(
       createEventService,
@@ -28,7 +30,8 @@ export class EventsModule {
       listEventInvitationsService,
       getEventByIdService,
       respondToEventInvitationService,
-      updateEventDescriptionService
+      updateEventDescriptionService,
+      deleteEventService
     )
   }
 }

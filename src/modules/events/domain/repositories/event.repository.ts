@@ -17,4 +17,5 @@ export interface EventRepository {
   findById(id: string): Promise<Event | null>
   updateDescription(eventId: string, description: string): Promise<Event>
   updateParticipantStatus(eventId: string, userId: string, status: EventParticipantStatus): Promise<void>
+  delete(eventId: string): Promise<void>
 }

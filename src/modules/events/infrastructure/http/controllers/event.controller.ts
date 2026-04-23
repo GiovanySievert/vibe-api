@@ -1,6 +1,7 @@
 import { User } from 'better-auth/types'
 import {
   CreateEvent,
+  DeleteEvent,
   GetEventById,
   ListEventInvitations,
   ListUserEvents,
@@ -17,7 +18,8 @@ export class EventController {
     private readonly listEventInvitations: ListEventInvitations,
     private readonly getEventById: GetEventById,
     private readonly respondToEventInvitation: RespondToEventInvitation,
-    private readonly updateEventDescription: UpdateEventDescription
+    private readonly updateEventDescription: UpdateEventDescription,
+    private readonly deleteEventUseCase: DeleteEvent
   ) {}
 
   async create({
@@ -88,5 +90,9 @@ export class EventController {
     })
 
     return GetEventDtoMapper.from(event)
+  }
+
+  async delete({ params, user }: { params: { id: string }; user: User }) {
+    await this.deleteEventUseCase.execute({ eventId: params.id, userId: user.id })
   }
 }

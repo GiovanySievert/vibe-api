@@ -120,4 +120,8 @@ export class DrizzleEventRepository implements EventRepository {
       .set({ status })
       .where(and(eq(eventParticipants.eventId, eventId), eq(eventParticipants.userId, userId)))
   }
+
+  async delete(eventId: string): Promise<void> {
+    await db.delete(events).where(eq(events.id, eventId))
+  }
 }

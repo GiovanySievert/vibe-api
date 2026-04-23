@@ -39,12 +39,14 @@ export class MockEventRepository implements EventRepository {
     return this.events.find((e) => e.id === id) ?? null
   }
 
+  async updateDescription(eventId: string, description: string): Promise<Event> {
+    this.events = this.events.map((e) => (e.id === eventId ? { ...e, description } : e))
+    return this.events.find((e) => e.id === eventId) as Event
+  }
+
   async updateParticipantStatus(eventId: string, userId: string, status: EventParticipantStatus): Promise<void> {
     this.events = this.events.map((event) => {
-      if (event.id !== eventId) {
-        return event
-      }
-
+      if (event.id !== eventId) return event
       return {
         ...event,
         participants: event.participants?.map((participant) =>
@@ -52,6 +54,10 @@ export class MockEventRepository implements EventRepository {
         )
       }
     })
+  }
+
+  async delete(eventId: string): Promise<void> {
+    this.events = this.events.filter((e) => e.id !== eventId)
   }
 
   reset() {

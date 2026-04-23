@@ -95,5 +95,18 @@ export const EventRoutes = (app: Elysia) => {
           }
         }
       )
+      .delete(
+        '/:id',
+        (ctx) => eventController.delete(ctx),
+        {
+          auth: true,
+          params: t.Object({ id: t.String() }),
+          detail: {
+            tags: ['Events'],
+            summary: 'Delete an event',
+            security: [{ cookieAuth: [] }]
+          }
+        }
+      )
   )
 }

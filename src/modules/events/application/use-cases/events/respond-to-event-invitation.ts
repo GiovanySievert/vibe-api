@@ -29,7 +29,7 @@ export class RespondToEventInvitation {
       throw new EventParticipantNotFoundException()
     }
 
-    if (participant.status !== EventParticipantStatus.PENDING) {
+    if (participant.status === status) {
       throw new EventInvitationAlreadyRespondedException()
     }
 
