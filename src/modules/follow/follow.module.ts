@@ -19,6 +19,7 @@ import {
   IncrementFollowersStats,
   ListRequestedFollowRequest
 } from './application/use-cases'
+import { applicationEventBus } from '@src/shared/application/events'
 import {
   DrizzleFollowRepository,
   DrizzleFollowRequestRepository,
@@ -65,7 +66,12 @@ export class FollowModule {
       deleteFollowStatsService
     )
 
-    const createFollowRequestService = new CreateFollowRequest(followRequestRepo, followersRepo, userBlockRepo)
+    const createFollowRequestService = new CreateFollowRequest(
+      followRequestRepo,
+      followersRepo,
+      userBlockRepo,
+      applicationEventBus
+    )
     const updateFollowRequestService = new UpdateFollowRequest(followRequestRepo)
     const listFollowRequestService = new ListFollowRequest(followRequestRepo)
     const listRequestedFollowRequestService = new ListRequestedFollowRequest(followRequestRepo)

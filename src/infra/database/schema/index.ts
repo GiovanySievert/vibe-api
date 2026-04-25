@@ -4,6 +4,7 @@ export {
   places,
   brandMenus,
   placeLocations,
+  placeOpeningHours,
   placesRelations,
   brandsRelations,
   brandMenusRelations
@@ -21,8 +22,19 @@ export {
 
 export { userBlocks } from '@src/modules/blocks/application/schemas'
 
-export { placeReviews, placeReviewsRelations, placeReviewTypeEnum } from '@src/modules/place-review/application/schemas'
+export {
+  placeReviews,
+  placeReviewsRelations,
+  placeReviewComments,
+  placeReviewCommentsRelations,
+  placeReviewReactions,
+  placeReviewReactionsRelations,
+  placeReviewTypeEnum,
+  placeReviewReactionTypeEnum
+} from '@src/modules/place-review/application/schemas'
 
 export { events, eventsRelations, eventParticipants, eventParticipantsRelations } from '@src/modules/events/application/schemas'
 
 export { eventComments, eventCommentsRelations } from '@src/modules/event-comments/application/schemas'
+
+export { devicePushTokens } from '@src/modules/notifications/application/schemas'

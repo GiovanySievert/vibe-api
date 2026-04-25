@@ -19,8 +19,14 @@ import { EventCommentRoutes } from './modules/event-comments/infrastructure/http
 import { PlaceReviewRoutes } from './modules/place-review/infrastructure/http/routes'
 import { appLogger } from './config/logger'
 import { loggingMiddleware } from './shared/middlewares/logging.middleware'
+import { NotificationDeviceRoutes } from './modules/notifications/infrastructure/http/routes/notification-device.routes'
+import { NotificationsModule } from './modules/notifications/notifications.module'
+import { applicationEventBus } from './shared/application/events'
 
 const betterAuthPlugin = new Elysia({ name: 'better-auth' }).mount(auth.handler)
+const notificationsModule = new NotificationsModule()
+
+notificationsModule.registerEventHandlers(applicationEventBus)
 
 const app = new Elysia()
   .use(helmetPlugin)
@@ -40,6 +46,7 @@ const app = new Elysia()
   .use(EventRoutes)
   .use(EventCommentRoutes)
   .use(PlaceReviewRoutes)
+  .use(NotificationDeviceRoutes)
   .use(
     cors({
       origin: 'http://localhost:3001',

@@ -7,6 +7,7 @@ import {
   RespondToEventInvitation,
   UpdateEventDescription
 } from './application/use-cases/events'
+import { applicationEventBus } from '@src/shared/application/events'
 import { DrizzleEventRepository } from './infrastructure/persistence/event.repository.drizzle'
 import { EventController } from './infrastructure/http/controllers/event.controller'
 
@@ -16,7 +17,7 @@ export class EventsModule {
   constructor() {
     const eventRepository = new DrizzleEventRepository()
 
-    const createEventService = new CreateEvent(eventRepository)
+    const createEventService = new CreateEvent(eventRepository, applicationEventBus)
     const listUserEventsService = new ListUserEvents(eventRepository)
     const listEventInvitationsService = new ListEventInvitations(eventRepository)
     const getEventByIdService = new GetEventById(eventRepository)

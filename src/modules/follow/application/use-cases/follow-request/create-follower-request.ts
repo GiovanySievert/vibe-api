@@ -1,3 +1,4 @@
+import { createFollowRequestCreatedEvent } from '../../events/follow-request-created.event'
 import { FollowRequests } from '../../../domain/mappers'
 import { FollowRequestsRepository, FollowersRepository } from '../../../domain/repositories'
 import {
@@ -8,10 +9,12 @@ import {
 import { FollowStatus } from '../../../domain/types'
 import { UserBlockRepository } from '@src/modules/blocks/domain/repositories'
 import { UserIsBlockedException } from '@src/modules/blocks/domain/exceptions'
+import { ApplicationEventBus } from '@src/shared/application/events'
 
 export interface CreateFollowRequestData {
   requestedId: string
   requesterId: string
+  requesterName: string
   status?: string
 }
 
@@ -19,7 +22,8 @@ export class CreateFollowRequest {
   constructor(
     private readonly followRequestRepo: FollowRequestsRepository,
     private readonly followersRepo: FollowersRepository,
-    private readonly userBlockRepo: UserBlockRepository
+    private readonly userBlockRepo: UserBlockRepository,
+    private readonly applicationEventBus: ApplicationEventBus
   ) {}
 
   async execute(data: CreateFollowRequestData): Promise<FollowRequests> {
@@ -48,6 +52,19 @@ export class CreateFollowRequest {
       requesterId: data.requesterId,
       status: data.status
     })
+
+    if (!followerRequest.id) {
+      throw new Error('Follow request id was not generated')
+    }
+
+    await this.applicationEventBus.publish(
+      createFollowRequestCreatedEvent({
+        followRequestId: followerRequest.id,
+        requesterId: data.requesterId,
+        requesterName: data.requesterName,
+        requestedId: data.requestedId
+      })
+    )
 
     return followerRequest
   }

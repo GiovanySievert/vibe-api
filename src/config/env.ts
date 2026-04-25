@@ -5,7 +5,8 @@ export const envSchema = z.object({
   BETTER_AUTH_URL: z.string(),
   DATABASE_URL: z.string(),
   RESEND_API_KEY: z.string(),
-  RESEND_FROM_EMAIL: z.string()
+  RESEND_FROM_EMAIL: z.string(),
+  EXPO_PUSH_ACCESS_TOKEN: z.string().optional()
 })
 
 export const env = envSchema.parse(Bun.env)

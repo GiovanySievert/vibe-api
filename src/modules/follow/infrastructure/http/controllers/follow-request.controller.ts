@@ -4,9 +4,9 @@ import {
   ListFollowRequest,
   AcceptFollowRequest,
   RejectFollowRequest,
-  CancelFollowRequest,
-  ListRequestedFollowRequest
+  CancelFollowRequest
 } from '../../../application/use-cases'
+import { ListRequestedFollowRequest } from '../../../application/use-cases/follow-request/list-requested-follow-request'
 
 export class FollowRequestController {
   constructor(
@@ -21,6 +21,7 @@ export class FollowRequestController {
   async create({ params, user }: { params: { userId: string }; user: User }) {
     return await this.createFollowRequest.execute({
       requesterId: user.id,
+      requesterName: user.name,
       requestedId: params.userId
     })
   }

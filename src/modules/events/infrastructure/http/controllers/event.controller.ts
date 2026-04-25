@@ -31,6 +31,7 @@ export class EventController {
   }) {
     const event = await this.createEvent.execute({
       ownerId: user.id,
+      ownerName: user.name,
       name: body.name,
       date: body.date,
       time: body.time,
