@@ -1,15 +1,28 @@
-import { EXCHANGE_NAME } from '@src/config/rabbitmq.config'
+import { randomUUID } from 'node:crypto'
+import { EXCHANGE, PLACE_INDEXED_RK } from '@src/config/rabbitmq.config'
 import { rabbitMQConnection } from './rabbitmq-connection'
 
-export class RabbitMQProducer {
-  async publish(data: any): Promise<void> {
-    const channel = await rabbitMQConnection.getChannel()
+export type PublishOptions = {
+  correlationId?: string
+}
 
-    channel.publish(
-      EXCHANGE_NAME,
-      'elasticsearch',
+export class RabbitMQProducer {
+  async publish(
+    data: unknown,
+    routingKey: string = PLACE_INDEXED_RK,
+    options: PublishOptions = {}
+  ): Promise<void> {
+    const channel = rabbitMQConnection.getChannel()
+
+    await channel.publish(
+      EXCHANGE,
+      routingKey,
       Buffer.from(JSON.stringify(data)),
-      { persistent: true }
+      {
+        persistent: true,
+        contentType: 'application/json',
+        correlationId: options.correlationId ?? randomUUID(),
+      }
     )
   }
 }

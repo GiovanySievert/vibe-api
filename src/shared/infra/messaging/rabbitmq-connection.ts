@@ -1,66 +1,44 @@
-import amqp from 'amqplib'
-import {
-  RABBITMQ_URL,
-  EXCHANGE_NAME,
-  ELASTICSEARCH_QUEUE
-} from '@src/config/rabbitmq.config'
-
-type AMQPConnection = Awaited<ReturnType<typeof amqp.connect>>
-type AMQPChannel = Awaited<ReturnType<AMQPConnection['createChannel']>>
+import amqpManager, {
+  type AmqpConnectionManager,
+  type ChannelWrapper,
+} from 'amqp-connection-manager'
+import { RABBITMQ_URL, ensureExchange } from '@src/config/rabbitmq.config'
 
 class RabbitMQConnection {
-  private connection: AMQPConnection | null = null
-  private channel: AMQPChannel | null = null
-  private connecting: Promise<void> | null = null
+  private connection: AmqpConnectionManager | null = null
+  private channel: ChannelWrapper | null = null
 
-  async getChannel(): Promise<AMQPChannel> {
-    if (this.channel) {
-      return this.channel
-    }
+  getChannel(): ChannelWrapper {
+    if (this.channel) return this.channel
 
-    if (this.connecting) {
-      await this.connecting
-      return this.channel!
-    }
-
-    this.connecting = this.connect()
-    await this.connecting
-    this.connecting = null
-
-    return this.channel!
-  }
-
-  private async connect(): Promise<void> {
-    this.connection = await amqp.connect(RABBITMQ_URL)
-
-    this.connection.on('error', (err: Error) => {
-      console.error('RabbitMQ connection error:', err)
-      this.channel = null
-      this.connection = null
+    this.connection = amqpManager.connect([RABBITMQ_URL], {
+      heartbeatIntervalInSeconds: 15,
+      reconnectTimeInSeconds: 5,
     })
 
-    this.connection.on('close', () => {
-      console.log('RabbitMQ connection closed')
-      this.channel = null
-      this.connection = null
+    this.connection.on('connect', () =>
+      console.log('RabbitMQ connection established')
+    )
+    this.connection.on('disconnect', ({ err }) =>
+      console.warn('RabbitMQ disconnected:', err?.message)
+    )
+
+    this.channel = this.connection.createChannel({
+      json: false,
+      confirm: true,
+      setup: ensureExchange,
     })
 
-    this.channel = await this.connection.createChannel()
-
-    await this.channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: true })
-    await this.channel.assertQueue(ELASTICSEARCH_QUEUE, { durable: true })
-    await this.channel.bindQueue(ELASTICSEARCH_QUEUE, EXCHANGE_NAME, 'elasticsearch')
-
-    console.log('RabbitMQ connection established')
+    return this.channel
   }
 
   async close(): Promise<void> {
     if (this.channel) {
-      await this.channel.close()
+      await this.channel.close().catch(() => {})
       this.channel = null
     }
     if (this.connection) {
-      await this.connection.close()
+      await this.connection.close().catch(() => {})
       this.connection = null
     }
   }

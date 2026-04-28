@@ -22,6 +22,7 @@ import { loggingMiddleware } from './shared/middlewares/logging.middleware'
 import { NotificationDeviceRoutes } from './modules/notifications/infrastructure/http/routes/notification-device.routes'
 import { NotificationsModule } from './modules/notifications/notifications.module'
 import { applicationEventBus } from './shared/application/events'
+import { rabbitMQConnection } from './shared/infra/messaging/rabbitmq-connection'
 
 const betterAuthPlugin = new Elysia({ name: 'better-auth' }).mount(auth.handler)
 const notificationsModule = new NotificationsModule()
@@ -79,3 +80,18 @@ appLogger.info('Vibe-api is running', {
   port: app.server?.port,
   environment: process.env.NODE_ENV || 'development'
 })
+
+const shutdown = async (signal: string) => {
+  appLogger.info('shutting down', { signal })
+  try {
+    await app.stop()
+    await rabbitMQConnection.close()
+    process.exit(0)
+  } catch (err) {
+    appLogger.error('error during shutdown', { err })
+    process.exit(1)
+  }
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'))
+process.on('SIGINT', () => shutdown('SIGINT'))

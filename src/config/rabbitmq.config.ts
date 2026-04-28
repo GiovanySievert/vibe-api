@@ -1,16 +1,13 @@
-import amqp from 'amqplib'
+import type { ConfirmChannel } from 'amqplib'
 
-export const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://admin:admin@localhost:5672'
-export const ELASTICSEARCH_QUEUE = 'elasticsearch_queue'
-export const EXCHANGE_NAME = 'elasticsearch_exchange'
+export const RABBITMQ_URL =
+  process.env.RABBITMQ_URL || 'amqp://admin:admin@localhost:5672'
 
-export async function createRabbitMQConnection() {
-  const connection = await amqp.connect(RABBITMQ_URL)
-  const channel = await connection.createChannel()
+export const EXCHANGE = 'vibes.events'
 
-  await channel.assertExchange(EXCHANGE_NAME, 'direct', { durable: true })
-  await channel.assertQueue(ELASTICSEARCH_QUEUE, { durable: true })
-  await channel.bindQueue(ELASTICSEARCH_QUEUE, EXCHANGE_NAME, 'elasticsearch')
+export const PLACE_INDEXED_RK = 'place.indexed'
+export const PLACE_REVIEW_CREATED_RK = 'place.review.created'
 
-  return { connection, channel }
+export async function ensureExchange(channel: ConfirmChannel): Promise<void> {
+  await channel.assertExchange(EXCHANGE, 'topic', { durable: true })
 }
