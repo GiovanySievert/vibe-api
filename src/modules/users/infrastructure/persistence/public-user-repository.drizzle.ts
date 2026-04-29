@@ -14,6 +14,7 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
         email: users.email,
         emailVerified: users.emailVerified,
         image: users.image,
+        bio: users.bio,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt
       })
@@ -34,6 +35,7 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
         email: users.email,
         emailVerified: users.emailVerified,
         image: users.image,
+        bio: users.bio,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt
       })

@@ -75,6 +75,11 @@ export const auth = betterAuth({
     additionalFields: {
       username: {
         type: 'string'
+      },
+      bio: {
+        type: 'string',
+        required: false,
+        returned: true
       }
     }
   },

@@ -17,7 +17,8 @@ export class GetPublicUserByIdDto {
     return {
       id: data.id,
       username: data.username,
-      image: data.image
+      image: data.image,
+      bio: data.bio ?? null
     }
   }
 }
