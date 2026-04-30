@@ -15,7 +15,9 @@ import {
   placeReviews,
   events,
   eventParticipants,
-  eventComments
+  eventComments,
+  appNotifications,
+  notificationPreferences
 } from '../schema'
 
 const USER_IDS = {
@@ -27,36 +29,38 @@ const USER_IDS = {
 }
 
 const BRAND_IDS = {
-  burgerKing: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-  pizzaHut: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-  starbucks: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
-  outback: 'dddddddd-dddd-dddd-dddd-dddddddddddd',
-  mcdonalds: 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
-  barelhoBar: 'f1f1f1f1-bbbb-bbbb-bbbb-f1f1f1f1f1f1',
-  prudentePub: 'f2f2f2f2-bbbb-bbbb-bbbb-f2f2f2f2f2f2',
-  cantinaBatel: 'f3f3f3f3-bbbb-bbbb-bbbb-f3f3f3f3f3f3',
-  vilaDoChopp: 'f4f4f4f4-bbbb-bbbb-bbbb-f4f4f4f4f4f4',
-  moraesWine: 'f5f5f5f5-bbbb-bbbb-bbbb-f5f5f5f5f5f5'
+  burgerKing: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa',
+  pizzaHut: 'bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb',
+  starbucks: 'cccccccc-cccc-4ccc-cccc-cccccccccccc',
+  outback: 'dddddddd-dddd-4ddd-dddd-dddddddddddd',
+  mcdonalds: 'eeeeeeee-eeee-4eee-eeee-eeeeeeeeeeee',
+  barelhoBar: 'f1f1f1f1-f1f1-4f1f-af1f-f1f1f1f1f1f1',
+  prudentePub: 'f2f2f2f2-f2f2-4f2f-af2f-f2f2f2f2f2f2',
+  cantinaBatel: 'f3f3f3f3-f3f3-4f3f-af3f-f3f3f3f3f3f3',
+  vilaDoChopp: 'f4f4f4f4-f4f4-4f4f-af4f-f4f4f4f4f4f4',
+  moraesWine: 'f5f5f5f5-f5f5-4f5f-af5f-f5f5f5f5f5f5'
 }
 
 const PLACE_IDS = {
-  burgerPaulista: '11111111-aaaa-aaaa-aaaa-111111111111',
-  burgerMoema: '22222222-aaaa-aaaa-aaaa-222222222222',
-  pizzaJardins: '33333333-bbbb-bbbb-bbbb-333333333333',
-  barelhoBar: 'b1b1b1b1-cccc-cccc-cccc-b1b1b1b1b1b1',
-  prudentePub: 'b2b2b2b2-cccc-cccc-cccc-b2b2b2b2b2b2',
-  cantinaBatel: 'b3b3b3b3-cccc-cccc-cccc-b3b3b3b3b3b3',
-  vilaDoChopp: 'b4b4b4b4-cccc-cccc-cccc-b4b4b4b4b4b4',
-  moraesWine: 'b5b5b5b5-cccc-cccc-cccc-b5b5b5b5b5b5',
-  starbucksFaria: '44444444-cccc-cccc-cccc-444444444444',
-  outbackMoema: '55555555-dddd-dddd-dddd-555555555555',
-  mcdonaldsIbirapuera: '66666666-eeee-eeee-eeee-666666666666'
+  burgerPaulista: '11111111-1111-4111-a111-111111111111',
+  burgerMoema: '22222222-2222-4222-a222-222222222222',
+  pizzaJardins: '33333333-3333-4333-a333-333333333333',
+  barelhoBar: 'b1b1b1b1-b1b1-4b1b-ab1b-b1b1b1b1b1b1',
+  prudentePub: 'b2b2b2b2-b2b2-4b2b-ab2b-b2b2b2b2b2b2',
+  cantinaBatel: 'b3b3b3b3-b3b3-4b3b-ab3b-b3b3b3b3b3b3',
+  vilaDoChopp: 'b4b4b4b4-b4b4-4b4b-ab4b-b4b4b4b4b4b4',
+  moraesWine: 'b5b5b5b5-b5b5-4b5b-ab5b-b5b5b5b5b5b5',
+  starbucksFaria: '44444444-4444-4444-a444-444444444444',
+  outbackMoema: '55555555-5555-4555-a555-555555555555',
+  mcdonaldsIbirapuera: '66666666-6666-4666-a666-666666666666'
 }
 
 async function seed() {
   console.log('Seeding database...')
 
   console.log('Clearing existing data...')
+  await db.delete(appNotifications)
+  await db.delete(notificationPreferences)
   await db.delete(eventComments)
   await db.delete(eventParticipants)
   await db.delete(events)
@@ -82,7 +86,7 @@ async function seed() {
       username: 'joaosilva',
       email: 'joao@email.com',
       emailVerified: true,
-      image: 'https://randomuser.me/api/portraits/men/1.jpg'
+      image: 'https://picsum.photos/200/200?random=1&place=review'
     },
     {
       id: USER_IDS.maria,
@@ -90,7 +94,7 @@ async function seed() {
       username: 'mariasantos',
       email: 'maria@email.com',
       emailVerified: true,
-      image: 'https://randomuser.me/api/portraits/women/1.jpg'
+      image: 'https://picsum.photos/200/200?random=2&place=review'
     },
     {
       id: USER_IDS.pedro,
@@ -98,7 +102,7 @@ async function seed() {
       username: 'pedrooliveira',
       email: 'pedro@email.com',
       emailVerified: true,
-      image: 'https://randomuser.me/api/portraits/men/2.jpg'
+      image: 'https://picsum.photos/200/200?random=3&place=review'
     },
     {
       id: USER_IDS.ana,
@@ -106,7 +110,7 @@ async function seed() {
       username: 'anacosta',
       email: 'ana@email.com',
       emailVerified: false,
-      image: 'https://randomuser.me/api/portraits/women/2.jpg'
+      image: 'https://picsum.photos/200/200?random=4&place=review'
     },
     {
       id: USER_IDS.lucas,
@@ -114,7 +118,7 @@ async function seed() {
       username: 'lucasferreira',
       email: 'lucas@email.com',
       emailVerified: true,
-      image: 'https://randomuser.me/api/portraits/men/3.jpg'
+      image: 'https://picsum.photos/200/200?random=5&place=review'
     }
   ])
 
@@ -164,70 +168,70 @@ async function seed() {
       name: 'Burger King',
       taxId: '12345678000101',
       type: 'fast-food',
-      avatar: 'https://upload.wikimedia.org/wikipedia/commons/8/85/Burger_King_logo_%281999%29.svg'
+      avatar: 'https://picsum.photos/400/400?random=10&place=review'
     },
     {
       id: BRAND_IDS.pizzaHut,
       name: 'Pizza Hut',
       taxId: '23456789000102',
       type: 'fast-food',
-      avatar: 'https://upload.wikimedia.org/wikipedia/sco/d/d2/Pizza_Hut_logo.svg'
+      avatar: 'https://picsum.photos/400/400?random=11&place=review'
     },
     {
       id: BRAND_IDS.starbucks,
       name: 'Starbucks',
       taxId: '34567890000103',
       type: 'cafe',
-      avatar: 'https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg'
+      avatar: 'https://picsum.photos/400/400?random=12&place=review'
     },
     {
       id: BRAND_IDS.outback,
       name: 'Outback Steakhouse',
       taxId: '45678901000104',
       type: 'steakhouse',
-      avatar: 'https://upload.wikimedia.org/wikipedia/commons/4/40/Outback_Steakhouse.svg'
+      avatar: 'https://picsum.photos/400/400?random=13&place=review'
     },
     {
       id: BRAND_IDS.mcdonalds,
       name: "McDonald's",
       taxId: '56789012000105',
       type: 'fast-food',
-      avatar: 'https://upload.wikimedia.org/wikipedia/commons/4/4b/McDonald%27s_logo.svg'
+      avatar: 'https://picsum.photos/400/400?random=14&place=review'
     },
     {
       id: BRAND_IDS.barelhoBar,
       name: 'Barelho Bar',
       taxId: '61234567000110',
       type: 'bar',
-      avatar: null
+      avatar: 'https://picsum.photos/400/400?random=15&place=review'
     },
     {
       id: BRAND_IDS.prudentePub,
       name: 'Prudente Pub',
       taxId: '62345678000111',
       type: 'pub',
-      avatar: null
+      avatar: 'https://picsum.photos/400/400?random=16&place=review'
     },
     {
       id: BRAND_IDS.cantinaBatel,
       name: 'Cantina do Batel',
       taxId: '63456789000112',
       type: 'bar',
-      avatar: null
+      avatar: 'https://picsum.photos/400/400?random=17&place=review'
     },
     {
       id: BRAND_IDS.vilaDoChopp,
       name: 'Vila do Chopp',
       taxId: '64567890000113',
       type: 'bar',
-      avatar: null
+      avatar: 'https://picsum.photos/400/400?random=18&place=review'
     },
     {
       id: BRAND_IDS.moraesWine,
       name: 'Moraes Wine Bar',
       taxId: '65678901000114',
       type: 'wine-bar',
-      avatar: null
+      avatar: 'https://picsum.photos/400/400?random=19&place=review'
     }
   ])
 
@@ -691,155 +695,203 @@ async function seed() {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.burgerPaulista,
       rating: 'crowded',
-      comment: 'Melhor Whopper que ja comi! Atendimento rapido.'
+      comment: 'Melhor Whopper que ja comi! Atendimento rapido.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=100&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review'
     },
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.burgerPaulista,
       rating: 'crowded',
-      comment: 'Muito bom, mas as vezes demora um pouco.'
+      comment: 'Muito bom, mas as vezes demora um pouco.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=101&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review'
     },
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.burgerPaulista,
       rating: 'crowded',
-      comment: 'Sempre lotado na hora do almoco, chega cedo.'
+      comment: 'Sempre lotado na hora do almoco, chega cedo.',
+      placeImageUrl: null,
+      selfieUrl: 'https://picsum.photos/200/200?random=5&place=review'
     },
 
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.burgerMoema,
       rating: 'dead',
-      comment: 'Mais tranquilo que o da Paulista, prefiro esse.'
+      comment: 'Mais tranquilo que o da Paulista, prefiro esse.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=102&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review'
     },
     {
       userId: USER_IDS.ana,
       placeId: PLACE_IDS.burgerMoema,
       rating: 'dead',
-      comment: 'Atendimento rapido, quase sem fila.'
+      comment: 'Atendimento rapido, quase sem fila.',
+      placeImageUrl: null,
+      selfieUrl: null
     },
 
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.pizzaJardins,
       rating: 'crowded',
-      comment: 'Pizza deliciosa, ambiente agradavel.'
+      comment: 'Pizza deliciosa, ambiente agradavel.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=103&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review'
     },
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.pizzaJardins,
       rating: 'crowded',
-      comment: 'Pepperoni incrivel, mas cheio no fim de semana.'
+      comment: 'Pepperoni incrivel, mas cheio no fim de semana.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=104&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review'
     },
 
     {
       userId: USER_IDS.ana,
       placeId: PLACE_IDS.starbucksFaria,
       rating: 'dead',
-      comment: 'Cafe otimo, mas preco salgado.'
+      comment: 'Cafe otimo, mas preco salgado.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=105&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=4&place=review'
     },
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.starbucksFaria,
       rating: 'dead',
-      comment: 'Bom para trabalhar, wifi excelente.'
+      comment: 'Bom para trabalhar, wifi excelente.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=106&place=review',
+      selfieUrl: null
     },
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.starbucksFaria,
       rating: 'dead',
-      comment: 'Sempre tem lugar vago pela manha.'
+      comment: 'Sempre tem lugar vago pela manha.',
+      placeImageUrl: null,
+      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review'
     },
 
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.outbackMoema,
       rating: 'crowded',
-      comment: 'Ribeye perfeito! Bloomin Onion sensacional.'
+      comment: 'Ribeye perfeito! Bloomin Onion sensacional.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=107&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=5&place=review'
     },
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.outbackMoema,
       rating: 'dead',
-      comment: 'Adorei! Perfeito para ocasioes especiais.'
+      comment: 'Adorei! Perfeito para ocasioes especiais.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=108&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review'
     },
 
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.mcdonaldsIbirapuera,
       rating: 'crowded',
-      comment: 'Basico, mas cumpre o que promete.'
+      comment: 'Basico, mas cumpre o que promete.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=109&place=review',
+      selfieUrl: null
     },
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.mcdonaldsIbirapuera,
       rating: 'crowded',
-      comment: 'Cheio depois do parque, espera uns 10 minutos.'
+      comment: 'Cheio depois do parque, espera uns 10 minutos.',
+      placeImageUrl: null,
+      selfieUrl: 'https://picsum.photos/200/200?random=5&place=review'
     },
 
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.barelhoBar,
       rating: 'crowded',
-      comment: 'Negroni impecavel, musica ao vivo na sexta e o lugar lotou rapido.'
+      comment: 'Negroni impecavel, musica ao vivo na sexta e o lugar lotou rapido.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=110&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review'
     },
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.barelhoBar,
       rating: 'crowded',
-      comment: 'Ambiente super agradavel, drinques otimos. Ja virou meu favorito do Batel.'
+      comment: 'Ambiente super agradavel, drinques otimos. Ja virou meu favorito do Batel.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=111&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review'
     },
 
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.prudentePub,
       rating: 'crowded',
-      comment: 'Melhor IPA da cidade, porcao de bolinha de queijo enorme. Vai sempre cheio.'
+      comment: 'Melhor IPA da cidade, porcao de bolinha de queijo enorme. Vai sempre cheio.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=112&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review'
     },
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.prudentePub,
       rating: 'dead',
-      comment: 'Fui numa quarta e tava tranquilo, perfeito pra uma cerveja sem barulho.'
+      comment: 'Fui numa quarta e tava tranquilo, perfeito pra uma cerveja sem barulho.',
+      placeImageUrl: null,
+      selfieUrl: 'https://picsum.photos/200/200?random=5&place=review'
     },
 
     {
       userId: USER_IDS.ana,
       placeId: PLACE_IDS.cantinaBatel,
       rating: 'dead',
-      comment: 'Ambiente intimo, carbonara deliciosa. Bom pra jantar a dois.'
+      comment: 'Ambiente intimo, carbonara deliciosa. Bom pra jantar a dois.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=113&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=4&place=review'
     },
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.cantinaBatel,
       rating: 'crowded',
-      comment: 'No sabado tava bem cheio mas valeu a espera, comida excelente.'
+      comment: 'No sabado tava bem cheio mas valeu a espera, comida excelente.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=114&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review'
     },
 
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.vilaDoChopp,
       rating: 'crowded',
-      comment: 'Point do bairro! Chope bem tirado e porcao de frango generosa.'
+      comment: 'Point do bairro! Chope bem tirado e porcao de frango generosa.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=115&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=5&place=review'
     },
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.vilaDoChopp,
       rating: 'crowded',
-      comment: 'Sempre cheio e animado, preco acessivel pro Batel.'
+      comment: 'Sempre cheio e animado, preco acessivel pro Batel.',
+      placeImageUrl: null,
+      selfieUrl: null
     },
 
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.moraesWine,
       rating: 'dead',
-      comment: 'Curadoria de vinhos naturais impressionante, atendimento atencioso.'
+      comment: 'Curadoria de vinhos naturais impressionante, atendimento atencioso.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=116&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review'
     },
     {
       userId: USER_IDS.ana,
       placeId: PLACE_IDS.moraesWine,
       rating: 'dead',
-      comment: 'Lugar sofisticado, tranquilo e com uma selecao de vinhos que voce nao acha em outro lugar.'
+      comment: 'Lugar sofisticado, tranquilo e com uma selecao de vinhos que voce nao acha em outro lugar.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=117&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=4&place=review'
     }
   ])
 
@@ -972,6 +1024,197 @@ async function seed() {
       eventId: EVENT_IDS.pizza_night,
       userId: USER_IDS.maria,
       content: 'Pizza Hut Jardins e demais, boa escolha Pedro!'
+    }
+  ])
+
+  console.log('Seeding notification preferences...')
+  await db.insert(notificationPreferences).values([
+    {
+      userId: USER_IDS.joao,
+      type: 'event_invitation',
+      pushEnabled: true,
+      inAppEnabled: true
+    },
+    {
+      userId: USER_IDS.joao,
+      type: 'follow_request_created',
+      pushEnabled: false,
+      inAppEnabled: true
+    },
+    {
+      userId: USER_IDS.maria,
+      type: 'event_invitation',
+      pushEnabled: true,
+      inAppEnabled: true
+    },
+    {
+      userId: USER_IDS.ana,
+      type: 'follow_request_created',
+      pushEnabled: true,
+      inAppEnabled: true
+    }
+  ])
+
+  console.log('Seeding app notifications...')
+  const now = Date.now()
+  const minutesAgo = (n: number) => new Date(now - n * 60 * 1000)
+  const hoursAgo = (n: number) => new Date(now - n * 60 * 60 * 1000)
+  const daysAgo = (n: number) => new Date(now - n * 24 * 60 * 60 * 1000)
+
+  await db.insert(appNotifications).values([
+    {
+      userId: USER_IDS.joao,
+      type: 'follow_request_created',
+      title: 'Nova solicitacao de follow',
+      body: 'Ana Costa quer seguir voce.',
+      data: {
+        type: 'follow_request_received',
+        url: 'myapp://social/follow-requests/received',
+        requesterId: USER_IDS.ana
+      },
+      readAt: null,
+      createdAt: minutesAgo(8)
+    },
+    {
+      userId: USER_IDS.joao,
+      type: 'event_invitation',
+      title: 'Novo convite para evento',
+      body: 'Maria Santos convidou voce para Happy Hour no Starbucks.',
+      data: {
+        type: 'event_invitation_received',
+        url: 'myapp://events/share/eeeeeeee-2222-2222-2222-222222222222',
+        eventId: 'eeeeeeee-2222-2222-2222-222222222222',
+        ownerId: USER_IDS.maria
+      },
+      readAt: null,
+      createdAt: hoursAgo(2)
+    },
+    {
+      userId: USER_IDS.joao,
+      type: 'event_invitation',
+      title: 'Novo convite para evento',
+      body: 'Pedro Oliveira convidou voce para Pizza Night Jardins.',
+      data: {
+        type: 'event_invitation_received',
+        url: 'myapp://events/share/eeeeeeee-3333-3333-3333-333333333333',
+        eventId: 'eeeeeeee-3333-3333-3333-333333333333',
+        ownerId: USER_IDS.pedro
+      },
+      readAt: null,
+      createdAt: hoursAgo(6)
+    },
+    {
+      userId: USER_IDS.joao,
+      type: 'follow_request_created',
+      title: 'Nova solicitacao de follow',
+      body: 'Lucas Ferreira quer seguir voce.',
+      data: {
+        type: 'follow_request_received',
+        url: 'myapp://social/follow-requests/received',
+        requesterId: USER_IDS.lucas
+      },
+      readAt: daysAgo(2),
+      createdAt: daysAgo(3)
+    },
+    {
+      userId: USER_IDS.joao,
+      type: 'event_invitation',
+      title: 'Novo convite para evento',
+      body: 'Maria Santos convidou voce para um churrasco antigo.',
+      data: {
+        type: 'event_invitation_received',
+        url: 'myapp://events/share/eeeeeeee-1111-1111-1111-111111111111',
+        eventId: 'eeeeeeee-1111-1111-1111-111111111111',
+        ownerId: USER_IDS.maria
+      },
+      readAt: daysAgo(5),
+      createdAt: daysAgo(6)
+    },
+
+    {
+      userId: USER_IDS.maria,
+      type: 'event_invitation',
+      title: 'Novo convite para evento',
+      body: 'Joao Silva convidou voce para Churrasco na Paulista.',
+      data: {
+        type: 'event_invitation_received',
+        url: 'myapp://events/share/eeeeeeee-1111-1111-1111-111111111111',
+        eventId: 'eeeeeeee-1111-1111-1111-111111111111',
+        ownerId: USER_IDS.joao
+      },
+      readAt: null,
+      createdAt: minutesAgo(30)
+    },
+    {
+      userId: USER_IDS.maria,
+      type: 'event_invitation',
+      title: 'Novo convite para evento',
+      body: 'Pedro Oliveira convidou voce para Pizza Night Jardins.',
+      data: {
+        type: 'event_invitation_received',
+        url: 'myapp://events/share/eeeeeeee-3333-3333-3333-333333333333',
+        eventId: 'eeeeeeee-3333-3333-3333-333333333333',
+        ownerId: USER_IDS.pedro
+      },
+      readAt: hoursAgo(4),
+      createdAt: hoursAgo(5)
+    },
+
+    {
+      userId: USER_IDS.ana,
+      type: 'event_invitation',
+      title: 'Novo convite para evento',
+      body: 'Joao Silva convidou voce para Churrasco na Paulista.',
+      data: {
+        type: 'event_invitation_received',
+        url: 'myapp://events/share/eeeeeeee-1111-1111-1111-111111111111',
+        eventId: 'eeeeeeee-1111-1111-1111-111111111111',
+        ownerId: USER_IDS.joao
+      },
+      readAt: null,
+      createdAt: hoursAgo(1)
+    },
+    {
+      userId: USER_IDS.ana,
+      type: 'event_invitation',
+      title: 'Novo convite para evento',
+      body: 'Pedro Oliveira convidou voce para Pizza Night Jardins.',
+      data: {
+        type: 'event_invitation_received',
+        url: 'myapp://events/share/eeeeeeee-3333-3333-3333-333333333333',
+        eventId: 'eeeeeeee-3333-3333-3333-333333333333',
+        ownerId: USER_IDS.pedro
+      },
+      readAt: null,
+      createdAt: daysAgo(1)
+    },
+
+    {
+      userId: USER_IDS.lucas,
+      type: 'follow_request_created',
+      title: 'Nova solicitacao de follow',
+      body: 'Ana Costa quer seguir voce.',
+      data: {
+        type: 'follow_request_received',
+        url: 'myapp://social/follow-requests/received',
+        requesterId: USER_IDS.ana
+      },
+      readAt: null,
+      createdAt: hoursAgo(3)
+    },
+    {
+      userId: USER_IDS.lucas,
+      type: 'event_invitation',
+      title: 'Novo convite para evento',
+      body: 'Maria Santos convidou voce para Happy Hour no Starbucks.',
+      data: {
+        type: 'event_invitation_received',
+        url: 'myapp://events/share/eeeeeeee-2222-2222-2222-222222222222',
+        eventId: 'eeeeeeee-2222-2222-2222-222222222222',
+        ownerId: USER_IDS.maria
+      },
+      readAt: hoursAgo(8),
+      createdAt: hoursAgo(10)
     }
   ])
 

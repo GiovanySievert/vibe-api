@@ -44,8 +44,8 @@ export class ReindexPlaces {
               id: place.id,
               name: place.name,
               location: {
-                lat: place.location.lat,
-                lon: place.location.lng
+                lat: Number(place.location.lat),
+                lon: Number(place.location.lng)
               }
             })
           }
