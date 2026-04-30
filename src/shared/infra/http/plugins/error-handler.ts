@@ -19,6 +19,8 @@ enum ErrorCode {
 }
 
 const DOMAIN_ERRORS: Record<string, { status: number; code: string }> = {
+  CannotReportYourselfException: { status: HttpStatus.BAD_REQUEST, code: ErrorCode.VALIDATION },
+  UserAlreadyReportedException: { status: HttpStatus.CONFLICT, code: ErrorCode.CONFLICT },
   EventNotFoundException: { status: HttpStatus.NOT_FOUND, code: ErrorCode.NOT_FOUND },
   EventParticipantNotFoundException: { status: HttpStatus.NOT_FOUND, code: ErrorCode.NOT_FOUND },
   EventNotOwnerException: { status: HttpStatus.FORBIDDEN, code: ErrorCode.FORBIDDEN },
