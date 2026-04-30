@@ -37,6 +37,21 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: vibe-api-redis-dev
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data_dev:/data
+    networks:
+      - vibe-network-dev
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app:
     image: oven/bun:1.2.21-alpine
     container_name: vibe-api-app-dev
@@ -61,6 +76,7 @@ services:
 volumes:
   postgres_data_dev:
   rabbitmq_data_dev:
+  redis_data_dev:
 
 networks:
   vibe-network-dev:
