@@ -1,2 +1,2 @@
-export * from './send-event-invitation-push.handler'
-export * from './send-follow-request-push.handler'
+export * from './dispatch-event-invitation.handler'
+export * from './dispatch-follow-request.handler'

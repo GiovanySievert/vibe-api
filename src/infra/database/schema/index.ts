@@ -37,4 +37,12 @@ export { events, eventsRelations, eventParticipants, eventParticipantsRelations 
 
 export { eventComments, eventCommentsRelations } from '@src/modules/event-comments/application/schemas'
 
-export { devicePushTokens } from '@src/modules/notifications/application/schemas'
+export {
+  devicePushTokens,
+  appNotifications,
+  notificationPreferences
+} from '@src/modules/notifications/application/schemas'
+
+export { userReports, reportReasonEnum } from '@src/modules/reports/application/schemas'
+
+export { contactMessages } from '@src/modules/contact-messages/application/schemas'

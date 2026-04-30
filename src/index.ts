@@ -14,12 +14,16 @@ import { FollowerRoutes, FollowRequestRoutes, FollowStatsRoutes } from './module
 import { PublicUsersRoute } from './modules/users/infrastructure/http/routes'
 import { healthRoutes } from './modules/health/infrastructure/http/routes/health.routes'
 import { UserBlockRoutes } from './modules/blocks/infrastructure/http/routes'
+import { UserReportRoutes } from './modules/reports/infrastructure/http/routes'
+import { ContactMessageRoutes } from './modules/contact-messages/infrastructure/http/routes'
+import { UserProfileRoutes } from './modules/user-profile/infrastructure/http/routes'
 import { EventRoutes } from './modules/events/infrastructure/http/routes'
 import { EventCommentRoutes } from './modules/event-comments/infrastructure/http/routes'
 import { PlaceReviewRoutes } from './modules/place-review/infrastructure/http/routes'
 import { appLogger } from './config/logger'
 import { loggingMiddleware } from './shared/middlewares/logging.middleware'
 import { NotificationDeviceRoutes } from './modules/notifications/infrastructure/http/routes/notification-device.routes'
+import { NotificationsRoutes } from './modules/notifications/infrastructure/http/routes/notifications.routes'
 import { NotificationsModule } from './modules/notifications/notifications.module'
 import { applicationEventBus } from './shared/application/events'
 import { rabbitMQConnection } from './shared/infra/messaging/rabbitmq-connection'
@@ -44,10 +48,14 @@ const app = new Elysia()
   .use(FollowRequestRoutes)
   .use(FollowStatsRoutes)
   .use(UserBlockRoutes)
+  .use(UserReportRoutes)
+  .use(ContactMessageRoutes)
+  .use(UserProfileRoutes)
   .use(EventRoutes)
   .use(EventCommentRoutes)
   .use(PlaceReviewRoutes)
   .use(NotificationDeviceRoutes)
+  .use(NotificationsRoutes)
   .use(
     cors({
       origin: 'http://localhost:3001',
