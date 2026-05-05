@@ -10,7 +10,8 @@ export const UserProfileRoutes = (app: Elysia) => {
       auth: true,
       body: t.Object({
         name: t.String({ minLength: 1, maxLength: 100 }),
-        bio: t.Optional(t.String({ maxLength: 300 }))
+        bio: t.Optional(t.String({ maxLength: 300 })),
+        image: t.Optional(t.String())
       }),
       detail: {
         tags: ['User Profile'],
