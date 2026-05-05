@@ -17,7 +17,9 @@ import {
   eventParticipants,
   eventComments,
   appNotifications,
-  notificationPreferences
+  notificationPreferences,
+  userStreaks,
+  userWeeklyActivity
 } from '../schema'
 
 const USER_IDS = {
@@ -65,6 +67,8 @@ async function seed() {
   await db.delete(eventParticipants)
   await db.delete(events)
   await db.delete(placeReviews)
+  await db.delete(userWeeklyActivity)
+  await db.delete(userStreaks)
   await db.delete(userFavoritesPlaces)
   await db.delete(userBlocks)
   await db.delete(followRequests)
@@ -893,6 +897,86 @@ async function seed() {
       placeImageUrl: 'https://picsum.photos/800/600?random=117&place=review',
       selfieUrl: 'https://picsum.photos/200/200?random=4&place=review'
     }
+  ])
+
+  console.log('Seeding user streaks...')
+  await db.insert(userStreaks).values([
+    {
+      userId: USER_IDS.joao,
+      currentStreak: 6,
+      longestStreak: 6,
+      lastActiveWeek: 18,
+      lastActiveYear: 2026,
+      weeklyThreshold: 2
+    },
+    {
+      userId: USER_IDS.maria,
+      currentStreak: 6,
+      longestStreak: 8,
+      lastActiveWeek: 18,
+      lastActiveYear: 2026,
+      weeklyThreshold: 2
+    },
+    {
+      userId: USER_IDS.pedro,
+      currentStreak: 4,
+      longestStreak: 4,
+      lastActiveWeek: 18,
+      lastActiveYear: 2026,
+      weeklyThreshold: 2
+    },
+    {
+      userId: USER_IDS.ana,
+      currentStreak: 3,
+      longestStreak: 5,
+      lastActiveWeek: 18,
+      lastActiveYear: 2026,
+      weeklyThreshold: 2
+    },
+    {
+      userId: USER_IDS.lucas,
+      currentStreak: 3,
+      longestStreak: 3,
+      lastActiveWeek: 18,
+      lastActiveYear: 2026,
+      weeklyThreshold: 2
+    }
+  ])
+
+  console.log('Seeding user weekly activity...')
+  await db.insert(userWeeklyActivity).values([
+    { userId: USER_IDS.joao, isoYear: 2026, isoWeek: 13, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.joao, isoYear: 2026, isoWeek: 14, reviewCount: 3, streakContributed: true },
+    { userId: USER_IDS.joao, isoYear: 2026, isoWeek: 15, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.joao, isoYear: 2026, isoWeek: 16, reviewCount: 4, streakContributed: true },
+    { userId: USER_IDS.joao, isoYear: 2026, isoWeek: 17, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.joao, isoYear: 2026, isoWeek: 18, reviewCount: 3, streakContributed: true },
+
+    { userId: USER_IDS.maria, isoYear: 2026, isoWeek: 13, reviewCount: 3, streakContributed: true },
+    { userId: USER_IDS.maria, isoYear: 2026, isoWeek: 14, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.maria, isoYear: 2026, isoWeek: 15, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.maria, isoYear: 2026, isoWeek: 16, reviewCount: 3, streakContributed: true },
+    { userId: USER_IDS.maria, isoYear: 2026, isoWeek: 17, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.maria, isoYear: 2026, isoWeek: 18, reviewCount: 2, streakContributed: true },
+
+    { userId: USER_IDS.pedro, isoYear: 2026, isoWeek: 13, reviewCount: 1, streakContributed: false },
+    { userId: USER_IDS.pedro, isoYear: 2026, isoWeek: 14, reviewCount: 1, streakContributed: false },
+    { userId: USER_IDS.pedro, isoYear: 2026, isoWeek: 15, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.pedro, isoYear: 2026, isoWeek: 16, reviewCount: 3, streakContributed: true },
+    { userId: USER_IDS.pedro, isoYear: 2026, isoWeek: 17, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.pedro, isoYear: 2026, isoWeek: 18, reviewCount: 2, streakContributed: true },
+
+    { userId: USER_IDS.ana, isoYear: 2026, isoWeek: 14, reviewCount: 1, streakContributed: false },
+    { userId: USER_IDS.ana, isoYear: 2026, isoWeek: 16, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.ana, isoYear: 2026, isoWeek: 17, reviewCount: 3, streakContributed: true },
+    { userId: USER_IDS.ana, isoYear: 2026, isoWeek: 18, reviewCount: 2, streakContributed: true },
+
+    { userId: USER_IDS.lucas, isoYear: 2026, isoWeek: 13, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.lucas, isoYear: 2026, isoWeek: 14, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.lucas, isoYear: 2026, isoWeek: 15, reviewCount: 1, streakContributed: false },
+    { userId: USER_IDS.lucas, isoYear: 2026, isoWeek: 16, reviewCount: 3, streakContributed: true },
+    { userId: USER_IDS.lucas, isoYear: 2026, isoWeek: 17, reviewCount: 2, streakContributed: true },
+    { userId: USER_IDS.lucas, isoYear: 2026, isoWeek: 18, reviewCount: 2, streakContributed: true }
   ])
 
   console.log('Seeding place opening hours...')
