@@ -2,13 +2,21 @@ import { ApplicationEventBus } from '@src/shared/application/events'
 import { env } from '@src/config/env'
 import { EVENT_CREATED_EVENT } from '@src/modules/events/application/events/event-created.event'
 import { FOLLOW_REQUEST_CREATED_EVENT } from '@src/modules/follow/application/events/follow-request-created.event'
+import { FOLLOW_REQUEST_ACCEPTED_EVENT } from '@src/modules/follow/application/events/follow-request-accepted.event'
+import { EVENT_COMMENT_CREATED_EVENT } from '@src/modules/event-comments/application/events/event-comment-created.event'
+import { PLACE_REVIEW_COMMENT_CREATED_EVENT } from '@src/modules/place-review/application/events/place-review-comment-created.event'
+import { PLACE_REVIEW_REACTION_SET_EVENT } from '@src/modules/place-review/application/events/place-review-reaction-set.event'
 
 import { EmailSender } from './application/ports/email-sender'
 import { NotificationChannel } from './application/ports/notification-channel'
 import { PushSender } from './application/ports/push-sender'
 import {
   DispatchEventInvitationHandler,
-  DispatchFollowRequestHandler
+  DispatchFollowRequestHandler,
+  DispatchFollowRequestAcceptedHandler,
+  DispatchEventCommentHandler,
+  DispatchPlaceReviewCommentHandler,
+  DispatchPlaceReviewReactionHandler
 } from './application/event-handlers'
 import { CountUnreadNotifications } from './application/use-cases/count-unread-notifications'
 import { DispatchNotification } from './application/use-cases/dispatch-notification'
@@ -40,6 +48,10 @@ export class NotificationsModule {
   public readonly dispatchNotification: DispatchNotification
   private readonly dispatchEventInvitationHandler: DispatchEventInvitationHandler
   private readonly dispatchFollowRequestHandler: DispatchFollowRequestHandler
+  private readonly dispatchFollowRequestAcceptedHandler: DispatchFollowRequestAcceptedHandler
+  private readonly dispatchEventCommentHandler: DispatchEventCommentHandler
+  private readonly dispatchPlaceReviewCommentHandler: DispatchPlaceReviewCommentHandler
+  private readonly dispatchPlaceReviewReactionHandler: DispatchPlaceReviewReactionHandler
 
   constructor(
     apiKey: string = env.RESEND_API_KEY,
@@ -68,6 +80,10 @@ export class NotificationsModule {
 
     this.dispatchEventInvitationHandler = new DispatchEventInvitationHandler(this.dispatchNotification)
     this.dispatchFollowRequestHandler = new DispatchFollowRequestHandler(this.dispatchNotification)
+    this.dispatchFollowRequestAcceptedHandler = new DispatchFollowRequestAcceptedHandler(this.dispatchNotification)
+    this.dispatchEventCommentHandler = new DispatchEventCommentHandler(this.dispatchNotification)
+    this.dispatchPlaceReviewCommentHandler = new DispatchPlaceReviewCommentHandler(this.dispatchNotification)
+    this.dispatchPlaceReviewReactionHandler = new DispatchPlaceReviewReactionHandler(this.dispatchNotification)
 
     this.notificationDeviceController = new NotificationDeviceController(
       registerDevicePushToken,
@@ -94,6 +110,26 @@ export class NotificationsModule {
       FOLLOW_REQUEST_CREATED_EVENT,
       this.dispatchFollowRequestHandler,
       'notifications.dispatch-follow-request'
+    )
+    applicationEventBus.subscribe(
+      FOLLOW_REQUEST_ACCEPTED_EVENT,
+      this.dispatchFollowRequestAcceptedHandler,
+      'notifications.dispatch-follow-request-accepted'
+    )
+    applicationEventBus.subscribe(
+      EVENT_COMMENT_CREATED_EVENT,
+      this.dispatchEventCommentHandler,
+      'notifications.dispatch-event-comment'
+    )
+    applicationEventBus.subscribe(
+      PLACE_REVIEW_COMMENT_CREATED_EVENT,
+      this.dispatchPlaceReviewCommentHandler,
+      'notifications.dispatch-place-review-comment'
+    )
+    applicationEventBus.subscribe(
+      PLACE_REVIEW_REACTION_SET_EVENT,
+      this.dispatchPlaceReviewReactionHandler,
+      'notifications.dispatch-place-review-reaction'
     )
   }
 }

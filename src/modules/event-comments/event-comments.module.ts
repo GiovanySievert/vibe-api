@@ -1,4 +1,5 @@
 import { DrizzleEventRepository } from '@src/modules/events/infrastructure/persistence/event.repository.drizzle'
+import { applicationEventBus } from '@src/shared/application/events'
 
 import { CreateEventComment, DeleteEventComment, ListEventComments } from './application/use-cases'
 import { EventCommentController } from './infrastructure/http/controllers/event-comment.controller'
@@ -19,7 +20,8 @@ export class EventCommentsModule {
       eventRepository,
       createEventCommentService,
       deleteEventCommentService,
-      listEventCommentsService
+      listEventCommentsService,
+      applicationEventBus
     )
   }
 }

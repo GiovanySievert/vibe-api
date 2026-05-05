@@ -10,6 +10,8 @@ import {
   AlreadyFollowingException
 } from '@src/modules/follow/domain/exceptions'
 import { FollowRequestStatus } from '@src/modules/follow/domain/types'
+import { ApplicationEventBus } from '@src/shared/application/events'
+import { createFollowRequestAcceptedEvent } from '@src/modules/follow/application/events/follow-request-accepted.event'
 
 export class AcceptFollowRequest {
   constructor(
@@ -18,10 +20,11 @@ export class AcceptFollowRequest {
     private readonly updateFollowRequest: UpdateFollowRequest,
     private readonly createFollow: CreateFollower,
     private readonly incrementFollowingStats: IncrementFollowingStats,
-    private readonly incrementFollowersStats: IncrementFollowersStats
+    private readonly incrementFollowersStats: IncrementFollowersStats,
+    private readonly applicationEventBus: ApplicationEventBus
   ) {}
 
-  async execute(requestFollowId: string): Promise<FollowRequests> {
+  async execute(requestFollowId: string, acceptorName: string): Promise<FollowRequests> {
     const followRequest = await this.followRequestRepo.getById(requestFollowId)
 
     if (!followRequest) {
@@ -47,6 +50,15 @@ export class AcceptFollowRequest {
 
     await this.incrementFollowingStats.execute(followRequest.requesterId)
     await this.incrementFollowersStats.execute(followRequest.requestedId)
+
+    await this.applicationEventBus.publish(
+      createFollowRequestAcceptedEvent({
+        followRequestId,
+        requesterId: followRequest.requesterId,
+        requestedId: followRequest.requestedId,
+        requestedName: acceptorName
+      })
+    )
 
     return updatedRequest
   }

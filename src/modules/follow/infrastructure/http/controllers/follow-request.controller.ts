@@ -34,8 +34,8 @@ export class FollowRequestController {
     return await this.listRequestedFollowRequest.execute(user.id)
   }
 
-  async accept({ params }: { params: { requestFollowId: string } }) {
-    return await this.acceptFollowRequest.execute(params.requestFollowId)
+  async accept({ params, user }: { params: { requestFollowId: string }; user: User }) {
+    return await this.acceptFollowRequest.execute(params.requestFollowId, user.name)
   }
 
   async reject({ params }: { params: { requestFollowId: string } }) {

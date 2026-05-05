@@ -82,7 +82,8 @@ export class FollowModule {
       updateFollowRequestService,
       createFollowerService,
       incrementFollowingStatsService,
-      incrementFollowersStatsService
+      incrementFollowersStatsService,
+      applicationEventBus
     )
     const rejectFollowRequestService = new RejectFollowRequest(followRequestRepo, updateFollowRequestService)
     const cancelFollowRequestService = new CancelFollowRequest(followRequestRepo, updateFollowRequestService)

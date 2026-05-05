@@ -1,2 +1,6 @@
 export * from './dispatch-event-invitation.handler'
 export * from './dispatch-follow-request.handler'
+export * from './dispatch-follow-request-accepted.handler'
+export * from './dispatch-event-comment.handler'
+export * from './dispatch-place-review-comment.handler'
+export * from './dispatch-place-review-reaction.handler'

@@ -1,4 +1,11 @@
-export const NOTIFICATION_TYPES = ['event_invitation', 'follow_request_created'] as const
+export const NOTIFICATION_TYPES = [
+  'event_invitation',
+  'follow_request_created',
+  'follow_request_accepted',
+  'event_comment_created',
+  'place_review_comment',
+  'place_review_reaction'
+] as const
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number]
 
