@@ -27,7 +27,8 @@ const DOMAIN_ERRORS: Record<string, { status: number; code: string }> = {
   EventInvitationAlreadyRespondedException: { status: HttpStatus.CONFLICT, code: ErrorCode.CONFLICT },
   PlaceReviewNotFoundException: { status: HttpStatus.NOT_FOUND, code: ErrorCode.NOT_FOUND },
   UnauthorizedPlaceReviewActionException: { status: HttpStatus.FORBIDDEN, code: ErrorCode.FORBIDDEN },
-  PlaceReviewAlreadyExistsException: { status: HttpStatus.CONFLICT, code: ErrorCode.CONFLICT }
+  PlaceReviewAlreadyExistsException: { status: HttpStatus.CONFLICT, code: ErrorCode.CONFLICT },
+  UnsupportedContentTypeException: { status: HttpStatus.BAD_REQUEST, code: ErrorCode.VALIDATION }
 }
 
 export const errorHandler = (app: Elysia) =>
