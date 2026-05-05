@@ -1,8 +1,15 @@
-import { pgTable, uuid, timestamp } from 'drizzle-orm/pg-core'
+import { index, pgTable, uuid, timestamp } from 'drizzle-orm/pg-core'
 
-export const userBlocks = pgTable('user_blocks', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  blockerId: uuid('blocker_id').notNull(),
-  blockedId: uuid('blocked_id').notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow()
-})
+export const userBlocks = pgTable(
+  'user_blocks',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    blockerId: uuid('blocker_id').notNull(),
+    blockedId: uuid('blocked_id').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow()
+  },
+  (table) => [
+    index('user_blocks_blocker_idx').on(table.blockerId),
+    index('user_blocks_blocked_idx').on(table.blockedId)
+  ]
+)
