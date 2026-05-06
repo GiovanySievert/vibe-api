@@ -91,6 +91,16 @@ export class DrizzleFollowRepository implements FollowersRepository {
   }
 
   async getFollowStatus(followerId: string, followingId: string): Promise<FollowStatusResponseDto> {
+    const [follow] = await db
+      .select()
+      .from(followers)
+      .where(and(eq(followers.followerId, followerId), eq(followers.followingId, followingId)))
+      .limit(1)
+
+    if (follow) {
+      return FollowStatusResponseDtoMapper.create(FollowStatus.FOLLOWING, follow.id)
+    }
+
     const [request] = await db
       .select()
       .from(followRequests)
