@@ -46,3 +46,7 @@ export {
 export { userReports, reportReasonEnum } from '@src/modules/reports/application/schemas'
 
 export { contactMessages } from '@src/modules/contact-messages/application/schemas'
+
+export { userStreaks, userWeeklyActivity } from '@src/modules/streaks/application/schemas'
+
+export { userPlaceBadges, placeReviewBadgeTierEnum } from '@src/modules/badges/application/schemas'

@@ -698,14 +698,17 @@ async function seed() {
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.burgerPaulista,
+      placeName: 'Burger King - Paulista',
       rating: 'crowded',
       comment: 'Melhor Whopper que ja comi! Atendimento rapido.',
       placeImageUrl: 'https://picsum.photos/800/600?random=100&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review'
+      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review',
+      selfieFriendsOnly: true
     },
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.burgerPaulista,
+      placeName: 'Burger King - Paulista',
       rating: 'crowded',
       comment: 'Muito bom, mas as vezes demora um pouco.',
       placeImageUrl: 'https://picsum.photos/800/600?random=101&place=review',
@@ -714,6 +717,7 @@ async function seed() {
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.burgerPaulista,
+      placeName: 'Burger King - Paulista',
       rating: 'crowded',
       comment: 'Sempre lotado na hora do almoco, chega cedo.',
       placeImageUrl: null,
@@ -723,14 +727,17 @@ async function seed() {
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.burgerMoema,
+      placeName: 'Burger King - Moema',
       rating: 'dead',
       comment: 'Mais tranquilo que o da Paulista, prefiro esse.',
       placeImageUrl: 'https://picsum.photos/800/600?random=102&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review'
+      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review',
+      selfieFriendsOnly: true
     },
     {
       userId: USER_IDS.ana,
       placeId: PLACE_IDS.burgerMoema,
+      placeName: 'Burger King - Moema',
       rating: 'dead',
       comment: 'Atendimento rapido, quase sem fila.',
       placeImageUrl: null,
@@ -740,6 +747,7 @@ async function seed() {
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.pizzaJardins,
+      placeName: 'Pizza Hut - Jardins',
       rating: 'crowded',
       comment: 'Pizza deliciosa, ambiente agradavel.',
       placeImageUrl: 'https://picsum.photos/800/600?random=103&place=review',
@@ -748,15 +756,18 @@ async function seed() {
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.pizzaJardins,
+      placeName: 'Pizza Hut - Jardins',
       rating: 'crowded',
       comment: 'Pepperoni incrivel, mas cheio no fim de semana.',
       placeImageUrl: 'https://picsum.photos/800/600?random=104&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review'
+      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review',
+      selfieFriendsOnly: true
     },
 
     {
       userId: USER_IDS.ana,
       placeId: PLACE_IDS.starbucksFaria,
+      placeName: 'Starbucks - Faria Lima',
       rating: 'dead',
       comment: 'Cafe otimo, mas preco salgado.',
       placeImageUrl: 'https://picsum.photos/800/600?random=105&place=review',
@@ -765,6 +776,7 @@ async function seed() {
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.starbucksFaria,
+      placeName: 'Starbucks - Faria Lima',
       rating: 'dead',
       comment: 'Bom para trabalhar, wifi excelente.',
       placeImageUrl: 'https://picsum.photos/800/600?random=106&place=review',
@@ -773,6 +785,7 @@ async function seed() {
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.starbucksFaria,
+      placeName: 'Starbucks - Faria Lima',
       rating: 'dead',
       comment: 'Sempre tem lugar vago pela manha.',
       placeImageUrl: null,
@@ -782,6 +795,7 @@ async function seed() {
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.outbackMoema,
+      placeName: 'Outback - Moema',
       rating: 'crowded',
       comment: 'Ribeye perfeito! Bloomin Onion sensacional.',
       placeImageUrl: 'https://picsum.photos/800/600?random=107&place=review',
@@ -790,6 +804,7 @@ async function seed() {
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.outbackMoema,
+      placeName: 'Outback - Moema',
       rating: 'dead',
       comment: 'Adorei! Perfeito para ocasioes especiais.',
       placeImageUrl: 'https://picsum.photos/800/600?random=108&place=review',
@@ -799,6 +814,7 @@ async function seed() {
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.mcdonaldsIbirapuera,
+      placeName: "McDonald's - Ibirapuera",
       rating: 'crowded',
       comment: 'Basico, mas cumpre o que promete.',
       placeImageUrl: 'https://picsum.photos/800/600?random=109&place=review',
@@ -807,6 +823,7 @@ async function seed() {
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.mcdonaldsIbirapuera,
+      placeName: "McDonald's - Ibirapuera",
       rating: 'crowded',
       comment: 'Cheio depois do parque, espera uns 10 minutos.',
       placeImageUrl: null,
@@ -816,14 +833,17 @@ async function seed() {
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.barelhoBar,
+      placeName: 'Barelho Bar',
       rating: 'crowded',
       comment: 'Negroni impecavel, musica ao vivo na sexta e o lugar lotou rapido.',
       placeImageUrl: 'https://picsum.photos/800/600?random=110&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review'
+      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review',
+      selfieFriendsOnly: true
     },
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.barelhoBar,
+      placeName: 'Barelho Bar',
       rating: 'crowded',
       comment: 'Ambiente super agradavel, drinques otimos. Ja virou meu favorito do Batel.',
       placeImageUrl: 'https://picsum.photos/800/600?random=111&place=review',
@@ -833,14 +853,17 @@ async function seed() {
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.prudentePub,
+      placeName: 'Prudente Pub',
       rating: 'crowded',
       comment: 'Melhor IPA da cidade, porcao de bolinha de queijo enorme. Vai sempre cheio.',
       placeImageUrl: 'https://picsum.photos/800/600?random=112&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review'
+      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review',
+      selfieFriendsOnly: true
     },
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.prudentePub,
+      placeName: 'Prudente Pub',
       rating: 'dead',
       comment: 'Fui numa quarta e tava tranquilo, perfeito pra uma cerveja sem barulho.',
       placeImageUrl: null,
@@ -850,6 +873,7 @@ async function seed() {
     {
       userId: USER_IDS.ana,
       placeId: PLACE_IDS.cantinaBatel,
+      placeName: 'Cantina do Batel',
       rating: 'dead',
       comment: 'Ambiente intimo, carbonara deliciosa. Bom pra jantar a dois.',
       placeImageUrl: 'https://picsum.photos/800/600?random=113&place=review',
@@ -858,6 +882,7 @@ async function seed() {
     {
       userId: USER_IDS.maria,
       placeId: PLACE_IDS.cantinaBatel,
+      placeName: 'Cantina do Batel',
       rating: 'crowded',
       comment: 'No sabado tava bem cheio mas valeu a espera, comida excelente.',
       placeImageUrl: 'https://picsum.photos/800/600?random=114&place=review',
@@ -867,6 +892,7 @@ async function seed() {
     {
       userId: USER_IDS.lucas,
       placeId: PLACE_IDS.vilaDoChopp,
+      placeName: 'Vila do Chopp',
       rating: 'crowded',
       comment: 'Point do bairro! Chope bem tirado e porcao de frango generosa.',
       placeImageUrl: 'https://picsum.photos/800/600?random=115&place=review',
@@ -875,6 +901,7 @@ async function seed() {
     {
       userId: USER_IDS.pedro,
       placeId: PLACE_IDS.vilaDoChopp,
+      placeName: 'Vila do Chopp',
       rating: 'crowded',
       comment: 'Sempre cheio e animado, preco acessivel pro Batel.',
       placeImageUrl: null,
@@ -884,6 +911,7 @@ async function seed() {
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.moraesWine,
+      placeName: 'Moraes Wine',
       rating: 'dead',
       comment: 'Curadoria de vinhos naturais impressionante, atendimento atencioso.',
       placeImageUrl: 'https://picsum.photos/800/600?random=116&place=review',
@@ -892,10 +920,12 @@ async function seed() {
     {
       userId: USER_IDS.ana,
       placeId: PLACE_IDS.moraesWine,
+      placeName: 'Moraes Wine',
       rating: 'dead',
       comment: 'Lugar sofisticado, tranquilo e com uma selecao de vinhos que voce nao acha em outro lugar.',
       placeImageUrl: 'https://picsum.photos/800/600?random=117&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=4&place=review'
+      selfieUrl: 'https://picsum.photos/200/200?random=4&place=review',
+      selfieFriendsOnly: true
     }
   ])
 

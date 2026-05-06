@@ -20,6 +20,9 @@ import { UserProfileRoutes } from './modules/user-profile/infrastructure/http/ro
 import { EventRoutes } from './modules/events/infrastructure/http/routes'
 import { EventCommentRoutes } from './modules/event-comments/infrastructure/http/routes'
 import { PlaceReviewRoutes } from './modules/place-review/infrastructure/http/routes'
+import { BadgesRoutes } from './modules/badges/infrastructure/http/routes'
+import { StreakRoutes } from './modules/streaks/infrastructure/http/routes'
+import { StorageRoutes } from './modules/storage/infrastructure/http/routes'
 import { appLogger } from './config/logger'
 import { loggingMiddleware } from './shared/middlewares/logging.middleware'
 import { NotificationDeviceRoutes } from './modules/notifications/infrastructure/http/routes/notification-device.routes'
@@ -54,6 +57,9 @@ const app = new Elysia()
   .use(EventRoutes)
   .use(EventCommentRoutes)
   .use(PlaceReviewRoutes)
+  .use(BadgesRoutes)
+  .use(StreakRoutes)
+  .use(StorageRoutes)
   .use(NotificationDeviceRoutes)
   .use(NotificationsRoutes)
   .use(
