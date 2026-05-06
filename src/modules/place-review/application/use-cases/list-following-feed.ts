@@ -1,31 +1,23 @@
 import { FollowChecker, PlaceReviewRepository } from '@src/modules/place-review/domain/repositories'
 import { FeedReviewItem } from '@src/modules/place-review/domain/types'
 
-export class ListPlaceReviews {
+export class ListFollowingFeed {
   constructor(
     private readonly placeReviewRepo: PlaceReviewRepository,
     private readonly followChecker: FollowChecker
   ) {}
 
-  async executeByPlace(placeId: string, since: Date, page?: number, viewerId?: string): Promise<FeedReviewItem[]> {
-    const items = await this.placeReviewRepo.listByPlace(placeId, since, page)
-    return this.applySelfieVisibility(items, viewerId)
-  }
-
-  async executeByUser(userId: string, page?: number, viewerId?: string): Promise<FeedReviewItem[]> {
-    const items = await this.placeReviewRepo.listByUser(userId, page)
-    return this.applySelfieVisibility(items, viewerId)
+  async execute(userId: string, page?: number): Promise<FeedReviewItem[]> {
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    const items = await this.placeReviewRepo.listFollowingFeed(userId, since, page)
+    return this.applySelfieVisibility(items, userId)
   }
 
   private async applySelfieVisibility<T extends { userId: string; selfieUrl: string | null; selfieFriendsOnly: boolean }>(
     rows: T[],
-    viewerId?: string
+    viewerId: string
   ): Promise<T[]> {
     if (rows.length === 0) return rows
-
-    if (!viewerId) {
-      return rows.map((row) => (row.selfieFriendsOnly ? { ...row, selfieUrl: null } : row))
-    }
 
     const authorIds = Array.from(
       new Set(
