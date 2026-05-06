@@ -16,8 +16,11 @@ describe('GetPlaceReview', () => {
     const created = await mockRepo.create({
       userId: 'user-1',
       placeId: 'place-1',
+      placeName: 'place-1',
       rating: 'crowded',
-      imageUrl: 'http://example.com/photo.jpg',
+      placeImageUrl: 'http://example.com/photo.jpg',
+      selfieUrl: null,
+      selfieFriendsOnly: false,
       comment: null
     })
 
@@ -32,5 +35,23 @@ describe('GetPlaceReview', () => {
     const result = await getPlaceReview.execute('id-inexistente')
 
     expect(result).toBeNull()
+  })
+
+  it('should return review with selfieUrl intact (visibility is handled by use cases, not this method)', async () => {
+    const created = await mockRepo.create({
+      userId: 'user-1',
+      placeId: 'place-1',
+      placeName: 'place-1',
+      rating: 'crowded',
+      placeImageUrl: null,
+      selfieUrl: 'http://example.com/selfie.jpg',
+      selfieFriendsOnly: true,
+      comment: null
+    })
+
+    const result = await getPlaceReview.execute(created.id)
+
+    expect(result).not.toBeNull()
+    expect(result!.selfieUrl).toBe('http://example.com/selfie.jpg')
   })
 })

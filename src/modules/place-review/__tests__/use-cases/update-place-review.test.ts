@@ -16,8 +16,11 @@ describe('UpdatePlaceReview', () => {
     const created = await mockRepo.create({
       userId: 'user-1',
       placeId: 'place-1',
+      placeName: 'place-1',
       rating: 'crowded',
-      imageUrl: null,
+      placeImageUrl: null,
+      selfieUrl: null,
+      selfieFriendsOnly: false,
       comment: null
     })
 
@@ -32,8 +35,11 @@ describe('UpdatePlaceReview', () => {
     const created = await mockRepo.create({
       userId: 'user-1',
       placeId: 'place-1',
+      placeName: 'place-1',
       rating: 'crowded',
-      imageUrl: null,
+      placeImageUrl: null,
+      selfieUrl: null,
+      selfieFriendsOnly: false,
       comment: null
     })
 
@@ -47,8 +53,11 @@ describe('UpdatePlaceReview', () => {
     const created = await mockRepo.create({
       userId: 'user-1',
       placeId: 'place-1',
+      placeName: 'place-1',
       rating: 'crowded',
-      imageUrl: null,
+      placeImageUrl: null,
+      selfieUrl: null,
+      selfieFriendsOnly: false,
       comment: 'Boa noite'
     })
 
