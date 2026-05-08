@@ -4,7 +4,9 @@ import { pgTable, timestamp, uuid, index, pgEnum, unique } from 'drizzle-orm/pg-
 
 export const placeReviewBadgeTierEnum = pgEnum('place_review_badge_tier', [
   'regular',
+  'fan',
   'frequent',
+  'legend',
   'king'
 ])
 

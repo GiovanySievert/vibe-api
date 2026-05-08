@@ -19,7 +19,8 @@ import {
   appNotifications,
   notificationPreferences,
   userStreaks,
-  userWeeklyActivity
+  userWeeklyActivity,
+  userPlaceBadges
 } from '../schema'
 
 const USER_IDS = {
@@ -40,7 +41,8 @@ const BRAND_IDS = {
   prudentePub: 'f2f2f2f2-f2f2-4f2f-af2f-f2f2f2f2f2f2',
   cantinaBatel: 'f3f3f3f3-f3f3-4f3f-af3f-f3f3f3f3f3f3',
   vilaDoChopp: 'f4f4f4f4-f4f4-4f4f-af4f-f4f4f4f4f4f4',
-  moraesWine: 'f5f5f5f5-f5f5-4f5f-af5f-f5f5f5f5f5f5'
+  moraesWine: 'f5f5f5f5-f5f5-4f5f-af5f-f5f5f5f5f5f5',
+  quintalBatel: 'f6f6f6f6-f6f6-4f6f-af6f-f6f6f6f6f6f6'
 }
 
 const PLACE_IDS = {
@@ -52,6 +54,7 @@ const PLACE_IDS = {
   cantinaBatel: 'b3b3b3b3-b3b3-4b3b-ab3b-b3b3b3b3b3b3',
   vilaDoChopp: 'b4b4b4b4-b4b4-4b4b-ab4b-b4b4b4b4b4b4',
   moraesWine: 'b5b5b5b5-b5b5-4b5b-ab5b-b5b5b5b5b5b5',
+  quintalBatel: 'b6b6b6b6-b6b6-4b6b-ab6b-b6b6b6b6b6b6',
   starbucksFaria: '44444444-4444-4444-a444-444444444444',
   outbackMoema: '55555555-5555-4555-a555-555555555555',
   mcdonaldsIbirapuera: '66666666-6666-4666-a666-666666666666'
@@ -67,6 +70,7 @@ async function seed() {
   await db.delete(eventParticipants)
   await db.delete(events)
   await db.delete(placeReviews)
+  await db.delete(userPlaceBadges)
   await db.delete(userWeeklyActivity)
   await db.delete(userStreaks)
   await db.delete(userFavoritesPlaces)
@@ -236,6 +240,13 @@ async function seed() {
       taxId: '65678901000114',
       type: 'wine-bar',
       avatar: 'https://picsum.photos/400/400?random=19&place=review'
+    },
+    {
+      id: BRAND_IDS.quintalBatel,
+      name: 'Quintal do Batel',
+      taxId: '66789012000115',
+      type: 'bar',
+      avatar: 'https://picsum.photos/400/400?random=20&place=review'
     }
   ])
 
@@ -361,6 +372,17 @@ async function seed() {
       contactPhone: '41999110005',
       about: 'Wine bar sofisticado com curadoria de vinhos naturais e tabuadas de frios.',
       status: 'active'
+    },
+    {
+      id: PLACE_IDS.quintalBatel,
+      brandId: BRAND_IDS.quintalBatel,
+      name: 'Quintal do Batel',
+      priceRange: '$$',
+      paymentMethods: 'cash,credit,debit,pix',
+      socialInstagram: '@quintalbatel',
+      contactPhone: '41999110006',
+      about: 'Bar ao ar livre com clima de quintal, drinques gelados e petiscos pra beliscar. O lugar pra descansar depois de um dia longo.',
+      status: 'active'
     }
   ])
 
@@ -440,8 +462,8 @@ async function seed() {
       state: 'PR',
       country: 'Brasil',
       postalCode: '80420-200',
-      lat: '-25.441820',
-      lng: '-49.288540'
+      lat: '-25.4238000',
+      lng: '-49.2858000'
     },
     {
       placeId: PLACE_IDS.prudentePub,
@@ -451,8 +473,8 @@ async function seed() {
       state: 'PR',
       country: 'Brasil',
       postalCode: '80420-200',
-      lat: '-25.442010',
-      lng: '-49.288920'
+      lat: '-25.4252000',
+      lng: '-49.2850000'
     },
     {
       placeId: PLACE_IDS.cantinaBatel,
@@ -462,8 +484,8 @@ async function seed() {
       state: 'PR',
       country: 'Brasil',
       postalCode: '80420-200',
-      lat: '-25.442190',
-      lng: '-49.289210'
+      lat: '-25.4265555',
+      lng: '-49.2843428'
     },
     {
       placeId: PLACE_IDS.vilaDoChopp,
@@ -473,8 +495,8 @@ async function seed() {
       state: 'PR',
       country: 'Brasil',
       postalCode: '80420-200',
-      lat: '-25.442350',
-      lng: '-49.289480'
+      lat: '-25.4273000',
+      lng: '-49.2840000'
     },
     {
       placeId: PLACE_IDS.moraesWine,
@@ -484,8 +506,19 @@ async function seed() {
       state: 'PR',
       country: 'Brasil',
       postalCode: '80420-200',
-      lat: '-25.442580',
-      lng: '-49.289810'
+      lat: '-25.4285250',
+      lng: '-49.2833998'
+    },
+    {
+      placeId: PLACE_IDS.quintalBatel,
+      addressLine: 'R. Prudente de Moraes, 890',
+      neighborhood: 'Batel',
+      city: 'Curitiba',
+      state: 'PR',
+      country: 'Brasil',
+      postalCode: '80420-200',
+      lat: '-25.4295490',
+      lng: '-49.2830621'
     }
   ])
 
@@ -655,6 +688,25 @@ async function seed() {
       name: 'Tábua Premium',
       description: 'Queijos especiais, presunto cru e geleias artesanais',
       priceCents: 6990
+    },
+
+    {
+      brandId: BRAND_IDS.quintalBatel,
+      name: 'Caipirinha da Casa',
+      description: 'Cachaça artesanal, limão siciliano e bastante gelo',
+      priceCents: 1990
+    },
+    {
+      brandId: BRAND_IDS.quintalBatel,
+      name: 'Espetinho Misto',
+      description: 'Frango, linguiça e queijo coalho na brasa',
+      priceCents: 2290
+    },
+    {
+      brandId: BRAND_IDS.quintalBatel,
+      name: 'Porção de Mandioca Frita',
+      description: 'Mandioca crocante com vinagrete e molho de pimenta',
+      priceCents: 1890
     }
   ])
 
@@ -926,6 +978,26 @@ async function seed() {
       placeImageUrl: 'https://picsum.photos/800/600?random=117&place=review',
       selfieUrl: 'https://picsum.photos/200/200?random=4&place=review',
       selfieFriendsOnly: true
+    },
+
+    {
+      userId: USER_IDS.pedro,
+      placeId: PLACE_IDS.quintalBatel,
+      placeName: 'Quintal do Batel',
+      rating: 'crowded',
+      comment: 'Caipirinha perfeita e o espetinho e absurdo. Tava cheio mas valeu cada minuto de espera.',
+      placeImageUrl: 'https://picsum.photos/800/600?random=118&place=review',
+      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review'
+    },
+    {
+      userId: USER_IDS.maria,
+      placeId: PLACE_IDS.quintalBatel,
+      placeName: 'Quintal do Batel',
+      rating: 'dead',
+      comment: 'Fui numa segunda e tinha quase ninguem, ótimo pra bater papo. Mandioca frita e delicia.',
+      placeImageUrl: null,
+      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review',
+      selfieFriendsOnly: true
     }
   ])
 
@@ -1015,7 +1087,8 @@ async function seed() {
     PLACE_IDS.prudentePub,
     PLACE_IDS.cantinaBatel,
     PLACE_IDS.vilaDoChopp,
-    PLACE_IDS.moraesWine
+    PLACE_IDS.moraesWine,
+    PLACE_IDS.quintalBatel
   ])
   const openingHoursData: { placeId: string; weekday: number; opensAt: string; closesAt: string; isClosed: boolean }[] =
     []
@@ -1330,6 +1403,46 @@ async function seed() {
       readAt: hoursAgo(8),
       createdAt: hoursAgo(10)
     }
+  ])
+
+  console.log('Seeding user place badges...')
+  await db.insert(userPlaceBadges).values([
+    // Joao: rei do Barelho Bar (20+ reviews históricos) + fã do Starbucks
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.barelhoBar, tier: 'regular' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.barelhoBar, tier: 'fan' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.barelhoBar, tier: 'frequent' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.barelhoBar, tier: 'legend' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.barelhoBar, tier: 'king' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.starbucksFaria, tier: 'regular' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.starbucksFaria, tier: 'fan' },
+
+    // Maria: lenda do Outback + VIP da Cantina
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.outbackMoema, tier: 'regular' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.outbackMoema, tier: 'fan' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.outbackMoema, tier: 'frequent' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.outbackMoema, tier: 'legend' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.cantinaBatel, tier: 'regular' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.cantinaBatel, tier: 'fan' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.cantinaBatel, tier: 'frequent' },
+
+    // Pedro: rei do Prudente Pub + cliente do Burger Moema
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.prudentePub, tier: 'regular' },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.prudentePub, tier: 'fan' },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.prudentePub, tier: 'frequent' },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.prudentePub, tier: 'legend' },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.prudentePub, tier: 'king' },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.burgerMoema, tier: 'regular' },
+
+    // Ana: fã do Moraes Wine + cliente da Cantina
+    { userId: USER_IDS.ana, placeId: PLACE_IDS.moraesWine, tier: 'regular' },
+    { userId: USER_IDS.ana, placeId: PLACE_IDS.moraesWine, tier: 'fan' },
+    { userId: USER_IDS.ana, placeId: PLACE_IDS.cantinaBatel, tier: 'regular' },
+
+    // Lucas: VIP da Vila do Chopp + cliente do Outback
+    { userId: USER_IDS.lucas, placeId: PLACE_IDS.vilaDoChopp, tier: 'regular' },
+    { userId: USER_IDS.lucas, placeId: PLACE_IDS.vilaDoChopp, tier: 'fan' },
+    { userId: USER_IDS.lucas, placeId: PLACE_IDS.vilaDoChopp, tier: 'frequent' },
+    { userId: USER_IDS.lucas, placeId: PLACE_IDS.outbackMoema, tier: 'regular' }
   ])
 
   console.log('Seeding completed!')
