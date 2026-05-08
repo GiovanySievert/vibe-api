@@ -1,4 +1,4 @@
-import { PublicUserRepository, UserSuggestion, TrendingUser } from '../../domain/repositories'
+import { PublicUserRepository, UserSuggestion, TrendingUser, WeekRef } from '../../domain/repositories'
 import { Users } from '@src/modules/auth/domain/mappers/user.mapper'
 
 interface BlockRelation {
@@ -24,7 +24,7 @@ export class MockPublicUserRepository implements PublicUserRepository {
   private follows: FollowRelation[] = []
   private weeklyActivities: WeeklyActivity[] = []
 
-  async getTrending(userId: string, limit = 20): Promise<TrendingUser[]> {
+  async getTrending(userId: string, _weeks: WeekRef[], limit = 20): Promise<TrendingUser[]> {
     const blockedIds = new Set([
       ...this.blocks.filter((b) => b.blockerId === userId).map((b) => b.blockedId),
       ...this.blocks.filter((b) => b.blockedId === userId).map((b) => b.blockerId)

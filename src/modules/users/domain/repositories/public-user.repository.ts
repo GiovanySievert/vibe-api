@@ -14,9 +14,11 @@ export type TrendingUser = {
   reviewsCount: number
 }
 
+export type WeekRef = { isoYear: number; isoWeek: number }
+
 export interface PublicUserRepository {
   getUserById(userId: string, loggedUserId: string): Promise<Users | null>
   getUserByUsername(username: string, userIdToExclude: string): Promise<Users[]>
   getSuggestions(userId: string, limit?: number): Promise<UserSuggestion[]>
-  getTrending(userId: string, limit?: number): Promise<TrendingUser[]>
+  getTrending(userId: string, weeks: WeekRef[], limit?: number): Promise<TrendingUser[]>
 }

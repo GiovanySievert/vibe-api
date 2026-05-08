@@ -4,6 +4,7 @@ import { openAPI } from 'better-auth/plugins'
 import { db } from '@src/infra/database/client'
 import { emailOTP } from 'better-auth/plugins'
 import { ResendEmailSender } from '@src/modules/notifications/infrastructure/email/resend-email-sender'
+import { verificationEmail, signInEmail, passwordResetEmail } from '@src/modules/notifications/infrastructure/email/templates/otp-email'
 import { env } from './env'
 import { expo } from '@better-auth/expo'
 
@@ -34,15 +35,21 @@ export const auth = betterAuth({
       overrideDefaultEmailVerification: true,
       async sendVerificationOTP({ email, otp, type }) {
         switch (type) {
-          case EMAIL_TYPE.EMAIL_VERIFICATION:
-            await emailSender.send(email, 'Verify your email', `Your verification code is: ${otp}`)
+          case EMAIL_TYPE.EMAIL_VERIFICATION: {
+            const { subject, html } = verificationEmail(otp)
+            await emailSender.send(email, subject, html)
             break
-          case EMAIL_TYPE.SIGN_IN:
-            await emailSender.send(email, 'Sign in', `Your sign in code is: ${otp}`)
+          }
+          case EMAIL_TYPE.SIGN_IN: {
+            const { subject, html } = signInEmail(otp)
+            await emailSender.send(email, subject, html)
             break
-          case EMAIL_TYPE.PASSWORD_RESET:
-            await emailSender.send(email, 'Password reset', `Your password reset code is: ${otp}`)
+          }
+          case EMAIL_TYPE.PASSWORD_RESET: {
+            const { subject, html } = passwordResetEmail(otp)
+            await emailSender.send(email, subject, html)
             break
+          }
         }
       }
     })
@@ -51,14 +58,6 @@ export const auth = betterAuth({
     provider: 'pg',
     usePlural: true
   }),
-  emailVerification: {
-    sendVerificationEmail: async ({ user, url, token }) => {
-      await emailSender.send(user.email, 'Verify your email', `Click: ${url}`)
-    },
-    autoSignInAfterVerification: true,
-    sendOnSignUp: true,
-    expiresIn: 600
-  },
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,

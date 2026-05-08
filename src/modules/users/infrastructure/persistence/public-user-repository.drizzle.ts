@@ -1,6 +1,6 @@
 import { and, eq, like, ne, isNull, notInArray, inArray, sql } from 'drizzle-orm'
 import { db } from '@src/infra/database/client'
-import { PublicUserRepository, UserSuggestion, TrendingUser } from '../../domain/repositories'
+import { PublicUserRepository, UserSuggestion, TrendingUser, WeekRef } from '../../domain/repositories'
 import { users, userBlocks, userWeeklyActivity } from '@src/infra/database/schema'
 import { followers } from '@src/modules/follow/application/schemas'
 import { Users } from '@src/modules/auth/domain/mappers/user.mapper'
@@ -50,23 +50,13 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
     return result
   }
 
-  async getTrending(userId: string, limit = 20): Promise<TrendingUser[]> {
+  async getTrending(userId: string, weeks: WeekRef[], limit = 20): Promise<TrendingUser[]> {
     const blocked = db.select({ id: userBlocks.blockedId }).from(userBlocks).where(eq(userBlocks.blockerId, userId))
     const blockedBy = db.select({ id: userBlocks.blockerId }).from(userBlocks).where(eq(userBlocks.blockedId, userId))
     const alreadyFollowing = db
       .select({ id: followers.followingId })
       .from(followers)
       .where(eq(followers.followerId, userId))
-
-    const weeks = Array.from({ length: 4 }, (_, i) => {
-      const d = new Date()
-      d.setDate(d.getDate() - i * 7)
-      d.setDate(d.getDate() + 4 - (d.getDay() || 7))
-      const isoYear = d.getFullYear()
-      const jan1 = new Date(isoYear, 0, 1)
-      const isoWeek = Math.ceil(((d.getTime() - jan1.getTime()) / 86_400_000 + 1) / 7)
-      return { isoYear, isoWeek }
-    })
 
     const weekConditions = weeks.map(
       (w) => sql`(${userWeeklyActivity.isoYear} = ${w.isoYear} AND ${userWeeklyActivity.isoWeek} = ${w.isoWeek})`
