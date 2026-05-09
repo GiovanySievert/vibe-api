@@ -1,5 +1,6 @@
 export * from './create-place-review'
 export * from './create-place-review-comment'
+export * from './get-place-review-eligibility'
 export * from './get-place-review'
 export * from './get-place-review-counts'
 export * from './list-place-reviews'

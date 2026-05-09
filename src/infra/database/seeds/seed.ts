@@ -772,7 +772,7 @@ async function seed() {
       placeName: 'Burger King - Paulista',
       rating: 'crowded',
       comment: 'Sempre lotado na hora do almoco, chega cedo.',
-      placeImageUrl: null,
+      placeImageUrl: 'https://picsum.photos/800/600?random=200&place=review',
       selfieUrl: 'https://picsum.photos/200/200?random=5&place=review'
     },
 
@@ -792,7 +792,7 @@ async function seed() {
       placeName: 'Burger King - Moema',
       rating: 'dead',
       comment: 'Atendimento rapido, quase sem fila.',
-      placeImageUrl: null,
+      placeImageUrl: 'https://picsum.photos/800/600?random=201&place=review',
       selfieUrl: null
     },
 
@@ -840,7 +840,7 @@ async function seed() {
       placeName: 'Starbucks - Faria Lima',
       rating: 'dead',
       comment: 'Sempre tem lugar vago pela manha.',
-      placeImageUrl: null,
+      placeImageUrl: 'https://picsum.photos/800/600?random=202&place=review',
       selfieUrl: 'https://picsum.photos/200/200?random=1&place=review'
     },
 
@@ -878,7 +878,7 @@ async function seed() {
       placeName: "McDonald's - Ibirapuera",
       rating: 'crowded',
       comment: 'Cheio depois do parque, espera uns 10 minutos.',
-      placeImageUrl: null,
+      placeImageUrl: 'https://picsum.photos/800/600?random=203&place=review',
       selfieUrl: 'https://picsum.photos/200/200?random=5&place=review'
     },
 
@@ -918,7 +918,7 @@ async function seed() {
       placeName: 'Prudente Pub',
       rating: 'dead',
       comment: 'Fui numa quarta e tava tranquilo, perfeito pra uma cerveja sem barulho.',
-      placeImageUrl: null,
+      placeImageUrl: 'https://picsum.photos/800/600?random=204&place=review',
       selfieUrl: 'https://picsum.photos/200/200?random=5&place=review'
     },
 
@@ -956,7 +956,7 @@ async function seed() {
       placeName: 'Vila do Chopp',
       rating: 'crowded',
       comment: 'Sempre cheio e animado, preco acessivel pro Batel.',
-      placeImageUrl: null,
+      placeImageUrl: 'https://picsum.photos/800/600?random=205&place=review',
       selfieUrl: null
     },
 
@@ -995,7 +995,7 @@ async function seed() {
       placeName: 'Quintal do Batel',
       rating: 'dead',
       comment: 'Fui numa segunda e tinha quase ninguem, ótimo pra bater papo. Mandioca frita e delicia.',
-      placeImageUrl: null,
+      placeImageUrl: 'https://picsum.photos/800/600?random=206&place=review',
       selfieUrl: 'https://picsum.photos/200/200?random=2&place=review',
       selfieFriendsOnly: true
     }

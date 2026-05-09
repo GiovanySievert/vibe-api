@@ -17,6 +17,7 @@ export interface PlaceReviewRepository {
   create(data: Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>): Promise<PlaceReview>
   getById(reviewId: string): Promise<PlaceReview | null>
   getByUserAndPlace(userId: string, placeId: string): Promise<PlaceReview | null>
+  getLastReviewByUserAndPlace(userId: string, placeId: string): Promise<PlaceReview | null>
   countReviewsByUserAndPlace(userId: string, placeId: string): Promise<number>
   listByPlace(placeId: string, since: Date, page?: number): Promise<FeedReviewItem[]>
   listByUser(userId: string, page?: number): Promise<FeedReviewItem[]>

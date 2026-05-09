@@ -3,6 +3,7 @@ import {
   CreatePlaceReviewComment,
   GetPlaceReview,
   GetPlaceReviewCounts,
+  GetPlaceReviewEligibility,
   ListPlaceReviews,
   ListFollowingFeed,
   ListPlaceReviewComments,
@@ -23,6 +24,7 @@ export class PlaceReviewController {
     private readonly createPlaceReviewComment: CreatePlaceReviewComment,
     private readonly getPlaceReview: GetPlaceReview,
     private readonly getPlaceReviewCounts: GetPlaceReviewCounts,
+    private readonly getPlaceReviewEligibility: GetPlaceReviewEligibility,
     private readonly listPlaceReviews: ListPlaceReviews,
     private readonly listFollowingFeed: ListFollowingFeed,
     private readonly listPlaceReviewComments: ListPlaceReviewComments,
@@ -39,10 +41,21 @@ export class PlaceReviewController {
       placeId: body.placeId,
       placeName: body.placeName,
       rating: body.rating,
-      placeImageUrl: body.placeImageUrl ?? null,
+      placeImageUrl: body.placeImageUrl,
+      userLat: body.userLat,
+      userLng: body.userLng,
+      placeLat: body.placeLat,
+      placeLng: body.placeLng,
       selfieUrl: body.selfieUrl ?? null,
       selfieFriendsOnly: body.selfieFriendsOnly ?? false,
       comment: body.comment ?? null
+    })
+  }
+
+  async eligibility({ params, user }: { params: { placeId: string }; user: User }) {
+    return await this.getPlaceReviewEligibility.execute({
+      userId: user.id,
+      placeId: params.placeId
     })
   }
 

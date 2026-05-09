@@ -30,6 +30,12 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     return this.reviews.find((r) => r.userId === userId && r.placeId === placeId) ?? null
   }
 
+  async getLastReviewByUserAndPlace(userId: string, placeId: string): Promise<PlaceReview | null> {
+    const matches = this.reviews.filter((r) => r.userId === userId && r.placeId === placeId)
+    if (matches.length === 0) return null
+    return matches.reduce((latest, r) => (r.createdAt > latest.createdAt ? r : latest))
+  }
+
   async countReviewsByUserAndPlace(userId: string, placeId: string): Promise<number> {
     return this.reviews.filter((r) => r.userId === userId && r.placeId === placeId).length
   }

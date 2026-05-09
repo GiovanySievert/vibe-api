@@ -1,3 +1,6 @@
 export * from './place-review-not-found.exception'
 export * from './place-review-already-exists.exception'
 export * from './unauthorized-place-review-action.exception'
+export * from './place-review-cooldown.exception'
+export * from './place-review-out-of-range.exception'
+export * from './place-review-photo-required.exception'

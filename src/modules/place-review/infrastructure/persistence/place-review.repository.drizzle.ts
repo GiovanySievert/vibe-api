@@ -33,6 +33,17 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
     return result || null
   }
 
+  async getLastReviewByUserAndPlace(userId: string, placeId: string): Promise<PlaceReview | null> {
+    const [result] = await db
+      .select()
+      .from(placeReviews)
+      .where(and(eq(placeReviews.userId, userId), eq(placeReviews.placeId, placeId)))
+      .orderBy(desc(placeReviews.createdAt))
+      .limit(1)
+
+    return result || null
+  }
+
   async countReviewsByUserAndPlace(userId: string, placeId: string): Promise<number> {
     const [row] = await db
       .select({ value: count() })

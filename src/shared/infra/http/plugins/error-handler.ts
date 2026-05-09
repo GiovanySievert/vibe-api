@@ -6,6 +6,8 @@ enum HttpStatus {
   FORBIDDEN = 403,
   NOT_FOUND = 404,
   CONFLICT = 409,
+  UNPROCESSABLE_ENTITY = 422,
+  TOO_MANY_REQUESTS = 429,
   INTERNAL_SERVER_ERROR = 500
 }
 
@@ -15,7 +17,10 @@ enum ErrorCode {
   NOT_FOUND = 'NOT_FOUND',
   FORBIDDEN = 'FORBIDDEN',
   CONFLICT = 'CONFLICT',
-  INTERNAL = 'INTERNAL_SERVER_ERROR'
+  INTERNAL = 'INTERNAL_SERVER_ERROR',
+  RATE_LIMITED = 'RATE_LIMITED',
+  OUT_OF_RANGE = 'OUT_OF_RANGE',
+  PHOTO_REQUIRED = 'PHOTO_REQUIRED'
 }
 
 const DOMAIN_ERRORS: Record<string, { status: number; code: string }> = {
@@ -28,7 +33,21 @@ const DOMAIN_ERRORS: Record<string, { status: number; code: string }> = {
   PlaceReviewNotFoundException: { status: HttpStatus.NOT_FOUND, code: ErrorCode.NOT_FOUND },
   UnauthorizedPlaceReviewActionException: { status: HttpStatus.FORBIDDEN, code: ErrorCode.FORBIDDEN },
   PlaceReviewAlreadyExistsException: { status: HttpStatus.CONFLICT, code: ErrorCode.CONFLICT },
+  PlaceReviewCooldownException: { status: HttpStatus.TOO_MANY_REQUESTS, code: ErrorCode.RATE_LIMITED },
+  PlaceReviewOutOfRangeException: { status: HttpStatus.UNPROCESSABLE_ENTITY, code: ErrorCode.OUT_OF_RANGE },
+  PlaceReviewPhotoRequiredException: { status: HttpStatus.UNPROCESSABLE_ENTITY, code: ErrorCode.PHOTO_REQUIRED },
   UnsupportedContentTypeException: { status: HttpStatus.BAD_REQUEST, code: ErrorCode.VALIDATION }
+}
+
+const RESERVED_ERROR_FIELDS = new Set(['name', 'message', 'stack', 'cause'])
+
+const extractDomainErrorDetails = (error: Error): Record<string, unknown> => {
+  const details: Record<string, unknown> = {}
+  for (const key of Object.keys(error)) {
+    if (RESERVED_ERROR_FIELDS.has(key)) continue
+    details[key] = (error as unknown as Record<string, unknown>)[key]
+  }
+  return details
 }
 
 export const errorHandler = (app: Elysia) =>
@@ -77,7 +96,7 @@ export const errorHandler = (app: Elysia) =>
     if (error instanceof Error && error.name in DOMAIN_ERRORS) {
       const response = DOMAIN_ERRORS[error.name]
       set.status = response.status
-      return { code: response.code, message: error.message }
+      return { code: response.code, message: error.message, ...extractDomainErrorDetails(error) }
     }
 
     set.status = HttpStatus.INTERNAL_SERVER_ERROR

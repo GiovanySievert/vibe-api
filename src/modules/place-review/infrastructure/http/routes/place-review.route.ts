@@ -24,7 +24,11 @@ export const PlaceReviewRoutes = (app: Elysia) => {
           placeId: t.String(),
           placeName: t.String({ minLength: 1 }),
           rating: t.Union([t.Literal('crowded'), t.Literal('dead')]),
-          placeImageUrl: t.Optional(t.String()),
+          placeImageUrl: t.String({ minLength: 1 }),
+          userLat: t.Number({ minimum: -90, maximum: 90 }),
+          userLng: t.Number({ minimum: -180, maximum: 180 }),
+          placeLat: t.Number({ minimum: -90, maximum: 90 }),
+          placeLng: t.Number({ minimum: -180, maximum: 180 }),
           selfieUrl: t.Optional(t.String()),
           selfieFriendsOnly: t.Optional(t.Boolean()),
           comment: t.Optional(t.String())
@@ -32,6 +36,17 @@ export const PlaceReviewRoutes = (app: Elysia) => {
         detail: {
           tags: ['Place Reviews'],
           summary: 'Create a place review',
+          security: [{ cookieAuth: [] }]
+        }
+      })
+      .get('/place/:placeId/eligibility', (ctx) => placeReviewController.eligibility(ctx), {
+        auth: true,
+        params: t.Object({
+          placeId: t.String()
+        }),
+        detail: {
+          tags: ['Place Reviews'],
+          summary: 'Check if the current user can review the place (cooldown only)',
           security: [{ cookieAuth: [] }]
         }
       })
