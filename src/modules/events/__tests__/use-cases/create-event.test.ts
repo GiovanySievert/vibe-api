@@ -3,19 +3,23 @@ import { describe, it, expect, beforeEach } from 'bun:test'
 import { CreateEvent } from '../../application/use-cases/events'
 import { EventParticipantStatus } from '../../domain/types'
 import { MockEventRepository } from '../mocks/event.repository.mock'
+import { InMemoryApplicationEventBus } from '@src/shared/application/events'
 
 describe('CreateEvent', () => {
   let createEvent: CreateEvent
   let mockEventRepo: MockEventRepository
+  let eventBus: InMemoryApplicationEventBus
 
   beforeEach(() => {
     mockEventRepo = new MockEventRepository()
-    createEvent = new CreateEvent(mockEventRepo)
+    eventBus = new InMemoryApplicationEventBus()
+    createEvent = new CreateEvent(mockEventRepo, eventBus)
   })
 
   it('should create an event successfully', async () => {
     const input = {
       ownerId: 'user-1',
+      ownerName: 'User One',
       name: 'Meu Aniversário',
       date: '25/12/2025',
       time: '18:00',
@@ -38,6 +42,7 @@ describe('CreateEvent', () => {
   it('should create an event with participants', async () => {
     const input = {
       ownerId: 'user-1',
+      ownerName: 'User One',
       name: 'Churrasco',
       date: '01/01/2026',
       time: '12:00',
@@ -55,6 +60,7 @@ describe('CreateEvent', () => {
   it('should create an event with no participants', async () => {
     const input = {
       ownerId: 'user-1',
+      ownerName: 'User One',
       name: 'Evento Solo',
       date: '15/06/2025',
       time: '20:00',
@@ -69,6 +75,7 @@ describe('CreateEvent', () => {
   it('should create an event without description', async () => {
     const input = {
       ownerId: 'user-1',
+      ownerName: 'User One',
       name: 'Rolê',
       date: '10/10/2025',
       time: '22:00',

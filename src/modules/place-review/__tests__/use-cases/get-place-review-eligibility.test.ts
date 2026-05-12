@@ -9,7 +9,7 @@ describe('GetPlaceReviewEligibility', () => {
 
   beforeEach(() => {
     mockRepo = new MockPlaceReviewRepository()
-    useCase = new GetPlaceReviewEligibility(mockRepo, { cooldownHours: 1 })
+    useCase = new GetPlaceReviewEligibility(mockRepo, { cooldownMinutes: 60 })
   })
 
   it('returns canReview=true and reason=null when no previous review', async () => {

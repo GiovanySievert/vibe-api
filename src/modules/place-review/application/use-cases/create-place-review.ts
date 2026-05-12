@@ -17,7 +17,7 @@ export type CreatePlaceReviewData = Omit<PlaceReview, 'id' | 'createdAt' | 'upda
 }
 
 export interface CreatePlaceReviewConfig {
-  cooldownHours: number
+  cooldownMinutes: number
   maxDistanceMeters: number
 }
 
@@ -57,12 +57,12 @@ export class CreatePlaceReview {
     const lastReview = await this.placeReviewRepo.getLastReviewByUserAndPlace(userId, placeId)
     if (!lastReview) return
 
-    const cooldownMs = this.config.cooldownHours * 60 * 60 * 1000
+    const cooldownMs = this.config.cooldownMinutes * 60 * 1000
     const elapsed = Date.now() - lastReview.createdAt.getTime()
     if (elapsed >= cooldownMs) return
 
     const nextAllowedAt = new Date(lastReview.createdAt.getTime() + cooldownMs)
-    throw new PlaceReviewCooldownException(nextAllowedAt, this.config.cooldownHours)
+    throw new PlaceReviewCooldownException(nextAllowedAt, this.config.cooldownMinutes)
   }
 
   private toPersistable(data: CreatePlaceReviewData): Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'> {

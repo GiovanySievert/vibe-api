@@ -53,7 +53,7 @@ export class AcceptFollowRequest {
 
     await this.applicationEventBus.publish(
       createFollowRequestAcceptedEvent({
-        followRequestId,
+        followRequestId: requestFollowId,
         requesterId: followRequest.requesterId,
         requestedId: followRequest.requestedId,
         requestedName: acceptorName

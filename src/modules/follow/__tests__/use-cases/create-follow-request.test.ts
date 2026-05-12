@@ -6,23 +6,27 @@ import { MockUserBlockRepository } from '@src/modules/blocks/__tests__/mocks/use
 import { CannotFollowYourselfException } from '../../domain/exceptions/cannot-follow-yourself.exception'
 import { AlreadyFollowingException } from '../../domain/exceptions/already-following.exception'
 import { FollowRequestAlreadyExistsException } from '../../domain/exceptions/follow-request-already-exists.exception'
+import { InMemoryApplicationEventBus } from '@src/shared/application/events'
 
 describe('CreateFollowRequest', () => {
   let followRequestRepo: MockFollowRequestRepository
   let followersRepo: MockFollowersRepository
   let userBlockRepo: MockUserBlockRepository
+  let eventBus: InMemoryApplicationEventBus
   let useCase: CreateFollowRequest
 
   beforeEach(() => {
     followRequestRepo = new MockFollowRequestRepository()
     followersRepo = new MockFollowersRepository(followRequestRepo)
     userBlockRepo = new MockUserBlockRepository()
-    useCase = new CreateFollowRequest(followRequestRepo, followersRepo, userBlockRepo)
+    eventBus = new InMemoryApplicationEventBus()
+    useCase = new CreateFollowRequest(followRequestRepo, followersRepo, userBlockRepo, eventBus)
   })
 
   it('should create a follow request successfully', async () => {
     const data = {
       requesterId: 'user-1',
+      requesterName: 'User One',
       requestedId: 'user-2',
       status: 'pending'
     }
@@ -38,6 +42,7 @@ describe('CreateFollowRequest', () => {
   it('should throw CannotFollowYourselfException when trying to follow yourself', async () => {
     const data = {
       requesterId: 'user-1',
+      requesterName: 'User One',
       requestedId: 'user-1',
       status: 'pending'
     }
@@ -55,6 +60,7 @@ describe('CreateFollowRequest', () => {
 
     const data = {
       requesterId: 'user-1',
+      requesterName: 'User One',
       requestedId: 'user-2',
       status: 'pending'
     }
@@ -76,6 +82,7 @@ describe('CreateFollowRequest', () => {
 
     const data = {
       requesterId: 'user-1',
+      requesterName: 'User One',
       requestedId: 'user-2',
       status: 'pending'
     }
@@ -97,6 +104,7 @@ describe('CreateFollowRequest', () => {
 
     const data = {
       requesterId: 'user-1',
+      requesterName: 'User One',
       requestedId: 'user-2',
       status: 'pending'
     }

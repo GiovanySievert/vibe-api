@@ -31,7 +31,7 @@ export class PlaceReviewModule {
     const evaluateUserPlaceBadge = badgesModule.evaluateUserPlaceBadge
 
     const placeReviewConfig = {
-      cooldownHours: env.PLACE_REVIEW_COOLDOWN_HOURS,
+      cooldownMinutes: env.PLACE_REVIEW_COOLDOWN_MINUTES,
       maxDistanceMeters: env.PLACE_REVIEW_MAX_DISTANCE_METERS
     }
 
@@ -45,7 +45,7 @@ export class PlaceReviewModule {
       placeReviewConfig
     )
     const getPlaceReviewEligibilityService = new GetPlaceReviewEligibility(placeReviewRepo, {
-      cooldownHours: placeReviewConfig.cooldownHours
+      cooldownMinutes: placeReviewConfig.cooldownMinutes
     })
     const createPlaceReviewCommentService = new CreatePlaceReviewComment(placeReviewRepo)
     const getPlaceReviewService = new GetPlaceReview(placeReviewRepo)

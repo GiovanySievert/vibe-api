@@ -33,7 +33,8 @@ export class CreateBrandWithPlace {
       socialTiktok: data.place.socialTiktok ?? null,
       contactPhone: data.place.contactPhone ?? null,
       about: data.place.about ?? null,
-      name: data.place.name
+      name: data.place.name,
+      status: 'pending'
     })
 
     const placeLocation = await this.createPlaceLocationService.execute({

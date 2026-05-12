@@ -21,7 +21,7 @@ describe('ListPlaceReviews', () => {
     await mockRepo.create({ userId: 'user-2', placeId: 'place-1', placeName: 'place-1', rating: 'dead', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null })
     await mockRepo.create({ userId: 'user-3', placeId: 'place-2', placeName: 'place-2', rating: 'crowded', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null })
 
-    const result = await listPlaceReviews.executeByPlace('place-1', since)
+    const result = await listPlaceReviews.executeByPlace('place-1', since, undefined, 'viewer-1')
 
     expect(result).toHaveLength(2)
     expect(result.every((r) => r.placeId === 'place-1')).toBe(true)
@@ -32,14 +32,14 @@ describe('ListPlaceReviews', () => {
     await mockRepo.create({ userId: 'user-1', placeId: 'place-2', placeName: 'place-2', rating: 'dead', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null })
     await mockRepo.create({ userId: 'user-2', placeId: 'place-1', placeName: 'place-1', rating: 'crowded', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null })
 
-    const result = await listPlaceReviews.executeByUser('user-1')
+    const result = await listPlaceReviews.executeByUser('user-1', undefined, 'viewer-1')
 
     expect(result).toHaveLength(2)
     expect(result.every((r) => r.userId === 'user-1')).toBe(true)
   })
 
   it('should return empty array when no reviews exist for a place', async () => {
-    const result = await listPlaceReviews.executeByPlace('place-sem-reviews', since)
+    const result = await listPlaceReviews.executeByPlace('place-sem-reviews', since, undefined, 'viewer-1')
 
     expect(result).toHaveLength(0)
   })
@@ -58,8 +58,8 @@ describe('ListPlaceReviews', () => {
       })
     }
 
-    const page1 = await listPlaceReviews.executeByPlace('place-1', since, 1)
-    const page2 = await listPlaceReviews.executeByPlace('place-1', since, 2)
+    const page1 = await listPlaceReviews.executeByPlace('place-1', since, 1, 'viewer-1')
+    const page2 = await listPlaceReviews.executeByPlace('place-1', since, 2, 'viewer-1')
 
     expect(page1).toHaveLength(10)
     expect(page2).toHaveLength(2)
@@ -97,6 +97,24 @@ describe('ListPlaceReviews', () => {
     mockFollowChecker.addFollow('user-2', 'user-1')
 
     const result = await listPlaceReviews.executeByPlace('place-1', since, 1, 'user-2')
+
+    expect(result).toHaveLength(1)
+    expect(result[0].selfieUrl).toBe('http://example.com/selfie.jpg')
+  })
+
+  it('should keep the private selfie when the viewer is the author', async () => {
+    await mockRepo.create({
+      userId: 'user-1',
+      placeId: 'place-1',
+      placeName: 'place-1',
+      rating: 'crowded',
+      placeImageUrl: null,
+      selfieUrl: 'http://example.com/selfie.jpg',
+      selfieFriendsOnly: true,
+      comment: null
+    })
+
+    const result = await listPlaceReviews.executeByPlace('place-1', since, 1, 'user-1')
 
     expect(result).toHaveLength(1)
     expect(result[0].selfieUrl).toBe('http://example.com/selfie.jpg')

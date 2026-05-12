@@ -49,7 +49,7 @@ describe('CreatePlaceReview', () => {
       new NoopProducer() as unknown as RabbitMQProducer,
       new NoopWeeklyActivity() as never,
       new NoopEvaluateBadge() as unknown as EvaluateUserPlaceBadge,
-      { cooldownHours: 1, maxDistanceMeters: 500 }
+      { cooldownMinutes: 60, maxDistanceMeters: 500 }
     )
   })
 
@@ -97,7 +97,7 @@ describe('CreatePlaceReview', () => {
       const cooldownError = error as PlaceReviewCooldownException
       const expectedNextAllowedAt = Date.now() + 30 * 60 * 1000
       expect(Math.abs(cooldownError.nextAllowedAt.getTime() - expectedNextAllowedAt)).toBeLessThan(2000)
-      expect(cooldownError.cooldownHours).toBe(1)
+      expect(cooldownError.cooldownMinutes).toBe(60)
     }
   })
 

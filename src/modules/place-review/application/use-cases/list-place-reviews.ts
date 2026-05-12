@@ -1,5 +1,6 @@
 import { FollowChecker, PlaceReviewRepository } from '@src/modules/place-review/domain/repositories'
 import { FeedReviewItem } from '@src/modules/place-review/domain/types'
+import { applySelfieVisibility } from '@src/modules/place-review/application/services/selfie-visibility'
 
 export class ListPlaceReviews {
   constructor(
@@ -7,43 +8,13 @@ export class ListPlaceReviews {
     private readonly followChecker: FollowChecker
   ) {}
 
-  async executeByPlace(placeId: string, since: Date, page?: number, viewerId?: string): Promise<FeedReviewItem[]> {
+  async executeByPlace(placeId: string, since: Date, page: number | undefined, viewerId: string): Promise<FeedReviewItem[]> {
     const items = await this.placeReviewRepo.listByPlace(placeId, since, page)
-    return this.applySelfieVisibility(items, viewerId)
+    return applySelfieVisibility(items, viewerId, this.followChecker)
   }
 
-  async executeByUser(userId: string, page?: number, viewerId?: string): Promise<FeedReviewItem[]> {
+  async executeByUser(userId: string, page: number | undefined, viewerId: string): Promise<FeedReviewItem[]> {
     const items = await this.placeReviewRepo.listByUser(userId, page)
-    return this.applySelfieVisibility(items, viewerId)
-  }
-
-  private async applySelfieVisibility<T extends { userId: string; selfieUrl: string | null; selfieFriendsOnly: boolean }>(
-    rows: T[],
-    viewerId?: string
-  ): Promise<T[]> {
-    if (rows.length === 0) return rows
-
-    if (!viewerId) {
-      return rows.map((row) => (row.selfieFriendsOnly ? { ...row, selfieUrl: null } : row))
-    }
-
-    const authorIds = Array.from(
-      new Set(
-        rows
-          .filter((row) => row.selfieFriendsOnly && row.selfieUrl && row.userId !== viewerId)
-          .map((row) => row.userId)
-      )
-    )
-
-    if (authorIds.length === 0) return rows
-
-    const followedUserIds = await this.followChecker.getFollowedUserIds(viewerId, authorIds)
-
-    return rows.map((row) => {
-      if (!row.selfieFriendsOnly || row.userId === viewerId || !row.selfieUrl || followedUserIds.has(row.userId)) {
-        return row
-      }
-      return { ...row, selfieUrl: null }
-    })
+    return applySelfieVisibility(items, viewerId, this.followChecker)
   }
 }

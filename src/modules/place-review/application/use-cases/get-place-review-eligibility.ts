@@ -11,13 +11,13 @@ export interface PlaceReviewEligibility {
     active: boolean
     lastReviewAt: string | null
     nextAllowedAt: string | null
-    cooldownHours: number
+    cooldownMinutes: number
   }
   reason: 'cooldown' | null
 }
 
 export interface GetPlaceReviewEligibilityConfig {
-  cooldownHours: number
+  cooldownMinutes: number
 }
 
 export class GetPlaceReviewEligibility {
@@ -29,7 +29,7 @@ export class GetPlaceReviewEligibility {
   async execute(input: GetPlaceReviewEligibilityInput): Promise<PlaceReviewEligibility> {
     const lastReview = await this.placeReviewRepo.getLastReviewByUserAndPlace(input.userId, input.placeId)
 
-    const cooldownMs = this.config.cooldownHours * 60 * 60 * 1000
+    const cooldownMs = this.config.cooldownMinutes * 60 * 1000
     let cooldownActive = false
     let nextAllowedAt: Date | null = null
 
@@ -47,7 +47,7 @@ export class GetPlaceReviewEligibility {
         active: cooldownActive,
         lastReviewAt: lastReview ? lastReview.createdAt.toISOString() : null,
         nextAllowedAt: nextAllowedAt ? nextAllowedAt.toISOString() : null,
-        cooldownHours: this.config.cooldownHours
+        cooldownMinutes: this.config.cooldownMinutes
       },
       reason: cooldownActive ? 'cooldown' : null
     }

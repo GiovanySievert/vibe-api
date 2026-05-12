@@ -210,7 +210,8 @@ describe('CreateBrandWithPlace', () => {
       socialInstagram: '@test',
       socialTiktok: '@test',
       contactPhone: '+5511999999999',
-      about: 'About text'
+      about: 'About text',
+      status: 'pending'
     })
   })
 
