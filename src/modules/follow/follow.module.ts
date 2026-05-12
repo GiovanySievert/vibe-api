@@ -3,6 +3,8 @@ import {
   DeleteFollower,
   ListFollowers,
   ListFollowings,
+  SearchFollowers,
+  SearchFollowings,
   GetFollowStatus,
   Unfollow,
   RemoveFollower,
@@ -46,6 +48,8 @@ export class FollowModule {
     const getFollowStatusService = new GetFollowStatus(followersRepo)
     const listFollowersService = new ListFollowers(followersRepo)
     const listFollowingsService = new ListFollowings(followersRepo)
+    const searchFollowersService = new SearchFollowers(followersRepo)
+    const searchFollowingsService = new SearchFollowings(followersRepo)
 
     const incrementFollowingStatsService = new IncrementFollowingStats(followStatsRepo)
     const incrementFollowersStatsService = new IncrementFollowersStats(followStatsRepo)
@@ -95,7 +99,9 @@ export class FollowModule {
       unfollowService,
       removeFollowerService,
       listFollowersService,
-      listFollowingsService
+      listFollowingsService,
+      searchFollowersService,
+      searchFollowingsService
     )
     this.followRequestController = new FollowRequestController(
       createFollowRequestService,

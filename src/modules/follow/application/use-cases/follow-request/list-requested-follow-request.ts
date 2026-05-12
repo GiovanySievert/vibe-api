@@ -5,8 +5,8 @@ import { FollowRequestListType } from '@src/modules/follow/domain/types'
 export class ListRequestedFollowRequest {
   constructor(private readonly followRequest: FollowRequestsRepository) {}
 
-  async execute(userId: string): Promise<GetFollowRequestByUserDtoMapper[]> {
-    const followerRequests = await this.followRequest.listByType(FollowRequestListType.SENT, userId)
+  async execute(userId: string, page?: number, limit?: number): Promise<GetFollowRequestByUserDtoMapper[]> {
+    const followerRequests = await this.followRequest.listByType(FollowRequestListType.SENT, userId, page, limit)
     return followerRequests
   }
 }

@@ -22,26 +22,48 @@ export class MockFollowersRepository implements FollowersRepository {
     return newFollower
   }
 
-  async listFollowers(userId: string): Promise<ListUserFollowResponseDto[]> {
+  async listFollowers(userId: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
     return this.followers
       .filter((f) => f.followingId === userId)
-      .map((f) => ({
-        id: f.id,
-        userId: f.followerId,
-        username: `user-${f.followerId}`,
-        image: null
-      }))
+      .map((f) => ({ id: f.id, userId: f.followerId, username: `user-${f.followerId}`, name: `Name ${f.followerId}`, image: null }))
+      .slice(offset, offset + pageSize)
   }
 
-  async listFollowings(userId: string): Promise<ListUserFollowResponseDto[]> {
+  async listFollowings(userId: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
     return this.followers
       .filter((f) => f.followerId === userId)
-      .map((f) => ({
-        id: f.id,
-        userId: f.followingId,
-        username: `user-${f.followingId}`,
-        image: null
-      }))
+      .map((f) => ({ id: f.id, userId: f.followingId, username: `user-${f.followingId}`, name: `Name ${f.followingId}`, image: null }))
+      .slice(offset, offset + pageSize)
+  }
+
+  async searchFollowers(userId: string, q: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+    const lower = q.toLowerCase()
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
+    return this.followers
+      .filter((f) => f.followingId === userId)
+      .map((f) => ({ id: f.id, userId: f.followerId, username: `user-${f.followerId}`, name: `Name ${f.followerId}`, image: null }))
+      .filter((f) => f.username.toLowerCase().includes(lower) || f.name.toLowerCase().includes(lower))
+      .slice(offset, offset + pageSize)
+  }
+
+  async searchFollowings(userId: string, q: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+    const lower = q.toLowerCase()
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
+    return this.followers
+      .filter((f) => f.followerId === userId)
+      .map((f) => ({ id: f.id, userId: f.followingId, username: `user-${f.followingId}`, name: `Name ${f.followingId}`, image: null }))
+      .filter((f) => f.username.toLowerCase().includes(lower) || f.name.toLowerCase().includes(lower))
+      .slice(offset, offset + pageSize)
   }
 
   async delete(followId: string): Promise<void> {

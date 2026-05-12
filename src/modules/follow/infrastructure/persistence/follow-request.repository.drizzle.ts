@@ -56,10 +56,19 @@ export class DrizzleFollowRequestRepository implements FollowRequestsRepository 
     return result
   }
 
-  async listByType(type: FollowRequestListType, userId: string): Promise<GetFollowRequestByUserDtoMapper[]> {
+  async listByType(
+    type: FollowRequestListType,
+    userId: string,
+    page?: number,
+    limit?: number
+  ): Promise<GetFollowRequestByUserDtoMapper[]> {
     const isReceived = type === FollowRequestListType.RECEIVED
     const whereField = isReceived ? followRequests.requestedId : followRequests.requesterId
     const joinField = isReceived ? followRequests.requesterId : followRequests.requestedId
+
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
 
     const result = await db
       .select({
@@ -79,6 +88,8 @@ export class DrizzleFollowRequestRepository implements FollowRequestsRepository 
       .from(followRequests)
       .innerJoin(users, eq(joinField, users.id))
       .where(and(eq(whereField, userId), eq(followRequests.status, FollowRequestStatus.PENDING)))
+      .limit(pageSize)
+      .offset(offset)
 
     return GetFollowRequestByUserDtoMapper.fromArray(result)
   }

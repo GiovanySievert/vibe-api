@@ -9,6 +9,10 @@ export const FollowRequestRoutes = (app: Elysia) => {
     app
       .get('/', (ctx) => followRequestController.list(ctx), {
         auth: true,
+        query: t.Object({
+          page: t.Optional(t.Numeric({ minimum: 1 })),
+          limit: t.Optional(t.Numeric({ minimum: 1, maximum: 50 }))
+        }),
         detail: {
           tags: ['Follow Request'],
           summary: 'List all user follow requests',
@@ -17,6 +21,10 @@ export const FollowRequestRoutes = (app: Elysia) => {
       })
       .get('/requested', (ctx) => followRequestController.listRequested(ctx), {
         auth: true,
+        query: t.Object({
+          page: t.Optional(t.Numeric({ minimum: 1 })),
+          limit: t.Optional(t.Numeric({ minimum: 1, maximum: 50 }))
+        }),
         detail: {
           tags: ['Follow Request'],
           summary: 'List all user follow requests from logged user',

@@ -46,7 +46,8 @@ export const FollowerRoutes = (app: Elysia) => {
           userId: t.String()
         }),
         query: t.Object({
-          page: t.Optional(t.Numeric({ minimum: 1 }))
+          page: t.Optional(t.Numeric({ minimum: 1 })),
+          limit: t.Optional(t.Numeric({ minimum: 1 }))
         }),
         detail: {
           tags: ['Followers'],
@@ -60,11 +61,44 @@ export const FollowerRoutes = (app: Elysia) => {
           userId: t.String()
         }),
         query: t.Object({
-          page: t.Optional(t.Numeric({ minimum: 1 }))
+          page: t.Optional(t.Numeric({ minimum: 1 })),
+          limit: t.Optional(t.Numeric({ minimum: 1 }))
         }),
         detail: {
           tags: ['Followers'],
           summary: 'List users being followed',
+          security: [{ cookieAuth: [] }]
+        }
+      })
+      .get('/:userId/search', (ctx) => followersController.searchFollowers(ctx), {
+        auth: true,
+        params: t.Object({
+          userId: t.String()
+        }),
+        query: t.Object({
+          q: t.String(),
+          page: t.Optional(t.Numeric({ minimum: 1 })),
+          limit: t.Optional(t.Numeric({ minimum: 1 }))
+        }),
+        detail: {
+          tags: ['Followers'],
+          summary: 'Search user followers',
+          security: [{ cookieAuth: [] }]
+        }
+      })
+      .get('/following/:userId/search', (ctx) => followersController.searchFollowings(ctx), {
+        auth: true,
+        params: t.Object({
+          userId: t.String()
+        }),
+        query: t.Object({
+          q: t.String(),
+          page: t.Optional(t.Numeric({ minimum: 1 })),
+          limit: t.Optional(t.Numeric({ minimum: 1 }))
+        }),
+        detail: {
+          tags: ['Followers'],
+          summary: 'Search users being followed',
           security: [{ cookieAuth: [] }]
         }
       })

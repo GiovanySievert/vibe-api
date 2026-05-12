@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, ilike, or } from 'drizzle-orm'
 
 import { followers, followRequests } from '../../application/schemas'
 import { db } from '@src/infra/database/client'
@@ -49,42 +49,91 @@ export class DrizzleFollowRepository implements FollowersRepository {
     return result || null
   }
 
-  async listFollowers(userId: string, page?: number): Promise<ListUserFollowResponseDto[]> {
-    const limit = 5
-    const currentPage = page || 1
-    const offset = (currentPage - 1) * limit
+  async listFollowers(userId: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
 
     const result = await db
       .select({
         id: followers.id,
         userId: followers.followerId,
         username: users.username,
+        name: users.name,
         image: users.image
       })
       .from(followers)
       .innerJoin(users, eq(followers.followerId, users.id))
       .where(eq(followers.followingId, userId))
-      .limit(limit)
+      .limit(pageSize)
       .offset(offset)
 
     return ListUserFollowResponseDto.fromArray(result)
   }
 
-  async listFollowings(userId: string, page?: number): Promise<ListUserFollowResponseDto[]> {
-    const limit = 5
-    const currentPage = page || 1
-    const offset = (currentPage - 1) * limit
+  async listFollowings(userId: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
+
     const result = await db
       .select({
         id: followers.id,
         userId: followers.followingId,
         username: users.username,
+        name: users.name,
         image: users.image
       })
       .from(followers)
       .innerJoin(users, eq(followers.followingId, users.id))
       .where(eq(followers.followerId, userId))
-      .limit(limit)
+      .limit(pageSize)
+      .offset(offset)
+
+    return ListUserFollowResponseDto.fromArray(result)
+  }
+
+  async searchFollowers(userId: string, q: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
+    const pattern = `%${q}%`
+
+    const result = await db
+      .select({
+        id: followers.id,
+        userId: followers.followerId,
+        username: users.username,
+        name: users.name,
+        image: users.image
+      })
+      .from(followers)
+      .innerJoin(users, eq(followers.followerId, users.id))
+      .where(and(eq(followers.followingId, userId), or(ilike(users.username, pattern), ilike(users.name, pattern))))
+      .limit(pageSize)
+      .offset(offset)
+
+    return ListUserFollowResponseDto.fromArray(result)
+  }
+
+  async searchFollowings(userId: string, q: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
+    const pattern = `%${q}%`
+
+    const result = await db
+      .select({
+        id: followers.id,
+        userId: followers.followingId,
+        username: users.username,
+        name: users.name,
+        image: users.image
+      })
+      .from(followers)
+      .innerJoin(users, eq(followers.followingId, users.id))
+      .where(and(eq(followers.followerId, userId), or(ilike(users.username, pattern), ilike(users.name, pattern))))
+      .limit(pageSize)
       .offset(offset)
 
     return ListUserFollowResponseDto.fromArray(result)

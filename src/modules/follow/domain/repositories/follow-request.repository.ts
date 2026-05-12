@@ -8,5 +8,10 @@ export interface FollowRequestsRepository {
   getPendingRequest(requesterId: string, requestedId: string): Promise<FollowRequests | null>
   getByRequesterAndRequested(requesterId: string, requestedId: string): Promise<FollowRequests | null>
   update(requestFollowId: string, status: string): Promise<FollowRequests>
-  listByType(type: FollowRequestListType, userId: string): Promise<GetFollowRequestByUserDtoMapper[]>
+  listByType(
+    type: FollowRequestListType,
+    userId: string,
+    page?: number,
+    limit?: number
+  ): Promise<GetFollowRequestByUserDtoMapper[]>
 }

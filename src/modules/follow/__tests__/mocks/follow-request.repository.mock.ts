@@ -45,12 +45,17 @@ export class MockFollowRequestRepository implements FollowRequestsRepository {
     return this.followRequests[index]
   }
 
-  async listByType(type: FollowRequestListType, userId: string): Promise<GetFollowRequestByUserDtoMapper[]> {
+  async listByType(
+    type: FollowRequestListType,
+    userId: string,
+    page?: number,
+    limit?: number
+  ): Promise<GetFollowRequestByUserDtoMapper[]> {
     const isReceived = type === FollowRequestListType.RECEIVED
     const filterField = isReceived ? 'requestedId' : 'requesterId'
     const userIdField = isReceived ? 'requesterId' : 'requestedId'
 
-    return this.followRequests
+    const all = this.followRequests
       .filter((fr) => fr[filterField] === userId && fr.status === FollowRequestStatus.PENDING)
       .map((fr) => ({
         id: fr.id,
@@ -60,6 +65,13 @@ export class MockFollowRequestRepository implements FollowRequestsRepository {
         status: fr.status,
         createdAt: (fr.createdAt || new Date()).toISOString()
       }))
+
+    if (page === undefined && limit === undefined) return all
+
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
+    return all.slice(offset, offset + pageSize)
   }
 
   reset() {

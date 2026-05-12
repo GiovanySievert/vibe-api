@@ -26,12 +26,12 @@ export class FollowRequestController {
     })
   }
 
-  async list({ user }: { user: User }) {
-    return await this.listFollowRequest.execute(user.id)
+  async list({ user, query }: { user: User; query: { page?: number; limit?: number } }) {
+    return await this.listFollowRequest.execute(user.id, query.page, query.limit)
   }
 
-  async listRequested({ user }: { user: User }) {
-    return await this.listRequestedFollowRequest.execute(user.id)
+  async listRequested({ user, query }: { user: User; query: { page?: number; limit?: number } }) {
+    return await this.listRequestedFollowRequest.execute(user.id, query.page, query.limit)
   }
 
   async accept({ params, user }: { params: { requestFollowId: string }; user: User }) {
