@@ -29,8 +29,8 @@ export class MockUserBlockRepository implements UserBlockRepository {
     return !!block
   }
 
-  async listBlockedUsers(blockerId: string): Promise<GetBlockedUserDto[]> {
-    return this.blocks
+  async listBlockedUsers(blockerId: string, page?: number, limit?: number): Promise<GetBlockedUserDto[]> {
+    const all = this.blocks
       .filter((b) => b.blockerId === blockerId)
       .map((b) => ({
         id: b.id,
@@ -38,6 +38,13 @@ export class MockUserBlockRepository implements UserBlockRepository {
         username: `user-${b.blockedId}`,
         avatar: null
       }))
+
+    if (page === undefined && limit === undefined) return all
+
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
+    return all.slice(offset, offset + pageSize)
   }
 
   reset() {

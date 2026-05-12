@@ -28,7 +28,7 @@ export class UserBlockController {
     return { isBlocked }
   }
 
-  async list({ user }: { user: User }) {
-    return await this.listBlockedUsers.execute(user.id)
+  async list({ user, query }: { user: User; query: { page?: number; limit?: number } }) {
+    return await this.listBlockedUsers.execute(user.id, query.page, query.limit)
   }
 }

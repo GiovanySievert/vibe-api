@@ -42,6 +42,10 @@ export const UserBlockRoutes = (app: Elysia) => {
       })
       .get('/', (ctx) => userBlockController.list(ctx), {
         auth: true,
+        query: t.Object({
+          page: t.Optional(t.Numeric({ minimum: 1 })),
+          limit: t.Optional(t.Numeric({ minimum: 1, maximum: 50 }))
+        }),
         detail: {
           tags: ['User Blocks'],
           summary: 'List all blocked users',

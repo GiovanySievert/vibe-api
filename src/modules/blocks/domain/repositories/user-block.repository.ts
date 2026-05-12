@@ -6,5 +6,5 @@ export interface UserBlockRepository {
   delete(blockerId: string, blockedId: string): Promise<void>
   findBlock(blockerId: string, blockedId: string): Promise<UserBlock | null>
   isBlocked(blockerId: string, blockedId: string): Promise<boolean>
-  listBlockedUsers(blockerId: string): Promise<GetBlockedUserDto[]>
+  listBlockedUsers(blockerId: string, page?: number, limit?: number): Promise<GetBlockedUserDto[]>
 }

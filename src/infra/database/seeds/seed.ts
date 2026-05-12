@@ -28,7 +28,20 @@ const USER_IDS = {
   maria: '22222222-2222-2222-2222-222222222222',
   pedro: '33333333-3333-3333-3333-333333333333',
   ana: '44444444-4444-4444-4444-444444444444',
-  lucas: '55555555-5555-5555-5555-555555555555'
+  lucas: '55555555-5555-5555-5555-555555555555',
+  // extra users
+  carla: 'aa000001-0000-0000-0000-000000000001',
+  rafael: 'aa000002-0000-0000-0000-000000000002',
+  bruna: 'aa000003-0000-0000-0000-000000000003',
+  thiago: 'aa000004-0000-0000-0000-000000000004',
+  fernanda: 'aa000005-0000-0000-0000-000000000005',
+  gabriel: 'aa000006-0000-0000-0000-000000000006',
+  juliana: 'aa000007-0000-0000-0000-000000000007',
+  marcos: 'aa000008-0000-0000-0000-000000000008',
+  beatriz: 'aa000009-0000-0000-0000-000000000009',
+  rodrigo: 'aa000010-0000-0000-0000-000000000010',
+  camila: 'aa000011-0000-0000-0000-000000000011',
+  vinicius: 'aa000012-0000-0000-0000-000000000012'
 }
 
 const BRAND_IDS = {
@@ -127,6 +140,102 @@ async function seed() {
       email: 'lucas@email.com',
       emailVerified: true,
       image: 'https://picsum.photos/200/200?random=5&place=review'
+    },
+    {
+      id: USER_IDS.carla,
+      name: 'Carla Mendes',
+      username: 'carlamendes',
+      email: 'carla@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=6&place=review'
+    },
+    {
+      id: USER_IDS.rafael,
+      name: 'Rafael Souza',
+      username: 'rafaelsouza',
+      email: 'rafael@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=7&place=review'
+    },
+    {
+      id: USER_IDS.bruna,
+      name: 'Bruna Lima',
+      username: 'brunalima',
+      email: 'bruna@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=8&place=review'
+    },
+    {
+      id: USER_IDS.thiago,
+      name: 'Thiago Rocha',
+      username: 'thiagorocha',
+      email: 'thiago@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=9&place=review'
+    },
+    {
+      id: USER_IDS.fernanda,
+      name: 'Fernanda Castro',
+      username: 'fernandacastro',
+      email: 'fernanda@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=10&place=review'
+    },
+    {
+      id: USER_IDS.gabriel,
+      name: 'Gabriel Nunes',
+      username: 'gabrielnunes',
+      email: 'gabriel@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=11&place=review'
+    },
+    {
+      id: USER_IDS.juliana,
+      name: 'Juliana Alves',
+      username: 'julianaalves',
+      email: 'juliana@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=12&place=review'
+    },
+    {
+      id: USER_IDS.marcos,
+      name: 'Marcos Barbosa',
+      username: 'marcosbarbosa',
+      email: 'marcos@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=13&place=review'
+    },
+    {
+      id: USER_IDS.beatriz,
+      name: 'Beatriz Pinto',
+      username: 'beatrizpinto',
+      email: 'beatriz@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=14&place=review'
+    },
+    {
+      id: USER_IDS.rodrigo,
+      name: 'Rodrigo Teixeira',
+      username: 'rodrigoteixeira',
+      email: 'rodrigo@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=15&place=review'
+    },
+    {
+      id: USER_IDS.camila,
+      name: 'Camila Freitas',
+      username: 'camilafreitas',
+      email: 'camila@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=16&place=review'
+    },
+    {
+      id: USER_IDS.vinicius,
+      name: 'Vinicius Cardoso',
+      username: 'viniciuscardoso',
+      email: 'vinicius@email.com',
+      emailVerified: true,
+      image: 'https://picsum.photos/200/200?random=17&place=review'
     }
   ])
 
@@ -164,6 +273,90 @@ async function seed() {
       accountId: USER_IDS.lucas,
       providerId: 'credential',
       userId: USER_IDS.lucas,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.carla,
+      providerId: 'credential',
+      userId: USER_IDS.carla,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.rafael,
+      providerId: 'credential',
+      userId: USER_IDS.rafael,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.bruna,
+      providerId: 'credential',
+      userId: USER_IDS.bruna,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.thiago,
+      providerId: 'credential',
+      userId: USER_IDS.thiago,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.fernanda,
+      providerId: 'credential',
+      userId: USER_IDS.fernanda,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.gabriel,
+      providerId: 'credential',
+      userId: USER_IDS.gabriel,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.juliana,
+      providerId: 'credential',
+      userId: USER_IDS.juliana,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.marcos,
+      providerId: 'credential',
+      userId: USER_IDS.marcos,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.beatriz,
+      providerId: 'credential',
+      userId: USER_IDS.beatriz,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.rodrigo,
+      providerId: 'credential',
+      userId: USER_IDS.rodrigo,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.camila,
+      providerId: 'credential',
+      userId: USER_IDS.camila,
+      password:
+        '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
+    },
+    {
+      accountId: USER_IDS.vinicius,
+      providerId: 'credential',
+      userId: USER_IDS.vinicius,
       password:
         '$argon2id$v=19$m=65536,t=2,p=1$f/4kZmu8cyp1cc0Ujkzw5WHTPYoZ5ZPAk3fMlP8SKeA$wdCiM/wGd+TbYrHmtO9MVciTZrTT0IfRzBgQV0CbB8M'
     }
@@ -711,7 +904,10 @@ async function seed() {
   ])
 
   console.log('Seeding followers...')
+  // joao follows and is followed by all 12 extra users (12 followers + 12 following)
+  // plus the original relationships between the 5 base users
   await db.insert(followers).values([
+    // original base relationships
     { followerId: USER_IDS.joao, followingId: USER_IDS.maria },
     { followerId: USER_IDS.joao, followingId: USER_IDS.pedro },
     { followerId: USER_IDS.maria, followingId: USER_IDS.joao },
@@ -721,16 +917,55 @@ async function seed() {
     { followerId: USER_IDS.ana, followingId: USER_IDS.maria },
     { followerId: USER_IDS.lucas, followingId: USER_IDS.joao },
     { followerId: USER_IDS.lucas, followingId: USER_IDS.maria },
-    { followerId: USER_IDS.lucas, followingId: USER_IDS.pedro }
+    { followerId: USER_IDS.lucas, followingId: USER_IDS.pedro },
+    // joao follows all 12 extra users
+    { followerId: USER_IDS.joao, followingId: USER_IDS.carla },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.rafael },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.bruna },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.thiago },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.fernanda },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.gabriel },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.juliana },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.marcos },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.beatriz },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.rodrigo },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.camila },
+    { followerId: USER_IDS.joao, followingId: USER_IDS.vinicius },
+    // all 12 extra users follow joao
+    { followerId: USER_IDS.carla, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.rafael, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.bruna, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.thiago, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.fernanda, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.gabriel, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.juliana, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.marcos, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.beatriz, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.rodrigo, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.camila, followingId: USER_IDS.joao },
+    { followerId: USER_IDS.vinicius, followingId: USER_IDS.joao }
   ])
 
   console.log('Seeding follow stats...')
+  // joao: 12 extra followers + maria + pedro + lucas = 15 followers; 12 extra following + maria + pedro = 14 following
   await db.insert(followStats).values([
-    { userId: USER_IDS.joao, followersCount: 3, followingCount: 2 },
+    { userId: USER_IDS.joao, followersCount: 15, followingCount: 14 },
     { userId: USER_IDS.maria, followersCount: 3, followingCount: 2 },
     { userId: USER_IDS.pedro, followersCount: 2, followingCount: 2 },
     { userId: USER_IDS.ana, followersCount: 1, followingCount: 1 },
-    { userId: USER_IDS.lucas, followersCount: 1, followingCount: 3 }
+    { userId: USER_IDS.lucas, followersCount: 1, followingCount: 3 },
+    { userId: USER_IDS.carla, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.rafael, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.bruna, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.thiago, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.fernanda, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.gabriel, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.juliana, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.marcos, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.beatriz, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.rodrigo, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.camila, followersCount: 0, followingCount: 1 },
+    { userId: USER_IDS.vinicius, followersCount: 0, followingCount: 1 }
   ])
 
   console.log('Seeding user favorites places...')

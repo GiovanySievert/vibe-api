@@ -37,7 +37,11 @@ export class DrizzleUserBlockRepository implements UserBlockRepository {
     return !!block
   }
 
-  async listBlockedUsers(blockerId: string): Promise<GetBlockedUserDto[]> {
+  async listBlockedUsers(blockerId: string, page?: number, limit?: number): Promise<GetBlockedUserDto[]> {
+    const pageSize = limit ?? 10
+    const currentPage = page ?? 1
+    const offset = (currentPage - 1) * pageSize
+
     const results = await db
       .select({
         userBlocks: {
@@ -55,6 +59,8 @@ export class DrizzleUserBlockRepository implements UserBlockRepository {
       .from(userBlocks)
       .innerJoin(users, eq(userBlocks.blockedId, users.id))
       .where(eq(userBlocks.blockerId, blockerId))
+      .limit(pageSize)
+      .offset(offset)
 
     return GetBlockedUserDtoMapper.fromArray(results)
   }
