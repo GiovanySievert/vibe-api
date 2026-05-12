@@ -1,3 +1,68 @@
+# vibe-api
+
+Main vibes API — Elysia + Bun + TypeScript.
+
+## Stack
+
+- **Runtime**: Bun.
+- **HTTP**: Elysia 1.4 (native OpenAPI/Swagger).
+- **Validation**: inline Zod in routes.
+- **DB**: PostgreSQL + Drizzle ORM (Drizzle Kit for migrations).
+- **Auth**: `better-auth` (existing middleware — do not reinvent).
+- **Messaging**: RabbitMQ.
+- **Logging**: Winston + Loki.
+- **Tests**: native `bun test`, no external deps.
+
+## Modular structure (DDD)
+
+```
+src/modules/<feature>/
+├── domain/                       # entities, value objects, repo interfaces
+├── application/
+│   └── use-cases/                # 1-per-action classes (e.g. CreateFollower)
+├── infrastructure/
+│   ├── http/
+│   │   ├── controllers/          # orchestrate use-cases, map req/res
+│   │   └── routes/               # Elysia routes (group, Zod, tags, security)
+│   └── persistence/              # DrizzleXRepository implements the domain interface
+├── <feature>.module.ts           # wiring: instantiate repos → services → controllers
+└── __tests__/                    # bun test
+```
+
+**Full reference**: [`src/modules/follow/`](src/modules/follow/) (follows the pattern 100%).
+
+## Patterns
+
+- **Wiring**: `<feature>.module.ts` is the ONLY place where concrete repositories are instantiated and injected into use-cases.
+- **Use cases**: 1 class per action, receives deps via constructor, exposes `execute()` or a named method.
+- **Elysia routes**: `group()`, inline Zod schema, `tags` for OpenAPI, `security` when auth is required (better-auth middleware).
+- **Controllers**: do NOT call Drizzle directly — always via a use-case.
+- **Repositories**: interface in `domain/`, `Drizzle*Repository` implementation in `infrastructure/persistence/`.
+- **Events**: use `applicationEventBus` (`@src/shared/application/events`) — do not invent emitters.
+- **Migrations**: `bun db:generate` → `bun db:migrate`. NEVER hand-edit generated SQL. Always run the migration reviewer before merging.
+- **Tests**: `__tests__/` folder next to the module. For routes, use `app.handle(new Request(...))` (don't spin up a real server). DB with transaction/rollback or repo mock.
+
+## Useful scripts
+
+```bash
+bun dev                    # watch
+bun test                   # tests
+bun test:watch
+bun test:coverage
+bun db:generate            # Drizzle: generate migration from schema
+bun db:migrate             # apply migrations
+bun db:seed
+docker:dev / docker:up
+```
+
+## Before committing
+
+1. `bun test` green.
+2. If you touched a Drizzle schema: `bun db:generate` + review the migration.
+3. If you added a route: confirm OpenAPI/Swagger renders the correct `tag`.
+
+---
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
