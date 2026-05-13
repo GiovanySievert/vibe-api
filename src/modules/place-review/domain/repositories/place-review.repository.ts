@@ -1,5 +1,5 @@
 import { PlaceReview } from '../mappers'
-import { FeedReviewItem, ListPlaceReviewCommentsResult, PlaceReviewComment, PlaceReviewReactionType, ReviewCounts } from '../types'
+import { FeedReviewItem, ListPlaceReviewCommentsResult, PlaceReviewComment, PlaceReviewReactionType, ReviewCounts, ReviewInteractionCount, ReviewInteractionUser } from '../types'
 
 export interface CreatePlaceReviewCommentInput {
   reviewId: string
@@ -24,7 +24,11 @@ export interface PlaceReviewRepository {
   listFollowingFeed(userId: string, since: Date, page?: number): Promise<FeedReviewItem[]>
   listCountsByReviewIds(reviewIds: string[], viewerId?: string): Promise<ReviewCounts[]>
   createComment(input: CreatePlaceReviewCommentInput): Promise<PlaceReviewComment>
+  getCommentById(commentId: string): Promise<PlaceReviewComment | null>
   listComments(reviewId: string, page: number, limit: number): Promise<ListPlaceReviewCommentsResult>
+  deleteComment(commentId: string): Promise<void>
+  countReactions(reviewId: string): Promise<ReviewInteractionCount>
+  listReactionUsers(reviewId: string, type: 'on' | 'off', page: number): Promise<ReviewInteractionUser[]>
   setReaction(input: SetPlaceReviewReactionInput): Promise<void>
   removeReaction(reviewId: string, userId: string): Promise<void>
   update(reviewId: string, data: Partial<Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>>): Promise<PlaceReview>

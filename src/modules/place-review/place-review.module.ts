@@ -1,12 +1,15 @@
 import {
   CreatePlaceReview,
   CreatePlaceReviewComment,
+  DeletePlaceReviewComment,
   GetPlaceReview,
   GetPlaceReviewCounts,
   GetPlaceReviewEligibility,
+  GetReviewInteractionCount,
   ListPlaceReviews,
   ListFollowingFeed,
   ListPlaceReviewComments,
+  ListReviewInteractions,
   RemovePlaceReviewReaction,
   SetPlaceReviewReaction,
   UpdatePlaceReview,
@@ -36,6 +39,9 @@ export class PlaceReviewModule {
     }
 
     const getPlaceReviewCountsService = new GetPlaceReviewCounts(placeReviewRepo)
+    const getReviewInteractionCountService = new GetReviewInteractionCount(placeReviewRepo)
+    const listReviewInteractionsService = new ListReviewInteractions(placeReviewRepo)
+    const deletePlaceReviewCommentService = new DeletePlaceReviewComment(placeReviewRepo)
 
     const createPlaceReviewService = new CreatePlaceReview(
       placeReviewRepo,
@@ -60,12 +66,15 @@ export class PlaceReviewModule {
     this.placeReviewController = new PlaceReviewController(
       createPlaceReviewService,
       createPlaceReviewCommentService,
+      deletePlaceReviewCommentService,
       getPlaceReviewService,
       getPlaceReviewCountsService,
       getPlaceReviewEligibilityService,
+      getReviewInteractionCountService,
       listPlaceReviewsService,
       listFollowingFeedService,
       listPlaceReviewCommentsService,
+      listReviewInteractionsService,
       setPlaceReviewReactionService,
       removePlaceReviewReactionService,
       updatePlaceReviewService,

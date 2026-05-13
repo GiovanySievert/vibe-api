@@ -1,12 +1,15 @@
 import {
   CreatePlaceReview,
   CreatePlaceReviewComment,
+  DeletePlaceReviewComment,
   GetPlaceReview,
   GetPlaceReviewCounts,
   GetPlaceReviewEligibility,
+  GetReviewInteractionCount,
   ListPlaceReviews,
   ListFollowingFeed,
   ListPlaceReviewComments,
+  ListReviewInteractions,
   RemovePlaceReviewReaction,
   SetPlaceReviewReaction,
   UpdatePlaceReview,
@@ -22,12 +25,15 @@ export class PlaceReviewController {
   constructor(
     private readonly createPlaceReview: CreatePlaceReview,
     private readonly createPlaceReviewComment: CreatePlaceReviewComment,
+    private readonly deletePlaceReviewComment: DeletePlaceReviewComment,
     private readonly getPlaceReview: GetPlaceReview,
     private readonly getPlaceReviewCounts: GetPlaceReviewCounts,
     private readonly getPlaceReviewEligibility: GetPlaceReviewEligibility,
+    private readonly getReviewInteractionCount: GetReviewInteractionCount,
     private readonly listPlaceReviews: ListPlaceReviews,
     private readonly listFollowingFeed: ListFollowingFeed,
     private readonly listPlaceReviewComments: ListPlaceReviewComments,
+    private readonly listReviewInteractions: ListReviewInteractions,
     private readonly setPlaceReviewReaction: SetPlaceReviewReaction,
     private readonly removePlaceReviewReaction: RemovePlaceReviewReaction,
     private readonly updatePlaceReview: UpdatePlaceReview,
@@ -170,6 +176,25 @@ export class PlaceReviewController {
     })
 
     return { success: true }
+  }
+
+  async getInteractionCount({ params }: { params: { reviewId: string }; user: User }) {
+    return this.getReviewInteractionCount.execute(params.reviewId)
+  }
+
+  async listInteractions({
+    params,
+    query
+  }: {
+    params: { reviewId: string }
+    query: { type: 'on' | 'off'; page?: number }
+    user: User
+  }) {
+    return this.listReviewInteractions.execute(params.reviewId, query.type, query.page ?? 1)
+  }
+
+  async deleteComment({ params, user }: { params: { reviewId: string; commentId: string }; user: User }) {
+    await this.deletePlaceReviewComment.execute(params.commentId, params.reviewId, user.id)
   }
 
   async update({ params, body }: { params: { reviewId: string }; body: UpdatePlaceReviewDto }) {

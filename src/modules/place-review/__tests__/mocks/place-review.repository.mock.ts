@@ -4,7 +4,7 @@ import {
   PlaceReviewRepository,
   SetPlaceReviewReactionInput
 } from '../../domain/repositories'
-import { FeedReviewItem, ListPlaceReviewCommentsResult, PlaceReviewComment, PlaceReviewReactionType, ReviewCounts } from '../../domain/types'
+import { FeedReviewItem, ListPlaceReviewCommentsResult, PlaceReviewComment, PlaceReviewReactionType, ReviewCounts, ReviewInteractionCount, ReviewInteractionUser } from '../../domain/types'
 
 export class MockPlaceReviewRepository implements PlaceReviewRepository {
   private reviews: PlaceReview[] = []
@@ -126,6 +126,33 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
       r.id === reviewId ? { ...r, ...data, updatedAt: new Date() } : r
     )
     return this.reviews.find((r) => r.id === reviewId) as PlaceReview
+  }
+
+  async getCommentById(commentId: string): Promise<PlaceReviewComment | null> {
+    return this.comments.find((c) => c.id === commentId) ?? null
+  }
+
+  async deleteComment(commentId: string): Promise<void> {
+    this.comments = this.comments.filter((c) => c.id !== commentId)
+  }
+
+  async countReactions(reviewId: string): Promise<ReviewInteractionCount> {
+    const reviewReactions = this.reactions.filter((r) => r.reviewId === reviewId)
+    return {
+      reviewId,
+      onCount: reviewReactions.filter((r) => r.type === 'on').length,
+      offCount: reviewReactions.filter((r) => r.type === 'off').length,
+      total: reviewReactions.length
+    }
+  }
+
+  async listReactionUsers(reviewId: string, type: 'on' | 'off', page: number): Promise<ReviewInteractionUser[]> {
+    const limit = 20
+    const offset = (page - 1) * limit
+    return this.reactions
+      .filter((r) => r.reviewId === reviewId && r.type === type)
+      .slice(offset, offset + limit)
+      .map((r) => ({ id: r.userId, username: `user-${r.userId}`, image: null }))
   }
 
   async delete(reviewId: string): Promise<void> {

@@ -50,6 +50,28 @@ export const PlaceReviewRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
+      .get('/:reviewId/interactions/count', (ctx) => placeReviewController.getInteractionCount(ctx), {
+        auth: true,
+        params: t.Object({ reviewId: t.String() }),
+        detail: {
+          tags: ['Place Reviews'],
+          summary: 'Get reaction counts (on/off/total) for a place review',
+          security: [{ cookieAuth: [] }]
+        }
+      })
+      .get('/:reviewId/interactions', (ctx) => placeReviewController.listInteractions(ctx), {
+        auth: true,
+        params: t.Object({ reviewId: t.String() }),
+        query: t.Object({
+          type: t.Union([t.Literal('on'), t.Literal('off')]),
+          page: t.Optional(t.Numeric({ minimum: 1 }))
+        }),
+        detail: {
+          tags: ['Place Reviews'],
+          summary: 'List users who reacted to a place review, filtered by type',
+          security: [{ cookieAuth: [] }]
+        }
+      })
       .get('/:reviewId/counts', (ctx) => placeReviewController.getCounts(ctx), {
         auth: true,
         params: t.Object({
@@ -72,6 +94,15 @@ export const PlaceReviewRoutes = (app: Elysia) => {
         detail: {
           tags: ['Place Reviews'],
           summary: 'List comments for a place review',
+          security: [{ cookieAuth: [] }]
+        }
+      })
+      .delete('/:reviewId/comments/:commentId', (ctx) => placeReviewController.deleteComment(ctx), {
+        auth: true,
+        params: t.Object({ reviewId: t.String(), commentId: t.String() }),
+        detail: {
+          tags: ['Place Reviews'],
+          summary: 'Delete a comment (author or review owner)',
           security: [{ cookieAuth: [] }]
         }
       })
