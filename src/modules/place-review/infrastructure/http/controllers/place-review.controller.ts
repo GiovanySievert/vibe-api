@@ -204,4 +204,9 @@ export class PlaceReviewController {
   async delete({ params, user }: { params: { reviewId: string }; user: User }) {
     await this.deletePlaceReview.execute(params.reviewId, user.id)
   }
+
+  async listPopularByPlace({ params, user }: { params: { placeId: string }; user: User }) {
+    const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+    return await this.listPlaceReviews.executePopularByPlace(params.placeId, since, 10, user.id)
+  }
 }

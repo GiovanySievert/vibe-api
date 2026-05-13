@@ -20,6 +20,7 @@ export interface PlaceReviewRepository {
   getLastReviewByUserAndPlace(userId: string, placeId: string): Promise<PlaceReview | null>
   countReviewsByUserAndPlace(userId: string, placeId: string): Promise<number>
   listByPlace(placeId: string, since: Date, page?: number): Promise<FeedReviewItem[]>
+  listPopularByPlace(placeId: string, since: Date, limit: number): Promise<FeedReviewItem[]>
   listByUser(userId: string, page?: number): Promise<FeedReviewItem[]>
   listFollowingFeed(userId: string, since: Date, page?: number): Promise<FeedReviewItem[]>
   listCountsByReviewIds(reviewIds: string[], viewerId?: string): Promise<ReviewCounts[]>

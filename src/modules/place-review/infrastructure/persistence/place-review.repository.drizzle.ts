@@ -119,6 +119,34 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
     return rows.map((row) => ({ ...row, viewerReaction: null }))
   }
 
+  async listPopularByPlace(placeId: string, since: Date, limit: number): Promise<FeedReviewItem[]> {
+    const rows = await db
+      .select({
+        id: placeReviews.id,
+        userId: placeReviews.userId,
+        placeId: placeReviews.placeId,
+        placeName: placeReviews.placeName,
+        rating: placeReviews.rating,
+        placeImageUrl: placeReviews.placeImageUrl,
+        selfieUrl: placeReviews.selfieUrl,
+        selfieFriendsOnly: placeReviews.selfieFriendsOnly,
+        comment: placeReviews.comment,
+        createdAt: placeReviews.createdAt,
+        updatedAt: placeReviews.updatedAt,
+        user: { id: users.id, username: users.username, image: users.image },
+        interactionCount: count(placeReviewReactions.id)
+      })
+      .from(placeReviews)
+      .innerJoin(users, eq(placeReviews.userId, users.id))
+      .leftJoin(placeReviewReactions, eq(placeReviewReactions.reviewId, placeReviews.id))
+      .where(and(eq(placeReviews.placeId, placeId), gte(placeReviews.createdAt, since)))
+      .groupBy(placeReviews.id, users.id, users.username, users.image)
+      .orderBy(desc(count(placeReviewReactions.id)), desc(placeReviews.createdAt))
+      .limit(limit)
+
+    return rows.map(({ interactionCount: _, ...row }) => ({ ...row, viewerReaction: null }))
+  }
+
   async update(
     reviewId: string,
     data: Partial<Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>>

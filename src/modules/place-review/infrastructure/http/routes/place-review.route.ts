@@ -156,6 +156,15 @@ export const PlaceReviewRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
+      .get('/place/:placeId/popular', (ctx) => placeReviewController.listPopularByPlace(ctx), {
+        auth: true,
+        params: t.Object({ placeId: t.String() }),
+        detail: {
+          tags: ['Place Reviews'],
+          summary: 'List most interacted reviews for a place in the last 3 months',
+          security: [{ cookieAuth: [] }]
+        }
+      })
       .get('/place/:placeId', (ctx) => placeReviewController.listByPlace(ctx), {
         auth: true,
         params: t.Object({

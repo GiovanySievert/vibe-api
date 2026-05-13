@@ -46,6 +46,16 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     return this.toFeedItems(this.reviews.filter((r) => r.placeId === placeId).slice(offset, offset + limit))
   }
 
+  async listPopularByPlace(placeId: string, since: Date, limit: number): Promise<FeedReviewItem[]> {
+    const reactionCountFor = (reviewId: string) => this.reactions.filter((r) => r.reviewId === reviewId).length
+    return this.toFeedItems(
+      this.reviews
+        .filter((r) => r.placeId === placeId && r.createdAt >= since)
+        .sort((a, b) => reactionCountFor(b.id) - reactionCountFor(a.id))
+        .slice(0, limit)
+    )
+  }
+
   async listByUser(userId: string, page?: number): Promise<FeedReviewItem[]> {
     const limit = 10
     const offset = ((page ?? 1) - 1) * limit

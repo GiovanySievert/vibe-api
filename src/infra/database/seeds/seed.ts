@@ -13,6 +13,7 @@ import {
   userFavoritesPlaces,
   userBlocks,
   placeReviews,
+  placeReviewReactions,
   events,
   eventParticipants,
   eventComments,
@@ -574,7 +575,8 @@ async function seed() {
       paymentMethods: 'cash,credit,debit,pix',
       socialInstagram: '@quintalbatel',
       contactPhone: '41999110006',
-      about: 'Bar ao ar livre com clima de quintal, drinques gelados e petiscos pra beliscar. O lugar pra descansar depois de um dia longo.',
+      about:
+        'Bar ao ar livre com clima de quintal, drinques gelados e petiscos pra beliscar. O lugar pra descansar depois de um dia longo.',
       status: 'active'
     }
   ])
@@ -1177,25 +1179,6 @@ async function seed() {
     },
 
     {
-      userId: USER_IDS.lucas,
-      placeId: PLACE_IDS.vilaDoChopp,
-      placeName: 'Vila do Chopp',
-      rating: 'crowded',
-      comment: 'Point do bairro! Chope bem tirado e porcao de frango generosa.',
-      placeImageUrl: 'https://picsum.photos/800/600?random=115&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=5&place=review'
-    },
-    {
-      userId: USER_IDS.pedro,
-      placeId: PLACE_IDS.vilaDoChopp,
-      placeName: 'Vila do Chopp',
-      rating: 'crowded',
-      comment: 'Sempre cheio e animado, preco acessivel pro Batel.',
-      placeImageUrl: 'https://picsum.photos/800/600?random=205&place=review',
-      selfieUrl: null
-    },
-
-    {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.moraesWine,
       placeName: 'Moraes Wine',
@@ -1234,6 +1217,75 @@ async function seed() {
       selfieUrl: 'https://picsum.photos/200/200?random=2&place=review',
       selfieFriendsOnly: true
     }
+  ])
+
+  console.log('Seeding popular reviews (old, high interactions)...')
+  const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+  const seventyDaysAgo = new Date(Date.now() - 70 * 24 * 60 * 60 * 1000)
+  const fiftyDaysAgo = new Date(Date.now() - 50 * 24 * 60 * 60 * 1000)
+
+  const popularReviews = await db
+    .insert(placeReviews)
+    .values([
+      {
+        userId: USER_IDS.joao,
+        placeId: PLACE_IDS.vilaDoChopp,
+        placeName: 'Vila do Chopp',
+        rating: 'crowded',
+        comment: 'Melhor chope da cidade, fila enorme mas vale cada minuto.',
+        placeImageUrl: 'https://picsum.photos/800/600?random=300&place=review',
+        selfieUrl: 'https://picsum.photos/200/200?random=10&place=review',
+        createdAt: ninetyDaysAgo,
+        updatedAt: ninetyDaysAgo
+      },
+      {
+        userId: USER_IDS.maria,
+        placeId: PLACE_IDS.vilaDoChopp,
+        placeName: 'Vila do Chopp',
+        rating: 'crowded',
+        comment: 'Ambiente incrivel, musica ao vivo toda sexta. Lotado mas divertido.',
+        placeImageUrl: 'https://picsum.photos/800/600?random=301&place=review',
+        selfieUrl: 'https://picsum.photos/200/200?random=11&place=review',
+        createdAt: seventyDaysAgo,
+        updatedAt: seventyDaysAgo
+      },
+      {
+        userId: USER_IDS.pedro,
+        placeId: PLACE_IDS.vilaDoChopp,
+        placeName: 'Vila do Chopp',
+        rating: 'dead',
+        comment: 'Fui numa terca e tava tranquilo, servico rapido e chope gelado.',
+        placeImageUrl: 'https://picsum.photos/800/600?random=302&place=review',
+        selfieUrl: null,
+        createdAt: fiftyDaysAgo,
+        updatedAt: fiftyDaysAgo
+      }
+    ])
+    .returning()
+
+  const [reviewA, reviewB, reviewC] = popularReviews
+
+  await db.insert(placeReviewReactions).values([
+    { reviewId: reviewA.id, userId: USER_IDS.maria, type: 'on' },
+    { reviewId: reviewA.id, userId: USER_IDS.pedro, type: 'on' },
+    { reviewId: reviewA.id, userId: USER_IDS.ana, type: 'on' },
+    { reviewId: reviewA.id, userId: USER_IDS.lucas, type: 'on' },
+    { reviewId: reviewA.id, userId: USER_IDS.carla, type: 'on' },
+    { reviewId: reviewA.id, userId: USER_IDS.rafael, type: 'on' },
+    { reviewId: reviewA.id, userId: USER_IDS.bruna, type: 'off' },
+    { reviewId: reviewA.id, userId: USER_IDS.thiago, type: 'on' },
+
+    { reviewId: reviewB.id, userId: USER_IDS.joao, type: 'on' },
+    { reviewId: reviewB.id, userId: USER_IDS.pedro, type: 'on' },
+    { reviewId: reviewB.id, userId: USER_IDS.ana, type: 'on' },
+    { reviewId: reviewB.id, userId: USER_IDS.lucas, type: 'on' },
+    { reviewId: reviewB.id, userId: USER_IDS.carla, type: 'off' },
+    { reviewId: reviewB.id, userId: USER_IDS.fernanda, type: 'on' },
+
+    { reviewId: reviewC.id, userId: USER_IDS.joao, type: 'on' },
+    { reviewId: reviewC.id, userId: USER_IDS.maria, type: 'on' },
+    { reviewId: reviewC.id, userId: USER_IDS.ana, type: 'on' },
+    { reviewId: reviewC.id, userId: USER_IDS.gabriel, type: 'on' }
   ])
 
   console.log('Seeding user streaks...')

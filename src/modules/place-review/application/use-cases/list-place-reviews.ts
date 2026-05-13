@@ -17,4 +17,9 @@ export class ListPlaceReviews {
     const items = await this.placeReviewRepo.listByUser(userId, page)
     return applySelfieVisibility(items, viewerId, this.followChecker)
   }
+
+  async executePopularByPlace(placeId: string, since: Date, limit: number, viewerId: string): Promise<FeedReviewItem[]> {
+    const items = await this.placeReviewRepo.listPopularByPlace(placeId, since, limit)
+    return applySelfieVisibility(items, viewerId, this.followChecker)
+  }
 }
