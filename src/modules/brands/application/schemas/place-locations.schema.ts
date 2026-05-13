@@ -14,7 +14,7 @@ export const placeLocations = pgTable('place_locations', {
   city: varchar('city', { length: 255 }).notNull(),
   state: varchar('state', { length: 255 }).notNull(),
   country: varchar('country', { length: 255 }).notNull(),
-  postalCode: varchar('postal_code', { length: 255 }).notNull(),
+  postalCode: varchar('postal_code', { length: 255 }),
   lat: numeric('lat', { precision: 9, scale: 6 }).notNull(),
   lng: numeric('lng', { precision: 9, scale: 6 }).notNull(),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),

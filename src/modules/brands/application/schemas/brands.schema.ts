@@ -6,7 +6,7 @@ import { brandMenus } from './brand-menus.schema'
 export const brands = pgTable('brands', {
   id: uuid('id').defaultRandom().primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
-  taxId: varchar('tax_id', { length: 14 }).notNull(),
+  taxId: varchar('tax_id', { length: 14 }),
   type: varchar('type', { length: 255 }),
   avatar: varchar('avatar', { length: 255 }),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),

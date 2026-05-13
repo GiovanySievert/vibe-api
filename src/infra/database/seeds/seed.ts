@@ -23,6 +23,7 @@ import {
   userWeeklyActivity,
   userPlaceBadges
 } from '../schema'
+import { osmBrands, osmPlaces, osmPlaceLocations } from './data/curitiba-osm-places'
 
 const USER_IDS = {
   joao: '11111111-1111-1111-1111-111111111111',
@@ -46,32 +47,31 @@ const USER_IDS = {
 }
 
 const BRAND_IDS = {
-  burgerKing: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa',
-  pizzaHut: 'bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb',
-  starbucks: 'cccccccc-cccc-4ccc-cccc-cccccccccccc',
-  outback: 'dddddddd-dddd-4ddd-dddd-dddddddddddd',
-  mcdonalds: 'eeeeeeee-eeee-4eee-eeee-eeeeeeeeeeee',
-  barelhoBar: 'f1f1f1f1-f1f1-4f1f-af1f-f1f1f1f1f1f1',
-  prudentePub: 'f2f2f2f2-f2f2-4f2f-af2f-f2f2f2f2f2f2',
-  cantinaBatel: 'f3f3f3f3-f3f3-4f3f-af3f-f3f3f3f3f3f3',
-  vilaDoChopp: 'f4f4f4f4-f4f4-4f4f-af4f-f4f4f4f4f4f4',
-  moraesWine: 'f5f5f5f5-f5f5-4f5f-af5f-f5f5f5f5f5f5',
-  quintalBatel: 'f6f6f6f6-f6f6-4f6f-af6f-f6f6f6f6f6f6'
+  jamesBar: '196f2298-6100-4ed5-ae1b-080c011126d1',
+  tesorosDeCuba: '0d04db46-e68e-453c-a55b-f0aa572625f7',
+  botecoBoaPraca: '3b18d50b-cd41-471f-ab30-cc1be77b4225',
+  seuPrudente: '71965752-fa1a-4fbd-ad07-e45fcc8b4b9a',
+  revistariaVisconde: 'ef2f8ea0-eeb7-44f3-adb9-6874d35d42c9',
+  barOtelo: '2f2f77e3-fc88-4fa1-a2d2-5e8decbfdca6',
+  amarelinho: 'ff2ff35f-99f7-4ade-a806-fa176390b978',
+  janelaBar: '9575d73a-c45b-402f-a602-96b093bb4458',
+  caramelo: 'edde69e4-1716-4f7e-a531-3f39d7216a63',
+  jatai: '9b264373-d86d-432e-a6c9-874bd50de16b',
+  ottroRole: 'f72d7d81-c5cc-435f-ad0b-f229ff5df70a'
 }
 
 const PLACE_IDS = {
-  burgerPaulista: '11111111-1111-4111-a111-111111111111',
-  burgerMoema: '22222222-2222-4222-a222-222222222222',
-  pizzaJardins: '33333333-3333-4333-a333-333333333333',
-  barelhoBar: 'b1b1b1b1-b1b1-4b1b-ab1b-b1b1b1b1b1b1',
-  prudentePub: 'b2b2b2b2-b2b2-4b2b-ab2b-b2b2b2b2b2b2',
-  cantinaBatel: 'b3b3b3b3-b3b3-4b3b-ab3b-b3b3b3b3b3b3',
-  vilaDoChopp: 'b4b4b4b4-b4b4-4b4b-ab4b-b4b4b4b4b4b4',
-  moraesWine: 'b5b5b5b5-b5b5-4b5b-ab5b-b5b5b5b5b5b5',
-  quintalBatel: 'b6b6b6b6-b6b6-4b6b-ab6b-b6b6b6b6b6b6',
-  starbucksFaria: '44444444-4444-4444-a444-444444444444',
-  outbackMoema: '55555555-5555-4555-a555-555555555555',
-  mcdonaldsIbirapuera: '66666666-6666-4666-a666-666666666666'
+  jamesBar: '58f0220a-1806-45b1-ae01-bda728ef0f83',
+  tesorosDeCuba: '4c3e795d-0166-41c1-a37d-1aba9290cb08',
+  botecoBoaPraca: 'f5e4bffd-8d24-410d-af3d-1d38abc61a58',
+  seuPrudente: '2db33be6-eff2-4a49-a128-9fd46d5aee04',
+  revistariaVisconde: '3d2e1141-0f1f-44f7-a4b4-035936d5a51a',
+  barOtelo: 'ad87d507-a07d-404b-ad5b-ad1e0c898916',
+  amarelinho: '7c6924b7-cdeb-469d-a3ce-c6768ef574b4',
+  janelaBar: '9b13f4b3-a928-4f80-a232-38214fc2ca9f',
+  caramelo: '16724293-c629-49ed-ae5d-f1419675fd7e',
+  jatai: '75a51af8-1170-4422-aa82-64b87c6d0adf',
+  ottroRole: '50eea33c-4b9c-447b-ac0e-54425e6b5663'
 }
 
 async function seed() {
@@ -364,541 +364,196 @@ async function seed() {
   ])
 
   console.log('Seeding brands...')
-  await db.insert(brands).values([
-    {
-      id: BRAND_IDS.burgerKing,
-      name: 'Burger King',
-      taxId: '12345678000101',
-      type: 'fast-food',
-      avatar: 'https://picsum.photos/400/400?random=10&place=review'
-    },
-    {
-      id: BRAND_IDS.pizzaHut,
-      name: 'Pizza Hut',
-      taxId: '23456789000102',
-      type: 'fast-food',
-      avatar: 'https://picsum.photos/400/400?random=11&place=review'
-    },
-    {
-      id: BRAND_IDS.starbucks,
-      name: 'Starbucks',
-      taxId: '34567890000103',
-      type: 'cafe',
-      avatar: 'https://picsum.photos/400/400?random=12&place=review'
-    },
-    {
-      id: BRAND_IDS.outback,
-      name: 'Outback Steakhouse',
-      taxId: '45678901000104',
-      type: 'steakhouse',
-      avatar: 'https://picsum.photos/400/400?random=13&place=review'
-    },
-    {
-      id: BRAND_IDS.mcdonalds,
-      name: "McDonald's",
-      taxId: '56789012000105',
-      type: 'fast-food',
-      avatar: 'https://picsum.photos/400/400?random=14&place=review'
-    },
-    {
-      id: BRAND_IDS.barelhoBar,
-      name: 'Barelho Bar',
-      taxId: '61234567000110',
-      type: 'bar',
-      avatar: 'https://picsum.photos/400/400?random=15&place=review'
-    },
-    {
-      id: BRAND_IDS.prudentePub,
-      name: 'Prudente Pub',
-      taxId: '62345678000111',
-      type: 'pub',
-      avatar: 'https://picsum.photos/400/400?random=16&place=review'
-    },
-    {
-      id: BRAND_IDS.cantinaBatel,
-      name: 'Cantina do Batel',
-      taxId: '63456789000112',
-      type: 'bar',
-      avatar: 'https://picsum.photos/400/400?random=17&place=review'
-    },
-    {
-      id: BRAND_IDS.vilaDoChopp,
-      name: 'Vila do Chopp',
-      taxId: '64567890000113',
-      type: 'bar',
-      avatar: 'https://picsum.photos/400/400?random=18&place=review'
-    },
-    {
-      id: BRAND_IDS.moraesWine,
-      name: 'Moraes Wine Bar',
-      taxId: '65678901000114',
-      type: 'wine-bar',
-      avatar: 'https://picsum.photos/400/400?random=19&place=review'
-    },
-    {
-      id: BRAND_IDS.quintalBatel,
-      name: 'Quintal do Batel',
-      taxId: '66789012000115',
-      type: 'bar',
-      avatar: 'https://picsum.photos/400/400?random=20&place=review'
-    }
-  ])
+  await db.insert(brands).values(osmBrands)
 
   console.log('Seeding places...')
-  await db.insert(places).values([
-    {
-      id: PLACE_IDS.burgerPaulista,
-      brandId: BRAND_IDS.burgerKing,
-      name: 'Burger King - Paulista',
-      priceRange: '$$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@burgerkingbr',
-      contactPhone: '11999999999',
-      about: 'O Burger King da Paulista, um dos mais movimentados de SP.',
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.burgerMoema,
-      brandId: BRAND_IDS.burgerKing,
-      name: 'Burger King - Moema',
-      priceRange: '$$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@burgerkingbr',
-      contactPhone: '11988888888',
-      about: 'Burger King no coracao de Moema.',
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.pizzaJardins,
-      brandId: BRAND_IDS.pizzaHut,
-      name: 'Pizza Hut - Jardins',
-      priceRange: '$$$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@pizzahutbr',
-      contactPhone: '11977777777',
-      about: 'Pizza Hut nos Jardins, ambiente familiar.',
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.starbucksFaria,
-      brandId: BRAND_IDS.starbucks,
-      name: 'Starbucks - Faria Lima',
-      priceRange: '$$$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@starbucksbrasil',
-      contactPhone: '11966666666',
-      about: 'Starbucks na Faria Lima, perfeito para reunioes.',
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.outbackMoema,
-      brandId: BRAND_IDS.outback,
-      name: 'Outback - Moema',
-      priceRange: '$$$$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@outbackbrasil',
-      contactPhone: '11955555555',
-      about: 'Outback em Moema, o melhor steak da regiao.',
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.mcdonaldsIbirapuera,
-      brandId: BRAND_IDS.mcdonalds,
-      name: "McDonald's - Ibirapuera",
-      priceRange: '$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@mcdonalds_br',
-      contactPhone: '11944444444',
-      about: "McDonald's proximo ao Parque Ibirapuera.",
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.barelhoBar,
-      brandId: BRAND_IDS.barelhoBar,
-      name: 'Barelho Bar',
-      priceRange: '$$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@barelhobar',
-      contactPhone: '41999110001',
-      about: 'Bar descolado no Batel com drinques autorais e petiscos. Musica ao vivo nas sextas.',
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.prudentePub,
-      brandId: BRAND_IDS.prudentePub,
-      name: 'Prudente Pub',
-      priceRange: '$$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@prudentepub',
-      contactPhone: '41999110002',
-      about: 'Pub com mais de 20 chopes artesanais, ambiente aconchegante e petiscos pra compartilhar.',
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.cantinaBatel,
-      brandId: BRAND_IDS.cantinaBatel,
-      name: 'Cantina do Batel',
-      priceRange: '$$$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@cantinabatel',
-      contactPhone: '41999110003',
-      about: 'Cozinha italiana informal com boa carta de vinhos e um ambiente intimista.',
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.vilaDoChopp,
-      brandId: BRAND_IDS.vilaDoChopp,
-      name: 'Vila do Chopp',
-      priceRange: '$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@viladochopp',
-      contactPhone: '41999110004',
-      about: 'Chopp gelado, bolinha de queijo e muito pagode. O point mais animado da Prudente.',
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.moraesWine,
-      brandId: BRAND_IDS.moraesWine,
-      name: 'Moraes Wine Bar',
-      priceRange: '$$$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@moraeswinebar',
-      contactPhone: '41999110005',
-      about: 'Wine bar sofisticado com curadoria de vinhos naturais e tabuadas de frios.',
-      status: 'active'
-    },
-    {
-      id: PLACE_IDS.quintalBatel,
-      brandId: BRAND_IDS.quintalBatel,
-      name: 'Quintal do Batel',
-      priceRange: '$$',
-      paymentMethods: 'cash,credit,debit,pix',
-      socialInstagram: '@quintalbatel',
-      contactPhone: '41999110006',
-      about:
-        'Bar ao ar livre com clima de quintal, drinques gelados e petiscos pra beliscar. O lugar pra descansar depois de um dia longo.',
-      status: 'active'
-    }
-  ])
+  await db.insert(places).values(osmPlaces)
 
   console.log('Seeding place locations...')
-  await db.insert(placeLocations).values([
-    {
-      placeId: PLACE_IDS.burgerPaulista,
-      addressLine: 'Av. Paulista, 1000',
-      neighborhood: 'Bela Vista',
-      city: 'Sao Paulo',
-      state: 'SP',
-      country: 'Brasil',
-      postalCode: '01310-100',
-      lat: '-23.561414',
-      lng: '-46.656646'
-    },
-    {
-      placeId: PLACE_IDS.burgerMoema,
-      addressLine: 'Av. Ibirapuera, 2500',
-      neighborhood: 'Moema',
-      city: 'Sao Paulo',
-      state: 'SP',
-      country: 'Brasil',
-      postalCode: '04028-001',
-      lat: '-23.601820',
-      lng: '-46.665260'
-    },
-    {
-      placeId: PLACE_IDS.pizzaJardins,
-      addressLine: 'Rua Oscar Freire, 500',
-      neighborhood: 'Jardins',
-      city: 'Sao Paulo',
-      state: 'SP',
-      country: 'Brasil',
-      postalCode: '01426-001',
-      lat: '-23.562480',
-      lng: '-46.669890'
-    },
-    {
-      placeId: PLACE_IDS.starbucksFaria,
-      addressLine: 'Av. Faria Lima, 3000',
-      neighborhood: 'Itaim Bibi',
-      city: 'Sao Paulo',
-      state: 'SP',
-      country: 'Brasil',
-      postalCode: '04538-132',
-      lat: '-23.586453',
-      lng: '-46.682739'
-    },
-    {
-      placeId: PLACE_IDS.outbackMoema,
-      addressLine: 'Alameda dos Arapanes, 100',
-      neighborhood: 'Moema',
-      city: 'Sao Paulo',
-      state: 'SP',
-      country: 'Brasil',
-      postalCode: '04524-001',
-      lat: '-23.607180',
-      lng: '-46.665320'
-    },
-    {
-      placeId: PLACE_IDS.mcdonaldsIbirapuera,
-      addressLine: 'Av. Republica do Libano, 1500',
-      neighborhood: 'Ibirapuera',
-      city: 'Sao Paulo',
-      state: 'SP',
-      country: 'Brasil',
-      postalCode: '04502-001',
-      lat: '-23.591420',
-      lng: '-46.657810'
-    },
-    {
-      placeId: PLACE_IDS.barelhoBar,
-      addressLine: 'R. Prudente de Moraes, 238',
-      neighborhood: 'Batel',
-      city: 'Curitiba',
-      state: 'PR',
-      country: 'Brasil',
-      postalCode: '80420-200',
-      lat: '-25.4238000',
-      lng: '-49.2858000'
-    },
-    {
-      placeId: PLACE_IDS.prudentePub,
-      addressLine: 'R. Prudente de Moraes, 411',
-      neighborhood: 'Batel',
-      city: 'Curitiba',
-      state: 'PR',
-      country: 'Brasil',
-      postalCode: '80420-200',
-      lat: '-25.4252000',
-      lng: '-49.2850000'
-    },
-    {
-      placeId: PLACE_IDS.cantinaBatel,
-      addressLine: 'R. Prudente de Moraes, 512',
-      neighborhood: 'Batel',
-      city: 'Curitiba',
-      state: 'PR',
-      country: 'Brasil',
-      postalCode: '80420-200',
-      lat: '-25.4265555',
-      lng: '-49.2843428'
-    },
-    {
-      placeId: PLACE_IDS.vilaDoChopp,
-      addressLine: 'R. Prudente de Moraes, 601',
-      neighborhood: 'Batel',
-      city: 'Curitiba',
-      state: 'PR',
-      country: 'Brasil',
-      postalCode: '80420-200',
-      lat: '-25.4273000',
-      lng: '-49.2840000'
-    },
-    {
-      placeId: PLACE_IDS.moraesWine,
-      addressLine: 'R. Prudente de Moraes, 748',
-      neighborhood: 'Batel',
-      city: 'Curitiba',
-      state: 'PR',
-      country: 'Brasil',
-      postalCode: '80420-200',
-      lat: '-25.4285250',
-      lng: '-49.2833998'
-    },
-    {
-      placeId: PLACE_IDS.quintalBatel,
-      addressLine: 'R. Prudente de Moraes, 890',
-      neighborhood: 'Batel',
-      city: 'Curitiba',
-      state: 'PR',
-      country: 'Brasil',
-      postalCode: '80420-200',
-      lat: '-25.4295490',
-      lng: '-49.2830621'
-    }
-  ])
+  await db.insert(placeLocations).values(osmPlaceLocations)
 
   console.log('Seeding brand menus...')
   await db.insert(brandMenus).values([
     {
-      brandId: BRAND_IDS.burgerKing,
+      brandId: BRAND_IDS.botecoBoaPraca,
       name: 'Whopper',
       description: 'O classico hamburguer grelhado no fogo',
       priceCents: 2990
     },
     {
-      brandId: BRAND_IDS.burgerKing,
+      brandId: BRAND_IDS.botecoBoaPraca,
       name: 'Whopper Duplo',
       description: 'Duas carnes grelhadas no fogo',
       priceCents: 3990
     },
     {
-      brandId: BRAND_IDS.burgerKing,
+      brandId: BRAND_IDS.botecoBoaPraca,
       name: 'Onion Rings',
       description: 'Aneis de cebola empanados e crocantes',
       priceCents: 1290
     },
 
     {
-      brandId: BRAND_IDS.pizzaHut,
+      brandId: BRAND_IDS.tesorosDeCuba,
       name: 'Pizza Pepperoni Grande',
       description: 'Pizza com pepperoni e queijo',
       priceCents: 5990
     },
     {
-      brandId: BRAND_IDS.pizzaHut,
+      brandId: BRAND_IDS.tesorosDeCuba,
       name: 'Pizza Margherita Grande',
       description: 'Pizza com tomate, mussarela e manjericao',
       priceCents: 4990
     },
 
     {
-      brandId: BRAND_IDS.starbucks,
+      brandId: BRAND_IDS.caramelo,
       name: 'Caramel Macchiato',
       description: 'Espresso com leite vaporizado e caramelo',
       priceCents: 1890
     },
     {
-      brandId: BRAND_IDS.starbucks,
+      brandId: BRAND_IDS.caramelo,
       name: 'Frappuccino Mocha',
       description: 'Bebida gelada com cafe, chocolate e chantilly',
       priceCents: 2190
     },
 
     {
-      brandId: BRAND_IDS.outback,
+      brandId: BRAND_IDS.jamesBar,
       name: 'Bloomin Onion',
       description: 'Cebola gigante empanada e frita',
       priceCents: 5990
     },
     {
-      brandId: BRAND_IDS.outback,
+      brandId: BRAND_IDS.jamesBar,
       name: 'Ribeye Steak',
       description: 'Corte nobre grelhado no ponto',
       priceCents: 8990
     },
 
     {
-      brandId: BRAND_IDS.mcdonalds,
+      brandId: BRAND_IDS.revistariaVisconde,
       name: 'Big Mac',
       description: 'Dois hamburgueres, alface, queijo, molho especial',
       priceCents: 2490
     },
     {
-      brandId: BRAND_IDS.mcdonalds,
+      brandId: BRAND_IDS.revistariaVisconde,
       name: 'McFlurry Ovomaltine',
       description: 'Sorvete com Ovomaltine',
       priceCents: 1290
     },
 
     {
-      brandId: BRAND_IDS.barelhoBar,
+      brandId: BRAND_IDS.seuPrudente,
       name: 'Negroni da Casa',
       description: 'Drinque autoral com gin, campari e vermute',
       priceCents: 2890
     },
     {
-      brandId: BRAND_IDS.barelhoBar,
+      brandId: BRAND_IDS.seuPrudente,
       name: 'Tábua de Frios Barelho',
       description: 'Queijos, embutidos e pao de fermentacao natural',
       priceCents: 4990
     },
     {
-      brandId: BRAND_IDS.barelhoBar,
+      brandId: BRAND_IDS.seuPrudente,
       name: 'Gin Tônica Especial',
       description: 'Gin artesanal com tonico e botanicos frescos',
       priceCents: 2490
     },
 
     {
-      brandId: BRAND_IDS.prudentePub,
+      brandId: BRAND_IDS.janelaBar,
       name: 'Chope Artesanal IPA',
       description: 'IPA gelado de cervejaria local, 500ml',
       priceCents: 1890
     },
     {
-      brandId: BRAND_IDS.prudentePub,
+      brandId: BRAND_IDS.janelaBar,
       name: 'Bolinha de Queijo',
       description: 'Porcao com 10 bolinhas crocantes recheadas',
       priceCents: 2290
     },
     {
-      brandId: BRAND_IDS.prudentePub,
+      brandId: BRAND_IDS.janelaBar,
       name: 'Hamburguer Pub',
       description: 'Artesanal com cheddar, bacon e aioli',
       priceCents: 3490
     },
 
     {
-      brandId: BRAND_IDS.cantinaBatel,
+      brandId: BRAND_IDS.jatai,
       name: 'Bruschetta ao Tomate',
       description: 'Pao rústico com tomate cereja, basilico e azeite',
       priceCents: 2490
     },
     {
-      brandId: BRAND_IDS.cantinaBatel,
+      brandId: BRAND_IDS.jatai,
       name: 'Tagliatelle Carbonara',
       description: 'Massa fresca com pancetta, ovo e parmesao',
       priceCents: 4990
     },
     {
-      brandId: BRAND_IDS.cantinaBatel,
+      brandId: BRAND_IDS.jatai,
       name: 'Tiramisu',
       description: 'Sobremesa italiana classica com cafe e mascarpone',
       priceCents: 2290
     },
 
     {
-      brandId: BRAND_IDS.vilaDoChopp,
+      brandId: BRAND_IDS.ottroRole,
       name: 'Chope Pilsen 600ml',
       description: 'Chope gelado bem tirado',
       priceCents: 1290
     },
     {
-      brandId: BRAND_IDS.vilaDoChopp,
+      brandId: BRAND_IDS.ottroRole,
       name: 'Porcao de Frango',
       description: 'Frango frito temperado, porcao generosa',
       priceCents: 2490
     },
     {
-      brandId: BRAND_IDS.vilaDoChopp,
+      brandId: BRAND_IDS.ottroRole,
       name: 'Caldo de Feijao',
       description: 'Caldo espesso com linguica e torresmo',
       priceCents: 1590
     },
 
     {
-      brandId: BRAND_IDS.moraesWine,
+      brandId: BRAND_IDS.barOtelo,
       name: 'Taça de Vinho Natural Branco',
       description: 'Curadoria de vinhos naturais, selecao do dia',
       priceCents: 3490
     },
     {
-      brandId: BRAND_IDS.moraesWine,
+      brandId: BRAND_IDS.barOtelo,
       name: 'Taça de Vinho Natural Tinto',
       description: 'Tinto natural de pequeno produtor, selecao do dia',
       priceCents: 3690
     },
     {
-      brandId: BRAND_IDS.moraesWine,
+      brandId: BRAND_IDS.barOtelo,
       name: 'Tábua Premium',
       description: 'Queijos especiais, presunto cru e geleias artesanais',
       priceCents: 6990
     },
 
     {
-      brandId: BRAND_IDS.quintalBatel,
+      brandId: BRAND_IDS.amarelinho,
       name: 'Caipirinha da Casa',
       description: 'Cachaça artesanal, limão siciliano e bastante gelo',
       priceCents: 1990
     },
     {
-      brandId: BRAND_IDS.quintalBatel,
+      brandId: BRAND_IDS.amarelinho,
       name: 'Espetinho Misto',
       description: 'Frango, linguiça e queijo coalho na brasa',
       priceCents: 2290
     },
     {
-      brandId: BRAND_IDS.quintalBatel,
+      brandId: BRAND_IDS.amarelinho,
       name: 'Porção de Mandioca Frita',
       description: 'Mandioca crocante com vinagrete e molho de pimenta',
       priceCents: 1890
@@ -972,21 +627,21 @@ async function seed() {
 
   console.log('Seeding user favorites places...')
   await db.insert(userFavoritesPlaces).values([
-    { userId: USER_IDS.joao, placeId: PLACE_IDS.burgerPaulista },
-    { userId: USER_IDS.joao, placeId: PLACE_IDS.starbucksFaria },
-    { userId: USER_IDS.maria, placeId: PLACE_IDS.pizzaJardins },
-    { userId: USER_IDS.maria, placeId: PLACE_IDS.outbackMoema },
-    { userId: USER_IDS.pedro, placeId: PLACE_IDS.burgerMoema },
-    { userId: USER_IDS.pedro, placeId: PLACE_IDS.mcdonaldsIbirapuera },
-    { userId: USER_IDS.ana, placeId: PLACE_IDS.starbucksFaria },
-    { userId: USER_IDS.lucas, placeId: PLACE_IDS.outbackMoema }
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.botecoBoaPraca },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.jamesBar },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.caramelo },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.janelaBar },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.tesorosDeCuba },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.revistariaVisconde },
+    { userId: USER_IDS.ana, placeId: PLACE_IDS.jamesBar },
+    { userId: USER_IDS.lucas, placeId: PLACE_IDS.janelaBar }
   ])
 
   console.log('Seeding place reviews...')
   await db.insert(placeReviews).values([
     {
       userId: USER_IDS.joao,
-      placeId: PLACE_IDS.burgerPaulista,
+      placeId: PLACE_IDS.botecoBoaPraca,
       placeName: 'Burger King - Paulista',
       rating: 'crowded',
       comment: 'Melhor Whopper que ja comi! Atendimento rapido.',
@@ -996,7 +651,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.maria,
-      placeId: PLACE_IDS.burgerPaulista,
+      placeId: PLACE_IDS.botecoBoaPraca,
       placeName: 'Burger King - Paulista',
       rating: 'crowded',
       comment: 'Muito bom, mas as vezes demora um pouco.',
@@ -1005,7 +660,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.lucas,
-      placeId: PLACE_IDS.burgerPaulista,
+      placeId: PLACE_IDS.botecoBoaPraca,
       placeName: 'Burger King - Paulista',
       rating: 'crowded',
       comment: 'Sempre lotado na hora do almoco, chega cedo.',
@@ -1015,7 +670,7 @@ async function seed() {
 
     {
       userId: USER_IDS.pedro,
-      placeId: PLACE_IDS.burgerMoema,
+      placeId: PLACE_IDS.tesorosDeCuba,
       placeName: 'Burger King - Moema',
       rating: 'dead',
       comment: 'Mais tranquilo que o da Paulista, prefiro esse.',
@@ -1025,7 +680,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.ana,
-      placeId: PLACE_IDS.burgerMoema,
+      placeId: PLACE_IDS.tesorosDeCuba,
       placeName: 'Burger King - Moema',
       rating: 'dead',
       comment: 'Atendimento rapido, quase sem fila.',
@@ -1035,7 +690,7 @@ async function seed() {
 
     {
       userId: USER_IDS.pedro,
-      placeId: PLACE_IDS.pizzaJardins,
+      placeId: PLACE_IDS.caramelo,
       placeName: 'Pizza Hut - Jardins',
       rating: 'crowded',
       comment: 'Pizza deliciosa, ambiente agradavel.',
@@ -1044,7 +699,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.maria,
-      placeId: PLACE_IDS.pizzaJardins,
+      placeId: PLACE_IDS.caramelo,
       placeName: 'Pizza Hut - Jardins',
       rating: 'crowded',
       comment: 'Pepperoni incrivel, mas cheio no fim de semana.',
@@ -1055,7 +710,7 @@ async function seed() {
 
     {
       userId: USER_IDS.ana,
-      placeId: PLACE_IDS.starbucksFaria,
+      placeId: PLACE_IDS.jamesBar,
       placeName: 'Starbucks - Faria Lima',
       rating: 'dead',
       comment: 'Cafe otimo, mas preco salgado.',
@@ -1064,7 +719,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.pedro,
-      placeId: PLACE_IDS.starbucksFaria,
+      placeId: PLACE_IDS.jamesBar,
       placeName: 'Starbucks - Faria Lima',
       rating: 'dead',
       comment: 'Bom para trabalhar, wifi excelente.',
@@ -1073,7 +728,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.joao,
-      placeId: PLACE_IDS.starbucksFaria,
+      placeId: PLACE_IDS.jamesBar,
       placeName: 'Starbucks - Faria Lima',
       rating: 'dead',
       comment: 'Sempre tem lugar vago pela manha.',
@@ -1083,7 +738,7 @@ async function seed() {
 
     {
       userId: USER_IDS.lucas,
-      placeId: PLACE_IDS.outbackMoema,
+      placeId: PLACE_IDS.janelaBar,
       placeName: 'Outback - Moema',
       rating: 'crowded',
       comment: 'Ribeye perfeito! Bloomin Onion sensacional.',
@@ -1092,7 +747,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.maria,
-      placeId: PLACE_IDS.outbackMoema,
+      placeId: PLACE_IDS.janelaBar,
       placeName: 'Outback - Moema',
       rating: 'dead',
       comment: 'Adorei! Perfeito para ocasioes especiais.',
@@ -1102,7 +757,7 @@ async function seed() {
 
     {
       userId: USER_IDS.joao,
-      placeId: PLACE_IDS.mcdonaldsIbirapuera,
+      placeId: PLACE_IDS.revistariaVisconde,
       placeName: "McDonald's - Ibirapuera",
       rating: 'crowded',
       comment: 'Basico, mas cumpre o que promete.',
@@ -1111,7 +766,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.lucas,
-      placeId: PLACE_IDS.mcdonaldsIbirapuera,
+      placeId: PLACE_IDS.revistariaVisconde,
       placeName: "McDonald's - Ibirapuera",
       rating: 'crowded',
       comment: 'Cheio depois do parque, espera uns 10 minutos.',
@@ -1121,7 +776,7 @@ async function seed() {
 
     {
       userId: USER_IDS.joao,
-      placeId: PLACE_IDS.barelhoBar,
+      placeId: PLACE_IDS.seuPrudente,
       placeName: 'Barelho Bar',
       rating: 'crowded',
       comment: 'Negroni impecavel, musica ao vivo na sexta e o lugar lotou rapido.',
@@ -1131,7 +786,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.maria,
-      placeId: PLACE_IDS.barelhoBar,
+      placeId: PLACE_IDS.seuPrudente,
       placeName: 'Barelho Bar',
       rating: 'crowded',
       comment: 'Ambiente super agradavel, drinques otimos. Ja virou meu favorito do Batel.',
@@ -1141,7 +796,7 @@ async function seed() {
 
     {
       userId: USER_IDS.pedro,
-      placeId: PLACE_IDS.prudentePub,
+      placeId: PLACE_IDS.tesorosDeCuba,
       placeName: 'Prudente Pub',
       rating: 'crowded',
       comment: 'Melhor IPA da cidade, porcao de bolinha de queijo enorme. Vai sempre cheio.',
@@ -1151,7 +806,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.lucas,
-      placeId: PLACE_IDS.prudentePub,
+      placeId: PLACE_IDS.tesorosDeCuba,
       placeName: 'Prudente Pub',
       rating: 'dead',
       comment: 'Fui numa quarta e tava tranquilo, perfeito pra uma cerveja sem barulho.',
@@ -1161,7 +816,7 @@ async function seed() {
 
     {
       userId: USER_IDS.ana,
-      placeId: PLACE_IDS.cantinaBatel,
+      placeId: PLACE_IDS.jatai,
       placeName: 'Cantina do Batel',
       rating: 'dead',
       comment: 'Ambiente intimo, carbonara deliciosa. Bom pra jantar a dois.',
@@ -1170,7 +825,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.maria,
-      placeId: PLACE_IDS.cantinaBatel,
+      placeId: PLACE_IDS.jatai,
       placeName: 'Cantina do Batel',
       rating: 'crowded',
       comment: 'No sabado tava bem cheio mas valeu a espera, comida excelente.',
@@ -1180,7 +835,7 @@ async function seed() {
 
     {
       userId: USER_IDS.joao,
-      placeId: PLACE_IDS.moraesWine,
+      placeId: PLACE_IDS.barOtelo,
       placeName: 'Moraes Wine',
       rating: 'dead',
       comment: 'Curadoria de vinhos naturais impressionante, atendimento atencioso.',
@@ -1189,7 +844,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.ana,
-      placeId: PLACE_IDS.moraesWine,
+      placeId: PLACE_IDS.barOtelo,
       placeName: 'Moraes Wine',
       rating: 'dead',
       comment: 'Lugar sofisticado, tranquilo e com uma selecao de vinhos que voce nao acha em outro lugar.',
@@ -1200,7 +855,7 @@ async function seed() {
 
     {
       userId: USER_IDS.pedro,
-      placeId: PLACE_IDS.quintalBatel,
+      placeId: PLACE_IDS.amarelinho,
       placeName: 'Quintal do Batel',
       rating: 'crowded',
       comment: 'Caipirinha perfeita e o espetinho e absurdo. Tava cheio mas valeu cada minuto de espera.',
@@ -1209,7 +864,7 @@ async function seed() {
     },
     {
       userId: USER_IDS.maria,
-      placeId: PLACE_IDS.quintalBatel,
+      placeId: PLACE_IDS.amarelinho,
       placeName: 'Quintal do Batel',
       rating: 'dead',
       comment: 'Fui numa segunda e tinha quase ninguem, ótimo pra bater papo. Mandioca frita e delicia.',
@@ -1229,7 +884,7 @@ async function seed() {
     .values([
       {
         userId: USER_IDS.joao,
-        placeId: PLACE_IDS.vilaDoChopp,
+        placeId: PLACE_IDS.ottroRole,
         placeName: 'Vila do Chopp',
         rating: 'crowded',
         comment: 'Melhor chope da cidade, fila enorme mas vale cada minuto.',
@@ -1240,7 +895,7 @@ async function seed() {
       },
       {
         userId: USER_IDS.maria,
-        placeId: PLACE_IDS.vilaDoChopp,
+        placeId: PLACE_IDS.ottroRole,
         placeName: 'Vila do Chopp',
         rating: 'crowded',
         comment: 'Ambiente incrivel, musica ao vivo toda sexta. Lotado mas divertido.',
@@ -1251,7 +906,7 @@ async function seed() {
       },
       {
         userId: USER_IDS.pedro,
-        placeId: PLACE_IDS.vilaDoChopp,
+        placeId: PLACE_IDS.ottroRole,
         placeName: 'Vila do Chopp',
         rating: 'dead',
         comment: 'Fui numa terca e tava tranquilo, servico rapido e chope gelado.',
@@ -1370,12 +1025,12 @@ async function seed() {
 
   console.log('Seeding place opening hours...')
   const barPlaceIds = new Set([
-    PLACE_IDS.barelhoBar,
-    PLACE_IDS.prudentePub,
-    PLACE_IDS.cantinaBatel,
-    PLACE_IDS.vilaDoChopp,
-    PLACE_IDS.moraesWine,
-    PLACE_IDS.quintalBatel
+    PLACE_IDS.seuPrudente,
+    PLACE_IDS.tesorosDeCuba,
+    PLACE_IDS.jatai,
+    PLACE_IDS.ottroRole,
+    PLACE_IDS.barOtelo,
+    PLACE_IDS.amarelinho
   ])
   const openingHoursData: { placeId: string; weekday: number; opensAt: string; closesAt: string; isClosed: boolean }[] =
     []
@@ -1695,41 +1350,40 @@ async function seed() {
   console.log('Seeding user place badges...')
   await db.insert(userPlaceBadges).values([
     // Joao: rei do Barelho Bar (20+ reviews históricos) + fã do Starbucks
-    { userId: USER_IDS.joao, placeId: PLACE_IDS.barelhoBar, tier: 'regular' },
-    { userId: USER_IDS.joao, placeId: PLACE_IDS.barelhoBar, tier: 'fan' },
-    { userId: USER_IDS.joao, placeId: PLACE_IDS.barelhoBar, tier: 'frequent' },
-    { userId: USER_IDS.joao, placeId: PLACE_IDS.barelhoBar, tier: 'legend' },
-    { userId: USER_IDS.joao, placeId: PLACE_IDS.barelhoBar, tier: 'king' },
-    { userId: USER_IDS.joao, placeId: PLACE_IDS.starbucksFaria, tier: 'regular' },
-    { userId: USER_IDS.joao, placeId: PLACE_IDS.starbucksFaria, tier: 'fan' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.seuPrudente, tier: 'regular' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.seuPrudente, tier: 'fan' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.seuPrudente, tier: 'frequent' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.seuPrudente, tier: 'legend' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.seuPrudente, tier: 'king' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.jamesBar, tier: 'regular' },
+    { userId: USER_IDS.joao, placeId: PLACE_IDS.jamesBar, tier: 'fan' },
 
     // Maria: lenda do Outback + VIP da Cantina
-    { userId: USER_IDS.maria, placeId: PLACE_IDS.outbackMoema, tier: 'regular' },
-    { userId: USER_IDS.maria, placeId: PLACE_IDS.outbackMoema, tier: 'fan' },
-    { userId: USER_IDS.maria, placeId: PLACE_IDS.outbackMoema, tier: 'frequent' },
-    { userId: USER_IDS.maria, placeId: PLACE_IDS.outbackMoema, tier: 'legend' },
-    { userId: USER_IDS.maria, placeId: PLACE_IDS.cantinaBatel, tier: 'regular' },
-    { userId: USER_IDS.maria, placeId: PLACE_IDS.cantinaBatel, tier: 'fan' },
-    { userId: USER_IDS.maria, placeId: PLACE_IDS.cantinaBatel, tier: 'frequent' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.janelaBar, tier: 'regular' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.janelaBar, tier: 'fan' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.janelaBar, tier: 'frequent' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.janelaBar, tier: 'legend' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.jatai, tier: 'regular' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.jatai, tier: 'fan' },
+    { userId: USER_IDS.maria, placeId: PLACE_IDS.jatai, tier: 'frequent' },
 
     // Pedro: rei do Prudente Pub + cliente do Burger Moema
-    { userId: USER_IDS.pedro, placeId: PLACE_IDS.prudentePub, tier: 'regular' },
-    { userId: USER_IDS.pedro, placeId: PLACE_IDS.prudentePub, tier: 'fan' },
-    { userId: USER_IDS.pedro, placeId: PLACE_IDS.prudentePub, tier: 'frequent' },
-    { userId: USER_IDS.pedro, placeId: PLACE_IDS.prudentePub, tier: 'legend' },
-    { userId: USER_IDS.pedro, placeId: PLACE_IDS.prudentePub, tier: 'king' },
-    { userId: USER_IDS.pedro, placeId: PLACE_IDS.burgerMoema, tier: 'regular' },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.tesorosDeCuba, tier: 'regular' },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.tesorosDeCuba, tier: 'fan' },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.tesorosDeCuba, tier: 'frequent' },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.tesorosDeCuba, tier: 'legend' },
+    { userId: USER_IDS.pedro, placeId: PLACE_IDS.tesorosDeCuba, tier: 'king' },
 
     // Ana: fã do Moraes Wine + cliente da Cantina
-    { userId: USER_IDS.ana, placeId: PLACE_IDS.moraesWine, tier: 'regular' },
-    { userId: USER_IDS.ana, placeId: PLACE_IDS.moraesWine, tier: 'fan' },
-    { userId: USER_IDS.ana, placeId: PLACE_IDS.cantinaBatel, tier: 'regular' },
+    { userId: USER_IDS.ana, placeId: PLACE_IDS.barOtelo, tier: 'regular' },
+    { userId: USER_IDS.ana, placeId: PLACE_IDS.barOtelo, tier: 'fan' },
+    { userId: USER_IDS.ana, placeId: PLACE_IDS.jatai, tier: 'regular' },
 
     // Lucas: VIP da Vila do Chopp + cliente do Outback
-    { userId: USER_IDS.lucas, placeId: PLACE_IDS.vilaDoChopp, tier: 'regular' },
-    { userId: USER_IDS.lucas, placeId: PLACE_IDS.vilaDoChopp, tier: 'fan' },
-    { userId: USER_IDS.lucas, placeId: PLACE_IDS.vilaDoChopp, tier: 'frequent' },
-    { userId: USER_IDS.lucas, placeId: PLACE_IDS.outbackMoema, tier: 'regular' }
+    { userId: USER_IDS.lucas, placeId: PLACE_IDS.ottroRole, tier: 'regular' },
+    { userId: USER_IDS.lucas, placeId: PLACE_IDS.ottroRole, tier: 'fan' },
+    { userId: USER_IDS.lucas, placeId: PLACE_IDS.ottroRole, tier: 'frequent' },
+    { userId: USER_IDS.lucas, placeId: PLACE_IDS.janelaBar, tier: 'regular' }
   ])
 
   console.log('Seeding completed!')
