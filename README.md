@@ -48,3 +48,23 @@ bun run db:migrate
 - **API:** 3000
 - **PostgreSQL:** 5423
 - **RabbitMQ:** 5672 (AMQP), 15672 (Management UI)
+
+## CI/CD
+
+The repository now ships with GitHub Actions workflows in `.github/workflows/`:
+
+- `ci.yml`: installs dependencies, runs `bun test`, and validates the Docker build.
+- `deploy.yml`: on `main`, builds an ARM64 image, pushes it to GHCR, and deploys it to Oracle via SSH.
+
+Configure these GitHub Actions secrets before enabling deploy:
+
+- `SSH_HOST`
+- `SSH_USER`
+- `SSH_PRIVATE_KEY`
+
+Optional repository variables used by deploy:
+
+- `DEPLOY_PATH` default `/opt/vibes`
+- `DEPLOY_COMPOSE_FILE` default `/opt/vibes/infra/compose/docker-compose.prod.yml`
+- `DEPLOY_MIGRATION_COMMAND` default `docker compose -f "$COMPOSE_FILE" run --rm vibe-api bun db:migrate`
+- `HEALTHCHECK_URL` optional smoke-test URL

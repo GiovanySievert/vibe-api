@@ -8,9 +8,11 @@ export class CreateBrand {
   constructor(private readonly brandRepo: BrandRepository) {}
 
   async execute(data: CreateBrandData): Promise<Brand> {
-    const existingBrand = await this.brandRepo.findByTaxId(data.taxId)
-    if (existingBrand) {
-      throw new TaxIdAlreadyExistsException(data.taxId)
+    if (data.taxId) {
+      const existingBrand = await this.brandRepo.findByTaxId(data.taxId)
+      if (existingBrand) {
+        throw new TaxIdAlreadyExistsException(data.taxId)
+      }
     }
 
     const brand = await this.brandRepo.create(data)

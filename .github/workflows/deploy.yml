@@ -1,0 +1,128 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: vibe-api-production
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+      image_tag: ${{ steps.meta.outputs.image_tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.21
+
+      - name: Prepare CI environment
+        run: cp .env.example .env
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run typecheck
+        run: bun run typecheck
+
+      - name: Run tests
+        run: bun test
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Define image metadata
+        id: meta
+        run: |
+          echo "image=${{ env.REGISTRY }}/${{ github.repository_owner }}/vibe-api" >> "$GITHUB_OUTPUT"
+          echo "image_tag=sha-${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/arm64
+          push: true
+          provenance: false
+          tags: |
+            ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.image_tag }}
+            ${{ steps.meta.outputs.image }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: read
+    environment: production
+
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1
+        env:
+          APP_DIR: ${{ vars.DEPLOY_PATH }}
+          COMPOSE_FILE: ${{ vars.DEPLOY_COMPOSE_FILE }}
+          SERVICE_NAME: vibe-api
+          MIGRATION_COMMAND: ${{ vars.DEPLOY_MIGRATION_COMMAND }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ github.token }}
+          IMAGE_NAME: ${{ needs.build-and-push.outputs.image }}
+          IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: APP_DIR,COMPOSE_FILE,SERVICE_NAME,MIGRATION_COMMAND,GHCR_USER,GHCR_TOKEN,IMAGE_NAME,IMAGE_TAG
+          command_timeout: 30m
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            APP_DIR="${APP_DIR:-/opt/vibes}"
+            COMPOSE_FILE="${COMPOSE_FILE:-$APP_DIR/infra/compose/docker-compose.prod.yml}"
+            SERVICE_NAME="${SERVICE_NAME:-vibe-api}"
+            MIGRATION_COMMAND="${MIGRATION_COMMAND:-docker compose -f \"$COMPOSE_FILE\" run --rm $SERVICE_NAME bun db:migrate}"
+
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            docker pull "$IMAGE_NAME:$IMAGE_TAG"
+            docker tag "$IMAGE_NAME:$IMAGE_TAG" "$IMAGE_NAME:latest"
+
+            cd "$APP_DIR"
+            eval "$MIGRATION_COMMAND"
+            docker compose -f "$COMPOSE_FILE" up -d --no-deps --force-recreate "$SERVICE_NAME"
+            docker image prune -af --filter "until=168h" || true
+
+      - name: Smoke test
+        if: ${{ vars.HEALTHCHECK_URL != '' }}
+        run: curl -fsSL --retry 12 --retry-delay 5 "${{ vars.HEALTHCHECK_URL }}"

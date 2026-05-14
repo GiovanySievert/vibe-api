@@ -7,6 +7,15 @@ import { RABBITMQ_URL, ensureExchange } from '@src/config/rabbitmq.config'
 class RabbitMQConnection {
   private connection: AmqpConnectionManager | null = null
   private channel: ChannelWrapper | null = null
+  private connected = false
+
+  peekChannel(): ChannelWrapper | null {
+    return this.channel
+  }
+
+  isConnected(): boolean {
+    return this.connected
+  }
 
   getChannel(): ChannelWrapper {
     if (this.channel) return this.channel
@@ -16,12 +25,14 @@ class RabbitMQConnection {
       reconnectTimeInSeconds: 5,
     })
 
-    this.connection.on('connect', () =>
+    this.connection.on('connect', () => {
+      this.connected = true
       console.log('RabbitMQ connection established')
-    )
-    this.connection.on('disconnect', ({ err }) =>
+    })
+    this.connection.on('disconnect', ({ err }) => {
+      this.connected = false
       console.warn('RabbitMQ disconnected:', err?.message)
-    )
+    })
 
     this.channel = this.connection.createChannel({
       json: false,
@@ -41,6 +52,7 @@ class RabbitMQConnection {
       await this.connection.close().catch(() => {})
       this.connection = null
     }
+    this.connected = false
   }
 }
 

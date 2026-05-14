@@ -25,5 +25,8 @@ COPY --from=prerelease /app/drizzle.config.ts .
 
 EXPOSE 3000
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD wget -qO- http://localhost:3000/health || exit 1
+
 USER bun
 CMD ["bun", "run", "src/index.ts"]

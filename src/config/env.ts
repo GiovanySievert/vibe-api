@@ -1,6 +1,13 @@
 import { z } from 'zod'
 
 export const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  PORT: z.coerce.number().int().positive().default(3000),
+  CORS_ORIGIN: z.string().default('http://localhost:3001'),
+  TRUSTED_ORIGINS: z
+    .string()
+    .default('myapp://')
+    .transform((value) => value.split(',').map((origin) => origin.trim()).filter(Boolean)),
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.string(),
   DATABASE_URL: z.string(),

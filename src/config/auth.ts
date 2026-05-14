@@ -18,9 +18,9 @@ const emailSender = new ResendEmailSender(env.RESEND_API_KEY, env.RESEND_FROM_EM
 
 export const auth = betterAuth({
   basePath: '/auth',
-  trustedOrigins: ['myapp://'],
+  trustedOrigins: env.TRUSTED_ORIGINS,
   advanced: {
-    useSecureCookies: false,
+    useSecureCookies: env.NODE_ENV === 'production',
     crossSubDomainCookies: {
       enabled: false
     },

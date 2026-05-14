@@ -3,6 +3,7 @@ import { Elysia } from 'elysia'
 import cors from '@elysiajs/cors'
 
 import { auth } from '@src/config/auth'
+import { env } from './config/env'
 import { OpenAPI } from './config/open-api'
 import { authRoutes } from './modules/auth/infrastructure/http/routes/auth.routes'
 import { brandsRoutes } from './modules/brands/infrastructure/http/routes'
@@ -64,7 +65,7 @@ const app = new Elysia()
   .use(NotificationsRoutes)
   .use(
     cors({
-      origin: 'http://localhost:3001',
+      origin: env.CORS_ORIGIN.split(',').map((origin) => origin.trim()).filter(Boolean),
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       credentials: true,
       allowedHeaders: ['Content-Type', 'Authorization']
@@ -87,12 +88,12 @@ const app = new Elysia()
       }
     })
   )
-  .listen(3000)
+  .listen({ port: env.PORT, hostname: '0.0.0.0' })
 
 appLogger.info('Vibe-api is running', {
   hostname: app.server?.hostname,
   port: app.server?.port,
-  environment: process.env.NODE_ENV || 'development'
+  environment: env.NODE_ENV
 })
 
 const shutdown = async (signal: string) => {
