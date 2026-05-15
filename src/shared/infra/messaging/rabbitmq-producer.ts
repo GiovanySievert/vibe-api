@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { EXCHANGE, PLACE_INDEXED_RK } from '@src/config/rabbitmq.config'
+import { EXCHANGE } from '@src/config/rabbitmq.config'
 import { rabbitMQConnection } from './rabbitmq-connection'
 
 export type PublishOptions = {
@@ -9,7 +9,7 @@ export type PublishOptions = {
 export class RabbitMQProducer {
   async publish(
     data: unknown,
-    routingKey: string = PLACE_INDEXED_RK,
+    routingKey: string,
     options: PublishOptions = {}
   ): Promise<void> {
     const channel = rabbitMQConnection.getChannel()

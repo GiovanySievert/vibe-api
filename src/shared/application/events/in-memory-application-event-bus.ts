@@ -32,5 +32,3 @@ export class InMemoryApplicationEventBus implements ApplicationEventBus {
     }
   }
 }
-
-export const applicationEventBus = new InMemoryApplicationEventBus()

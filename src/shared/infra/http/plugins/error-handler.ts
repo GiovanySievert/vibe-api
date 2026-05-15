@@ -30,6 +30,7 @@ const DOMAIN_ERRORS: Record<string, { status: number; code: string }> = {
   EventParticipantNotFoundException: { status: HttpStatus.NOT_FOUND, code: ErrorCode.NOT_FOUND },
   EventNotOwnerException: { status: HttpStatus.FORBIDDEN, code: ErrorCode.FORBIDDEN },
   EventInvitationAlreadyRespondedException: { status: HttpStatus.CONFLICT, code: ErrorCode.CONFLICT },
+  PlaceNotFoundException: { status: HttpStatus.NOT_FOUND, code: ErrorCode.NOT_FOUND },
   PlaceReviewNotFoundException: { status: HttpStatus.NOT_FOUND, code: ErrorCode.NOT_FOUND },
   UnauthorizedPlaceReviewActionException: { status: HttpStatus.FORBIDDEN, code: ErrorCode.FORBIDDEN },
   PlaceReviewAlreadyExistsException: { status: HttpStatus.CONFLICT, code: ErrorCode.CONFLICT },
