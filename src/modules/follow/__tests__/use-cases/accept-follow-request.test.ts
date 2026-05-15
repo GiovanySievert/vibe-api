@@ -10,6 +10,7 @@ import { MockFollowStatsRepository } from '../mocks/follow-stats.repository.mock
 import { FollowRequestNotFoundException } from '../../domain/exceptions/follow-request-not-found.exception'
 import { FollowRequestAlreadyProcessedException } from '../../domain/exceptions/follow-request-already-processed.exception'
 import { AlreadyFollowingException } from '../../domain/exceptions/already-following.exception'
+import { UnauthorizedFollowRequestActionException } from '../../domain/exceptions/unauthorized-follow-request-action.exception'
 import { InMemoryApplicationEventBus } from '@src/shared/application/events'
 
 describe('AcceptFollowRequest', () => {
@@ -53,7 +54,7 @@ describe('AcceptFollowRequest', () => {
       updatedAt: new Date()
     })
 
-    const result = await useCase.execute(followRequest.id!, 'User Two')
+    const result = await useCase.execute(followRequest.id!, 'user-2', 'User Two')
 
     expect(result.status).toBe('accepted')
 
@@ -63,15 +64,15 @@ describe('AcceptFollowRequest', () => {
     expect(followers[0].followingId).toBe('user-2')
 
     const stats1 = await followStatsRepo.listFollowStats('user-1')
-    expect(stats1[0].followingCount).toBe(1)
+    expect(stats1?.followingCount).toBe(1)
 
     const stats2 = await followStatsRepo.listFollowStats('user-2')
-    expect(stats2[0].followersCount).toBe(1)
+    expect(stats2?.followersCount).toBe(1)
   })
 
   it('should throw FollowRequestNotFoundException when request does not exist', async () => {
     expect(async () => {
-      await useCase.execute('non-existent-id', 'User Two')
+      await useCase.execute('non-existent-id', 'user-2', 'User Two')
     }).toThrow(FollowRequestNotFoundException)
   })
 
@@ -86,7 +87,7 @@ describe('AcceptFollowRequest', () => {
     })
 
     expect(async () => {
-      await useCase.execute(followRequest.id!, 'User Two')
+      await useCase.execute(followRequest.id!, 'user-2', 'User Two')
     }).toThrow(AlreadyFollowingException)
   })
 
@@ -101,8 +102,23 @@ describe('AcceptFollowRequest', () => {
     })
 
     expect(async () => {
-      await useCase.execute(followRequest.id!, 'User Two')
+      await useCase.execute(followRequest.id!, 'user-2', 'User Two')
     }).toThrow(FollowRequestAlreadyProcessedException)
+  })
+
+  it('should throw UnauthorizedFollowRequestActionException when user is not requested user', async () => {
+    const followRequest = await followRequestRepo.create({
+      id: 'request-1',
+      requesterId: 'user-1',
+      requestedId: 'user-2',
+      status: 'pending',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    })
+
+    expect(async () => {
+      await useCase.execute(followRequest.id!, 'user-3', 'User Three')
+    }).toThrow(UnauthorizedFollowRequestActionException)
   })
 
   it('should increment stats correctly when accepting', async () => {
@@ -120,14 +136,14 @@ describe('AcceptFollowRequest', () => {
       updatedAt: new Date()
     })
 
-    await useCase.execute(followRequest.id!, 'User Two')
+    await useCase.execute(followRequest.id!, 'user-2', 'User Two')
 
     const stats1 = await followStatsRepo.listFollowStats('user-1')
-    expect(stats1[0].followingCount).toBe(4)
-    expect(stats1[0].followersCount).toBe(5)
+    expect(stats1?.followingCount).toBe(4)
+    expect(stats1?.followersCount).toBe(5)
 
     const stats2 = await followStatsRepo.listFollowStats('user-2')
-    expect(stats2[0].followersCount).toBe(11)
-    expect(stats2[0].followingCount).toBe(8)
+    expect(stats2?.followersCount).toBe(11)
+    expect(stats2?.followingCount).toBe(8)
   })
 })

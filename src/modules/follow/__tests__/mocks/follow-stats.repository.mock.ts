@@ -4,8 +4,8 @@ import { FollowStatsRepository } from '../../domain/repositories'
 export class MockFollowStatsRepository implements FollowStatsRepository {
   private followStats: FollowStats[] = []
 
-  async listFollowStats(userId: string): Promise<FollowStats[]> {
-    return this.followStats.filter((fs) => fs.userId === userId)
+  async listFollowStats(userId: string): Promise<FollowStats | null> {
+    return this.followStats.find((fs) => fs.userId === userId) ?? null
   }
 
   async incrementFollowersStats(userId: string): Promise<FollowStats> {

@@ -1,6 +1,5 @@
-import { Brand } from '../../domain/mappers'
+import { Brand, BrandWithRelations } from '../../domain/mappers'
 import { BrandRepository } from '../../domain/repositories'
-import { BrandNotFoundException } from '../../domain/exceptions/brand-not-found.exception'
 
 export class MockBrandRepository implements BrandRepository {
   private brands: Brand[] = []
@@ -19,12 +18,9 @@ export class MockBrandRepository implements BrandRepository {
     return newBrand
   }
 
-  async getById(brandId: string): Promise<Brand> {
+  async getById(brandId: string): Promise<BrandWithRelations | null> {
     const brand = this.brands.find((b) => b.id === brandId)
-    if (!brand) {
-      throw new BrandNotFoundException(brandId)
-    }
-    return brand
+    return (brand as unknown as BrandWithRelations) || null
   }
 
   async findByTaxId(taxId: string): Promise<Brand | null> {

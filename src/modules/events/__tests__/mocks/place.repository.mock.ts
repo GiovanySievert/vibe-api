@@ -16,9 +16,9 @@ export class MockPlacesRepository implements PlacesRepository {
     return place
   }
 
-  async getById(placeId: string): Promise<PlaceWithRelations | []> {
+  async getById(placeId: string): Promise<PlaceWithRelations | null> {
     if (!this.placeIds.has(placeId)) {
-      return []
+      return null
     }
 
     return { id: placeId } as PlaceWithRelations

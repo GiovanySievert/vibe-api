@@ -70,6 +70,10 @@ export class MockFollowersRepository implements FollowersRepository {
     this.followers = this.followers.filter((f) => f.id !== followId)
   }
 
+  async getById(followId: string): Promise<Followers | null> {
+    return this.followers.find((f) => f.id === followId) || null
+  }
+
   async getFollowStatus(followerId: string, followingId: string): Promise<FollowStatusResponseDto> {
     if (this.followRequestRepo) {
       const request = await this.followRequestRepo.getByRequesterAndRequested(followerId, followingId)

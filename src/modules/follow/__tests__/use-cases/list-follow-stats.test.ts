@@ -23,16 +23,17 @@ describe('ListFollowStats', () => {
 
     const result = await useCase.execute('user-1')
 
-    expect(result).toHaveLength(1)
-    expect(result[0].userId).toBe('user-1')
-    expect(result[0].followersCount).toBe(10)
-    expect(result[0].followingCount).toBe(5)
+    expect(result.userId).toBe('user-1')
+    expect(result.followersCount).toBe(10)
+    expect(result.followingCount).toBe(5)
   })
 
-  it('should return empty array when user has no stats', async () => {
+  it('should return zeroed stats when user has no stats', async () => {
     const result = await useCase.execute('user-1')
 
-    expect(result).toHaveLength(0)
+    expect(result.userId).toBe('user-1')
+    expect(result.followersCount).toBe(0)
+    expect(result.followingCount).toBe(0)
   })
 
   it('should only return stats for the specified user', async () => {
@@ -44,10 +45,9 @@ describe('ListFollowStats', () => {
 
     const result = await useCase.execute('user-2')
 
-    expect(result).toHaveLength(1)
-    expect(result[0].userId).toBe('user-2')
-    expect(result[0].followersCount).toBe(20)
-    expect(result[0].followingCount).toBe(15)
+    expect(result.userId).toBe('user-2')
+    expect(result.followersCount).toBe(20)
+    expect(result.followingCount).toBe(15)
   })
 
   it('should return correct stats values', async () => {
@@ -57,7 +57,7 @@ describe('ListFollowStats', () => {
 
     const result = await useCase.execute('user-1')
 
-    expect(result[0].followersCount).toBe(0)
-    expect(result[0].followingCount).toBe(0)
+    expect(result.followersCount).toBe(0)
+    expect(result.followingCount).toBe(0)
   })
 })
