@@ -25,8 +25,8 @@ export const validateCreatePlaceLocationSchema = t.Object({
   country: t.String({ minLength: 1, maxLength: 255 }),
   neighborhood: t.String({ minLength: 1, maxLength: 255 }),
   postalCode: t.String({ minLength: 1, maxLength: 255 }),
-  lat: t.String({ minimum: -90, maximum: 90 }),
-  lng: t.String({ minimum: -180, maximum: 180 })
+  lat: t.Number({ minimum: -90, maximum: 90 }),
+  lng: t.Number({ minimum: -180, maximum: 180 })
 })
 
 export const validateBrandMenusSchema = t.Array(

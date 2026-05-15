@@ -3,7 +3,8 @@ import { FollowRequestsRepository } from '@src/modules/follow/domain/repositorie
 import { FollowRequests } from '@src/modules/follow/domain/mappers'
 import {
   FollowRequestNotFoundException,
-  FollowRequestAlreadyProcessedException
+  FollowRequestAlreadyProcessedException,
+  UnauthorizedFollowRequestActionException
 } from '@src/modules/follow/domain/exceptions'
 import { FollowRequestStatus } from '@src/modules/follow/domain/types'
 
@@ -13,11 +14,15 @@ export class RejectFollowRequest {
     private readonly updateFollowRequest: UpdateFollowRequest
   ) {}
 
-  async execute(requestFollowId: string): Promise<FollowRequests> {
+  async execute(requestFollowId: string, loggedUserId: string): Promise<FollowRequests> {
     const followRequest = await this.followRequestRepo.getById(requestFollowId)
 
     if (!followRequest) {
       throw new FollowRequestNotFoundException(requestFollowId)
+    }
+
+    if (followRequest.requestedId !== loggedUserId) {
+      throw new UnauthorizedFollowRequestActionException(loggedUserId, 'reject')
     }
 
     if (followRequest.status !== FollowRequestStatus.PENDING) {

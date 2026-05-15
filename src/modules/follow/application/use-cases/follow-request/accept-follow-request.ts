@@ -7,7 +7,8 @@ import { FollowRequests } from '@src/modules/follow/domain/mappers'
 import {
   FollowRequestNotFoundException,
   FollowRequestAlreadyProcessedException,
-  AlreadyFollowingException
+  AlreadyFollowingException,
+  UnauthorizedFollowRequestActionException
 } from '@src/modules/follow/domain/exceptions'
 import { FollowRequestStatus } from '@src/modules/follow/domain/types'
 import { ApplicationEventBus } from '@src/shared/application/events'
@@ -24,11 +25,15 @@ export class AcceptFollowRequest {
     private readonly applicationEventBus: ApplicationEventBus
   ) {}
 
-  async execute(requestFollowId: string, acceptorName: string): Promise<FollowRequests> {
+  async execute(requestFollowId: string, loggedUserId: string, acceptorName: string): Promise<FollowRequests> {
     const followRequest = await this.followRequestRepo.getById(requestFollowId)
 
     if (!followRequest) {
       throw new FollowRequestNotFoundException(requestFollowId)
+    }
+
+    if (followRequest.requestedId !== loggedUserId) {
+      throw new UnauthorizedFollowRequestActionException(loggedUserId, 'accept')
     }
 
     if (followRequest.status === FollowRequestStatus.ACCEPTED) {

@@ -9,18 +9,18 @@ import {
   Unfollow,
   RemoveFollower,
   CreateFollowRequest,
-  UpdateFollowRequest,
   ListFollowRequest,
   AcceptFollowRequest,
   RejectFollowRequest,
   CancelFollowRequest,
-  DeleteFollowStats,
-  DeleteFollowingStats,
+  DecrementFollowersStats,
+  DecrementFollowingStats,
   ListFollowStats,
   IncrementFollowingStats,
   IncrementFollowersStats,
   ListRequestedFollowRequest
 } from './application/use-cases'
+import { UpdateFollowRequest } from './application/use-cases/follow-request/update-follow-request'
 import { applicationEventBus } from '@src/shared/application/events'
 import {
   DrizzleFollowRepository,
@@ -53,21 +53,21 @@ export class FollowModule {
 
     const incrementFollowingStatsService = new IncrementFollowingStats(followStatsRepo)
     const incrementFollowersStatsService = new IncrementFollowersStats(followStatsRepo)
-    const deleteFollowingStatsService = new DeleteFollowingStats(followStatsRepo)
-    const deleteFollowStatsService = new DeleteFollowStats(followStatsRepo)
+    const decrementFollowingStatsService = new DecrementFollowingStats(followStatsRepo)
+    const decrementFollowersStatsService = new DecrementFollowersStats(followStatsRepo)
 
     const unfollowService = new Unfollow(
       followersRepo,
       deleteFollowerService,
-      deleteFollowingStatsService,
-      deleteFollowStatsService
+      decrementFollowingStatsService,
+      decrementFollowersStatsService
     )
 
     const removeFollowerService = new RemoveFollower(
       followersRepo,
       deleteFollowerService,
-      deleteFollowingStatsService,
-      deleteFollowStatsService
+      decrementFollowingStatsService,
+      decrementFollowersStatsService
     )
 
     const createFollowRequestService = new CreateFollowRequest(
@@ -113,9 +113,9 @@ export class FollowModule {
     )
     this.followStatsController = new FollowStatsController(
       incrementFollowersStatsService,
-      deleteFollowStatsService,
+      decrementFollowersStatsService,
       incrementFollowingStatsService,
-      deleteFollowingStatsService,
+      decrementFollowingStatsService,
       listFollowStatsService
     )
   }

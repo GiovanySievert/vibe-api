@@ -8,7 +8,6 @@ export * from './follow-request/create-follower-request'
 export * from './follow-request/accept-follow-request'
 export * from './follow-request/reject-follow-request'
 export * from './follow-request/cancel-follow-request'
-export * from './follow-request/update-follow-request'
 export * from './follow-request/list-follow-request'
 export * from './follow-request/list-requested-follow-request'
 

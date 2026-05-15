@@ -29,7 +29,7 @@ export class BrandsModule {
 
     const createBrandService = new CreateBrand(brandRepo)
     const createBrandMenusService = new CreateBrandMenus(brandMenusRepo)
-    const createPlaceService = new CreatePlace(placeRepo)
+    const createPlaceService = new CreatePlace(placeRepo, brandRepo)
     const createPlaceLocationService = new CreatePlaceLocation(placeLocationRepo)
     const getBrandService = new GetBrand(brandRepo)
     const getPlaceService = new GetPlace(placeRepo)

@@ -28,7 +28,7 @@ export class BlockUserWithCleanup {
     } catch {}
 
     try {
-      await this.removeFollower.execute(blockerId, blockedId)
+      await this.removeFollower.executeByUsers(blockerId, blockedId)
     } catch {}
 
     const requestFromBlocker = await this.followRequestRepository.getPendingRequest(blockerId, blockedId)

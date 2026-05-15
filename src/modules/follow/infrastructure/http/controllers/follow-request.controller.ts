@@ -35,11 +35,11 @@ export class FollowRequestController {
   }
 
   async accept({ params, user }: { params: { requestFollowId: string }; user: User }) {
-    return await this.acceptFollowRequest.execute(params.requestFollowId, user.name)
+    return await this.acceptFollowRequest.execute(params.requestFollowId, user.id, user.name)
   }
 
-  async reject({ params }: { params: { requestFollowId: string } }) {
-    return await this.rejectFollowRequest.execute(params.requestFollowId)
+  async reject({ params, user }: { params: { requestFollowId: string }; user: User }) {
+    return await this.rejectFollowRequest.execute(params.requestFollowId, user.id)
   }
 
   async cancel({ params, user }: { params: { requestFollowId: string }; user: User }) {

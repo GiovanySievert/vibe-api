@@ -8,7 +8,7 @@ import { DrizzleUserBlockRepository } from './infrastructure/persistence'
 import { UserBlockController } from './infrastructure/http/controllers/user-block.controller'
 import { Unfollow, RemoveFollower } from '@src/modules/follow/application/use-cases'
 import { DrizzleFollowRepository, DrizzleFollowRequestRepository, DrizzleFollowStatsRepository } from '@src/modules/follow/infrastructure/persistence'
-import { DeleteFollower, DeleteFollowStats, DeleteFollowingStats } from '@src/modules/follow/application/use-cases'
+import { DeleteFollower, DecrementFollowersStats, DecrementFollowingStats } from '@src/modules/follow/application/use-cases'
 
 export class BlocksModule {
   public readonly userBlockController: UserBlockController
@@ -20,21 +20,21 @@ export class BlocksModule {
     const followStatsRepo = new DrizzleFollowStatsRepository()
 
     const deleteFollowerService = new DeleteFollower(followersRepo)
-    const deleteFollowingStatsService = new DeleteFollowingStats(followStatsRepo)
-    const deleteFollowStatsService = new DeleteFollowStats(followStatsRepo)
+    const decrementFollowingStatsService = new DecrementFollowingStats(followStatsRepo)
+    const decrementFollowersStatsService = new DecrementFollowersStats(followStatsRepo)
 
     const unfollowService = new Unfollow(
       followersRepo,
       deleteFollowerService,
-      deleteFollowingStatsService,
-      deleteFollowStatsService
+      decrementFollowingStatsService,
+      decrementFollowersStatsService
     )
 
     const removeFollowerService = new RemoveFollower(
       followersRepo,
       deleteFollowerService,
-      deleteFollowingStatsService,
-      deleteFollowStatsService
+      decrementFollowingStatsService,
+      decrementFollowersStatsService
     )
 
     const blockUserWithCleanupService = new BlockUserWithCleanup(

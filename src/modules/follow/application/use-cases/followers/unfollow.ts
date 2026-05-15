@@ -1,15 +1,15 @@
 import { DeleteFollower } from './delete-follower'
 import { FollowersRepository } from '@src/modules/follow/domain/repositories'
 import { FollowRelationshipNotFoundException } from '@src/modules/follow/domain/exceptions'
-import { DeleteFollowStats } from '../follow-stats/decrement-followers-stats'
-import { DeleteFollowingStats } from '../follow-stats/decrement-following-stats'
+import { DecrementFollowersStats } from '../follow-stats/decrement-followers-stats'
+import { DecrementFollowingStats } from '../follow-stats/decrement-following-stats'
 
 export class Unfollow {
   constructor(
     private readonly followersRepo: FollowersRepository,
     private readonly deleteFollower: DeleteFollower,
-    private readonly decrementFollowingStats: DeleteFollowingStats,
-    private readonly decrementFollowersStats: DeleteFollowStats
+    private readonly decrementFollowingStats: DecrementFollowingStats,
+    private readonly decrementFollowersStats: DecrementFollowersStats
   ) {}
 
   async execute(followerId: string, followingId: string): Promise<void> {

@@ -1,9 +1,9 @@
 import { FollowStatsRepository } from '@src/modules/follow/domain/repositories'
 
-export class DeleteFollowStats {
+export class DecrementFollowersStats {
   constructor(private readonly followStatsRepo: FollowStatsRepository) {}
 
-  async execute(followId: string): Promise<void> {
-    await this.followStatsRepo.decrementFollowersStats(followId)
+  async execute(userId: string): Promise<void> {
+    await this.followStatsRepo.decrementFollowersStats(userId)
   }
 }

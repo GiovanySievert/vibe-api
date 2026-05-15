@@ -6,7 +6,7 @@ import { Brand, BrandWithRelations } from '../../domain/mappers'
 import { brandMenus, brands, places, placeLocations } from '@src/infra/database/schema'
 
 export class DrizzleBrandRepository implements BrandRepository {
-  async getById(brandId: string): Promise<BrandWithRelations> {
+  async getById(brandId: string): Promise<BrandWithRelations | null> {
     const [brand] = await db
       .select()
       .from(brands)
@@ -16,7 +16,7 @@ export class DrizzleBrandRepository implements BrandRepository {
       .where(eq(brands.id, brandId))
       .limit(1)
 
-    return brand
+    return brand ?? null
   }
 
   async findByTaxId(taxId: string): Promise<Brand | null> {

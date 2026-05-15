@@ -14,8 +14,10 @@ export class CreateBrandMenus {
       return []
     }
 
-    const mappedBrandMenus = data.menus.map((brandMenu) => ({
-      ...brandMenu,
+    const mappedBrandMenus = data.menus.map(({ name, priceCents, description }) => ({
+      name,
+      priceCents,
+      description,
       brandId: data.brandId
     }))
 

@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm'
+import { and, eq, gt, sql } from 'drizzle-orm'
 
 import { followStats } from '../../application/schemas'
 import { db } from '@src/infra/database/client'
@@ -23,7 +23,7 @@ export class DrizzleFollowStatsRepository implements FollowStatsRepository {
     await db
       .update(followStats)
       .set({ followersCount: sql`${followStats.followersCount} - 1` })
-      .where(eq(followStats.userId, userId))
+      .where(and(eq(followStats.userId, userId), gt(followStats.followersCount, 0)))
   }
 
   async incrementFollowingStats(userId: string): Promise<FollowStats> {
@@ -43,12 +43,12 @@ export class DrizzleFollowStatsRepository implements FollowStatsRepository {
     await db
       .update(followStats)
       .set({ followingCount: sql`${followStats.followingCount} - 1` })
-      .where(eq(followStats.userId, userId))
+      .where(and(eq(followStats.userId, userId), gt(followStats.followingCount, 0)))
   }
 
-  async listFollowStats(userId: string): Promise<FollowStats> {
+  async listFollowStats(userId: string): Promise<FollowStats | null> {
     const [result] = await db.select().from(followStats).where(eq(followStats.userId, userId))
 
-    return result
+    return result ?? null
   }
 }

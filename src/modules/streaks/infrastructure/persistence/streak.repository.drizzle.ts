@@ -29,23 +29,42 @@ export class DrizzleStreakRepository implements StreakRepository {
     longestStreak: number,
     isoYear: number,
     isoWeek: number
-  ): Promise<UserStreak> {
-    const [result] = await db
-      .insert(userStreaks)
-      .values({ userId, currentStreak, longestStreak, lastActiveWeek: isoWeek, lastActiveYear: isoYear })
-      .onConflictDoUpdate({
-        target: userStreaks.userId,
-        set: {
-          currentStreak,
-          longestStreak,
-          lastActiveWeek: isoWeek,
-          lastActiveYear: isoYear,
-          updatedAt: new Date()
-        }
-      })
-      .returning()
+  ): Promise<UserStreak | null> {
+    return await db.transaction(async (tx) => {
+      const [activity] = await tx
+        .update(userWeeklyActivity)
+        .set({ streakContributed: true })
+        .where(
+          and(
+            eq(userWeeklyActivity.userId, userId),
+            eq(userWeeklyActivity.isoYear, isoYear),
+            eq(userWeeklyActivity.isoWeek, isoWeek),
+            eq(userWeeklyActivity.streakContributed, false)
+          )
+        )
+        .returning()
 
-    return result
+      if (!activity) {
+        return null
+      }
+
+      const [result] = await tx
+        .insert(userStreaks)
+        .values({ userId, currentStreak, longestStreak, lastActiveWeek: isoWeek, lastActiveYear: isoYear })
+        .onConflictDoUpdate({
+          target: userStreaks.userId,
+          set: {
+            currentStreak,
+            longestStreak,
+            lastActiveWeek: isoWeek,
+            lastActiveYear: isoYear,
+            updatedAt: new Date()
+          }
+        })
+        .returning()
+
+      return result
+    })
   }
 
   async getWeeklyActivity(userId: string, limit = 52): Promise<UserWeeklyActivity[]> {

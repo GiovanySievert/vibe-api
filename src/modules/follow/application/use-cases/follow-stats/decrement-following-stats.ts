@@ -1,6 +1,6 @@
 import { FollowStatsRepository } from '@src/modules/follow/domain/repositories'
 
-export class DeleteFollowingStats {
+export class DecrementFollowingStats {
   constructor(private readonly followStatsRepo: FollowStatsRepository) {}
 
   async execute(userId: string): Promise<void> {

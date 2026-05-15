@@ -4,7 +4,7 @@ import { PlaceLocation } from '../../domain/mappers'
 import { placeLocations } from '@src/infra/database/schema'
 
 export class DrizzlePlaceLocationsRepository implements PlaceLocationsRepository {
-  async create(data: PlaceLocation): Promise<PlaceLocation> {
+  async create(data: Omit<PlaceLocation, 'id' | 'createdAt' | 'updatedAt'>): Promise<PlaceLocation> {
     const [result] = await db.insert(placeLocations).values(data).returning()
 
     return result

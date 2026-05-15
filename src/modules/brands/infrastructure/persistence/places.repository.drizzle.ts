@@ -14,7 +14,7 @@ export class DrizzlePlacesRepository implements PlacesRepository {
     return result
   }
 
-  async getById(brandId: string): Promise<PlaceWithRelations | []> {
+  async getById(brandId: string): Promise<PlaceWithRelations | null> {
     const result = await db.query.places.findFirst({
       where: eq(places.id, brandId),
       with: {
@@ -27,11 +27,7 @@ export class DrizzlePlacesRepository implements PlacesRepository {
       }
     })
 
-    if (!result) {
-      return []
-    }
-
-    return result
+    return result ?? null
   }
 
   async findAllPaginated(
