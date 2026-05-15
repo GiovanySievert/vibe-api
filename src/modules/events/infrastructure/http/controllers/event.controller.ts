@@ -6,7 +6,7 @@ import {
   ListEventInvitations,
   ListUserEvents,
   RespondToEventInvitation,
-  UpdateEventDescription
+  UpdateEventDetails
 } from '../../../application/use-cases/events'
 import { GetEventDtoMapper } from '../dtos'
 import { EventParticipantStatus } from '../../../domain/types'
@@ -18,7 +18,7 @@ export class EventController {
     private readonly listEventInvitations: ListEventInvitations,
     private readonly getEventById: GetEventById,
     private readonly respondToEventInvitation: RespondToEventInvitation,
-    private readonly updateEventDescription: UpdateEventDescription,
+    private readonly updateEventDetails: UpdateEventDetails,
     private readonly deleteEventUseCase: DeleteEvent
   ) {}
 
@@ -26,7 +26,15 @@ export class EventController {
     body,
     user
   }: {
-    body: { name: string; date: string; time: string; description?: string; participantIds: string[] }
+    body: {
+      name: string
+      date: string
+      time: string
+      description?: string
+      placeId?: string
+      imageUrl?: string
+      participantIds: string[]
+    }
     user: User
   }) {
     const event = await this.createEvent.execute({
@@ -36,6 +44,8 @@ export class EventController {
       date: body.date,
       time: body.time,
       description: body.description,
+      placeId: body.placeId,
+      imageUrl: body.imageUrl,
       participantIds: body.participantIds
     })
 
@@ -57,19 +67,21 @@ export class EventController {
     return GetEventDtoMapper.from(event)
   }
 
-  async updateDescription({
+  async updateDetails({
     params,
     body,
     user
   }: {
     params: { id: string }
-    body: { description: string }
+    body: { description: string; placeId: string | null; imageUrl: string | null }
     user: User
   }) {
-    const event = await this.updateEventDescription.execute({
+    const event = await this.updateEventDetails.execute({
       eventId: params.id,
       userId: user.id,
-      description: body.description
+      description: body.description,
+      placeId: body.placeId,
+      imageUrl: body.imageUrl
     })
 
     return GetEventDtoMapper.from(event)

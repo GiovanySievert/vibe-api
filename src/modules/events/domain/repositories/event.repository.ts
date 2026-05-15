@@ -7,7 +7,15 @@ export interface CreateEventInput {
   date: string
   time: string
   description?: string
+  placeId?: string
+  imageUrl?: string
   participantIds: string[]
+}
+
+export interface UpdateEventDetailsInput {
+  description: string
+  placeId: string | null
+  imageUrl: string | null
 }
 
 export interface EventRepository {
@@ -15,7 +23,7 @@ export interface EventRepository {
   listByOwner(ownerId: string): Promise<Event[]>
   listByParticipant(userId: string): Promise<Event[]>
   findById(id: string): Promise<Event | null>
-  updateDescription(eventId: string, description: string): Promise<Event>
+  updateDetails(eventId: string, data: UpdateEventDetailsInput): Promise<Event>
   updateParticipantStatus(eventId: string, userId: string, status: EventParticipantStatus): Promise<void>
   delete(eventId: string): Promise<void>
 }

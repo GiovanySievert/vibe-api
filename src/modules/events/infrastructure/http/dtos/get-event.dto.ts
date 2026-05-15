@@ -7,8 +7,17 @@ export interface GetEventDto {
   date: string
   time: string
   description: string | null
+  place: EventPlaceDto | null
+  imageUrl: string | null
   createdAt: Date
   participants: EventParticipantDto[]
+}
+
+export interface EventPlaceDto {
+  id: string
+  name: string
+  type: string | null
+  neighborhood: string | null
 }
 
 export interface EventParticipantDto {
@@ -28,6 +37,15 @@ export class GetEventDtoMapper {
       date: event.date,
       time: event.time,
       description: event.description,
+      imageUrl: event.imageUrl,
+      place: event.place
+        ? {
+            id: event.place.id,
+            name: event.place.name,
+            type: event.place.type,
+            neighborhood: event.place.neighborhood
+          }
+        : null,
       createdAt: event.createdAt,
       participants: (event.participants ?? []).map((p: EventParticipant) => ({
         id: p.id,

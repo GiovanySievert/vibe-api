@@ -1,6 +1,7 @@
 import { users } from '@src/infra/database/schema'
 import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm'
 import { pgTable, uuid, varchar, text, timestamp, date, time } from 'drizzle-orm/pg-core'
+import { places } from '@src/modules/brands/application/schemas/places.schema'
 import { eventParticipants } from './event-participants.schema'
 
 export const events = pgTable('events', {
@@ -12,6 +13,8 @@ export const events = pgTable('events', {
   date: date('date').notNull(),
   time: time('time').notNull(),
   description: text('description'),
+  placeId: uuid('place_id').references(() => places.id, { onDelete: 'set null' }),
+  imageUrl: text('image_url'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
 })
@@ -20,6 +23,10 @@ export const eventsRelations = relations(events, ({ one, many }) => ({
   owner: one(users, {
     fields: [events.ownerId],
     references: [users.id]
+  }),
+  place: one(places, {
+    fields: [events.placeId],
+    references: [places.id]
   }),
   participants: many(eventParticipants)
 }))

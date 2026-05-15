@@ -17,6 +17,8 @@ export const EventRoutes = (app: Elysia) => {
             date: t.String(),
             time: t.String(),
             description: t.Optional(t.String({ maxLength: 300 })),
+            placeId: t.Optional(t.String()),
+            imageUrl: t.Optional(t.String()),
             participantIds: t.Array(t.String())
           }),
           detail: {
@@ -65,16 +67,18 @@ export const EventRoutes = (app: Elysia) => {
       )
       .patch(
         '/:id',
-        (ctx) => eventController.updateDescription(ctx),
+        (ctx) => eventController.updateDetails(ctx),
         {
           auth: true,
           params: t.Object({ id: t.String() }),
           body: t.Object({
-            description: t.String({ maxLength: 300 })
+            description: t.String({ maxLength: 300 }),
+            placeId: t.Nullable(t.String()),
+            imageUrl: t.Nullable(t.String())
           }),
           detail: {
             tags: ['Events'],
-            summary: 'Update event description',
+            summary: 'Update event details',
             security: [{ cookieAuth: [] }]
           }
         }

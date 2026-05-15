@@ -1,5 +1,5 @@
 import { Event } from '../../domain/mappers'
-import { EventRepository, CreateEventInput } from '../../domain/repositories'
+import { EventRepository, CreateEventInput, UpdateEventDetailsInput } from '../../domain/repositories'
 import { EventParticipantStatus } from '../../domain/types'
 
 export class MockEventRepository implements EventRepository {
@@ -13,6 +13,15 @@ export class MockEventRepository implements EventRepository {
       date: input.date,
       time: input.time,
       description: input.description ?? null,
+      imageUrl: input.imageUrl ?? null,
+      place: input.placeId
+        ? {
+            id: input.placeId,
+            name: `place-${input.placeId}`,
+            type: 'bar',
+            neighborhood: 'Centro'
+          }
+        : null,
       createdAt: new Date(),
       updatedAt: new Date(),
       participants: input.participantIds.map((userId) => ({
@@ -39,8 +48,24 @@ export class MockEventRepository implements EventRepository {
     return this.events.find((e) => e.id === id) ?? null
   }
 
-  async updateDescription(eventId: string, description: string): Promise<Event> {
-    this.events = this.events.map((e) => (e.id === eventId ? { ...e, description } : e))
+  async updateDetails(eventId: string, data: UpdateEventDetailsInput): Promise<Event> {
+    this.events = this.events.map((e) =>
+      e.id === eventId
+        ? {
+            ...e,
+            description: data.description,
+            imageUrl: data.imageUrl,
+            place: data.placeId
+              ? {
+                  id: data.placeId,
+                  name: `place-${data.placeId}`,
+                  type: 'bar',
+                  neighborhood: 'Centro'
+                }
+              : null
+          }
+        : e
+    )
     return this.events.find((e) => e.id === eventId) as Event
   }
 

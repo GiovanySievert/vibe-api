@@ -1,9 +1,8 @@
 import { db } from '@src/infra/database/client'
 import { and, eq, ne } from 'drizzle-orm'
-import { users } from '@src/modules/auth/application/schemas'
 import { events, eventParticipants } from '../../application/schemas'
-import { EventRepository, CreateEventInput } from '../../domain/repositories'
-import { Event } from '../../domain/mappers'
+import { EventRepository, CreateEventInput, UpdateEventDetailsInput } from '../../domain/repositories'
+import { Event, EventMapper } from '../../domain/mappers'
 import { EventParticipantStatus } from '../../domain/types'
 
 export class DrizzleEventRepository implements EventRepository {
@@ -15,7 +14,9 @@ export class DrizzleEventRepository implements EventRepository {
         name: input.name,
         date: input.date,
         time: input.time,
-        description: input.description
+        description: input.description,
+        placeId: input.placeId,
+        imageUrl: input.imageUrl
       })
       .returning()
 
@@ -36,6 +37,12 @@ export class DrizzleEventRepository implements EventRepository {
     const rows = await db.query.events.findMany({
       where: eq(events.ownerId, ownerId),
       with: {
+        place: {
+          with: {
+            brand: true,
+            location: true
+          }
+        },
         participants: {
           with: { user: true }
         }
@@ -43,16 +50,7 @@ export class DrizzleEventRepository implements EventRepository {
       orderBy: (events, { desc }) => [desc(events.createdAt)]
     })
 
-    return rows.map((row) => ({
-      ...row,
-      participants: row.participants.map((p) => ({
-        id: p.id,
-        userId: p.userId,
-        username: (p.user as typeof users.$inferSelect).username,
-        avatar: (p.user as typeof users.$inferSelect).image,
-        status: p.status
-      }))
-    }))
+    return rows.map((row) => EventMapper.toEvent(row))
   }
 
   async listByParticipant(userId: string): Promise<Event[]> {
@@ -61,6 +59,12 @@ export class DrizzleEventRepository implements EventRepository {
       with: {
         event: {
           with: {
+            place: {
+              with: {
+                brand: true,
+                location: true
+              }
+            },
             participants: {
               with: { user: true }
             }
@@ -69,22 +73,19 @@ export class DrizzleEventRepository implements EventRepository {
       }
     })
 
-    return myParticipations.map(({ event: row }) => ({
-      ...row,
-      participants: row.participants.map((p) => ({
-        id: p.id,
-        userId: p.userId,
-        username: (p.user as typeof users.$inferSelect).username,
-        avatar: (p.user as typeof users.$inferSelect).image,
-        status: p.status
-      }))
-    }))
+    return myParticipations.map(({ event: row }) => EventMapper.toEvent(row))
   }
 
   async findById(id: string): Promise<Event | null> {
     const row = await db.query.events.findFirst({
       where: eq(events.id, id),
       with: {
+        place: {
+          with: {
+            brand: true,
+            location: true
+          }
+        },
         participants: {
           with: { user: true }
         }
@@ -93,22 +94,13 @@ export class DrizzleEventRepository implements EventRepository {
 
     if (!row) return null
 
-    return {
-      ...row,
-      participants: row.participants.map((p) => ({
-        id: p.id,
-        userId: p.userId,
-        username: (p.user as typeof users.$inferSelect).username,
-        avatar: (p.user as typeof users.$inferSelect).image,
-        status: p.status
-      }))
-    }
+    return EventMapper.toEvent(row)
   }
 
-  async updateDescription(eventId: string, description: string): Promise<Event> {
+  async updateDetails(eventId: string, data: UpdateEventDetailsInput): Promise<Event> {
     await db
       .update(events)
-      .set({ description, updatedAt: new Date() })
+      .set({ description: data.description, placeId: data.placeId, imageUrl: data.imageUrl, updatedAt: new Date() })
       .where(eq(events.id, eventId))
 
     return this.findById(eventId) as Promise<Event>
