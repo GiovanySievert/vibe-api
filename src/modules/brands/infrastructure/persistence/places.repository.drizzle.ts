@@ -42,17 +42,20 @@ export class DrizzlePlacesRepository implements PlacesRepository {
       limit,
       offset,
       with: {
-        location: true
+        location: true,
+        brand: true
       }
     })
 
     return result.map((place) => ({
       id: place.id,
       name: place.name,
+      type: place.brand?.type ?? null,
       location: place.location
         ? {
             lat: place.location.lat,
-            lng: place.location.lng
+            lng: place.location.lng,
+            neighborhood: place.location.neighborhood
           }
         : null
     }))

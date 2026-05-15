@@ -4,9 +4,12 @@ import { CreateBrand } from '../../application/use-cases/create-brands'
 import { CreateBrandMenus } from '../../application/use-cases/create-brand-menus'
 import { CreatePlace } from '../../application/use-cases/create-places'
 import { CreatePlaceLocation } from '../../application/use-cases/create-place-location'
-import { EventBus } from '@src/shared/domain/event-bus'
+import { InMemoryApplicationEventBus } from '@src/shared/application/events'
+import {
+  PLACE_INDEXED_EVENT,
+  type PlaceIndexedEvent
+} from '../../application/events/place-indexed.event'
 import type { CreateAllEntitiesDTO } from '../../infrastructure/http/dtos/create-brand.dto'
-import { Brand } from '../../domain/mappers'
 
 describe('CreateBrandWithPlace', () => {
   let useCase: CreateBrandWithPlace
@@ -14,7 +17,8 @@ describe('CreateBrandWithPlace', () => {
   let mockCreateBrandMenus: CreateBrandMenus
   let mockCreatePlace: CreatePlace
   let mockCreatePlaceLocation: CreatePlaceLocation
-  let mockEventBus: EventBus
+  let eventBus: InMemoryApplicationEventBus
+  let capturedEvents: PlaceIndexedEvent[]
 
   beforeEach(() => {
     mockCreateBrand = {
@@ -72,16 +76,20 @@ describe('CreateBrandWithPlace', () => {
       }))
     } as unknown as CreatePlaceLocation
 
-    mockEventBus = {
-      publish: mock(async () => {})
-    } as unknown as EventBus
+    capturedEvents = []
+    eventBus = new InMemoryApplicationEventBus()
+    eventBus.subscribe<PlaceIndexedEvent>(PLACE_INDEXED_EVENT, {
+      handle: async (event) => {
+        capturedEvents.push(event)
+      }
+    })
 
     useCase = new CreateBrandWithPlace(
       mockCreateBrand,
       mockCreateBrandMenus,
       mockCreatePlace,
       mockCreatePlaceLocation,
-      mockEventBus
+      eventBus
     )
   })
 
@@ -263,7 +271,7 @@ describe('CreateBrandWithPlace', () => {
     })
   })
 
-  it('should publish brand.created event with correct data', async () => {
+  it('should publish place.indexed event with correct payload', async () => {
     const data: CreateAllEntitiesDTO = {
       brand: {
         name: 'Test Brand',
@@ -296,12 +304,18 @@ describe('CreateBrandWithPlace', () => {
 
     await useCase.execute(data)
 
-    expect(mockEventBus.publish).toHaveBeenCalledWith('brand.created', {
-      id: 'place-123',
-      name: 'Test Place',
-      location: {
-        lat: -23.5505,
-        lon: -46.6333
+    expect(capturedEvents).toHaveLength(1)
+    expect(capturedEvents[0]).toEqual({
+      name: PLACE_INDEXED_EVENT,
+      payload: {
+        id: 'place-123',
+        name: 'Test Place',
+        type: 'Restaurant',
+        neighborhood: 'Center',
+        location: {
+          lat: -23.5505,
+          lon: -46.6333
+        }
       }
     })
   })

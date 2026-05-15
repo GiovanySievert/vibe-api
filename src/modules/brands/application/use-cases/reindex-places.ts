@@ -1,5 +1,6 @@
 import { PlacesRepository } from '../../domain/repositories/places.repository'
-import { EventBus } from '@src/shared/domain/event-bus'
+import { ApplicationEventBus } from '@src/shared/application/events'
+import { createPlaceIndexedEvent } from '../events/place-indexed.event'
 import { jobManager, Job } from '@src/shared/infra/jobs/job-manager'
 
 export class ReindexPlaces {
@@ -7,7 +8,7 @@ export class ReindexPlaces {
 
   constructor(
     private readonly placesRepository: PlacesRepository,
-    private readonly eventBus: EventBus
+    private readonly applicationEventBus: ApplicationEventBus
   ) {}
 
   async execute(): Promise<Job> {
@@ -40,14 +41,18 @@ export class ReindexPlaces {
 
         for (const place of places) {
           if (place.location) {
-            await this.eventBus.publish('place.reindex', {
-              id: place.id,
-              name: place.name,
-              location: {
-                lat: Number(place.location.lat),
-                lon: Number(place.location.lng)
-              }
-            })
+            await this.applicationEventBus.publish(
+              createPlaceIndexedEvent({
+                id: place.id,
+                name: place.name,
+                type: place.type,
+                neighborhood: place.location.neighborhood,
+                location: {
+                  lat: Number(place.location.lat),
+                  lon: Number(place.location.lng)
+                }
+              })
+            )
           }
           processed++
           jobManager.updateProgress(jobId, { processed })

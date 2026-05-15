@@ -3,9 +3,11 @@ import { Place, PlaceWithRelations } from '../mappers'
 export interface PlaceWithLocation {
   id: string
   name: string
+  type: string | null
   location: {
     lat: string
     lng: string
+    neighborhood: string | null
   } | null
 }
 

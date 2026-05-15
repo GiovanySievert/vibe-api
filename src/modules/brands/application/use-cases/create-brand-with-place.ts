@@ -1,4 +1,5 @@
-import { EventBus } from '@src/shared/domain/event-bus'
+import { ApplicationEventBus } from '@src/shared/application/events'
+import { createPlaceIndexedEvent } from '../events/place-indexed.event'
 import { CreateBrand } from './create-brands'
 import { CreateBrandMenus } from './create-brand-menus'
 import { CreatePlace } from './create-places'
@@ -11,7 +12,7 @@ export class CreateBrandWithPlace {
     private readonly createBrandMenusService: CreateBrandMenus,
     private readonly createPlaceService: CreatePlace,
     private readonly createPlaceLocationService: CreatePlaceLocation,
-    private readonly eventBus: EventBus
+    private readonly applicationEventBus: ApplicationEventBus
   ) {}
 
   async execute(data: CreateAllEntitiesDTO) {
@@ -51,14 +52,18 @@ export class CreateBrandWithPlace {
       lng: data.placeLocation.lng
     })
 
-    await this.eventBus.publish('brand.created', {
-      id: place.id,
-      name: place.name,
-      location: {
-        lat: placeLocation.lat,
-        lon: placeLocation.lng
-      }
-    })
+    await this.applicationEventBus.publish(
+      createPlaceIndexedEvent({
+        id: place.id,
+        name: place.name,
+        type: brand.type,
+        neighborhood: placeLocation.neighborhood,
+        location: {
+          lat: Number(placeLocation.lat),
+          lon: Number(placeLocation.lng)
+        }
+      })
+    )
 
     return {
       brand,
