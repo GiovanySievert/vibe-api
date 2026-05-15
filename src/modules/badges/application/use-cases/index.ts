@@ -1,3 +1,6 @@
 export * from './evaluate-user-place-badge'
 export * from './list-user-badges'
+export * from './list-user-badge-progress'
+export * from './list-visible-user-badges'
 export * from './get-user-badge-for-place'
+export * from './update-user-profile-badges'

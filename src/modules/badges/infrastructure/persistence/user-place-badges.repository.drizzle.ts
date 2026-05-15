@@ -60,7 +60,7 @@ export class DrizzleUserPlaceBadgesRepository implements UserPlaceBadgesReposito
   }
 
   async listByUser(userId: string): Promise<UserPlaceBadgeWithPlace[]> {
-    const rows = await db
+    const earnedBadgeRecords = await db
       .select({
         id: userPlaceBadges.id,
         userId: userPlaceBadges.userId,
@@ -75,16 +75,16 @@ export class DrizzleUserPlaceBadgesRepository implements UserPlaceBadgesReposito
       .leftJoin(brands, eq(places.brandId, brands.id))
       .where(eq(userPlaceBadges.userId, userId))
 
-    return rows.map((row) => ({
-      id: row.id,
-      userId: row.userId,
-      placeId: row.placeId,
-      tier: row.tier,
-      achievedAt: row.achievedAt,
+    return earnedBadgeRecords.map((badgeRecord) => ({
+      id: badgeRecord.id,
+      userId: badgeRecord.userId,
+      placeId: badgeRecord.placeId,
+      tier: badgeRecord.tier,
+      achievedAt: badgeRecord.achievedAt,
       place: {
-        id: row.placeId,
-        name: row.placeName,
-        brandAvatar: row.brandAvatar
+        id: badgeRecord.placeId,
+        name: badgeRecord.placeName,
+        brandAvatar: badgeRecord.brandAvatar
       }
     }))
   }

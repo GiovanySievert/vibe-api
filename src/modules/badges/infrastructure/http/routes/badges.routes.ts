@@ -15,6 +15,23 @@ export const BadgesRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
+      .put('/me/profile-selection', (ctx) => controller.updateProfileSelection(ctx), {
+        auth: true,
+        body: t.Object({ placeIds: t.Array(t.String()) }),
+        detail: {
+          tags: ['Badges'],
+          summary: 'Update profile badge selection for the current user',
+          security: [{ cookieAuth: [] }]
+        }
+      })
+      .get('/me/progress', (ctx) => controller.listProgressMine(ctx), {
+        auth: true,
+        detail: {
+          tags: ['Badges'],
+          summary: 'List badge progress for the current user',
+          security: [{ cookieAuth: [] }]
+        }
+      })
       .get('/user/:userId', (ctx) => controller.listByUser(ctx), {
         auth: true,
         params: t.Object({ userId: t.String() }),

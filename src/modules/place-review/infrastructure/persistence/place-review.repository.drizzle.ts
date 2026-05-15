@@ -1,15 +1,17 @@
-import { and, count, desc, eq, gte, inArray, isNotNull, or, sql } from 'drizzle-orm'
+import { and, asc, count, desc, eq, gte, inArray, isNotNull, or, sql } from 'drizzle-orm'
 
 import { placeReviewComments, placeReviewReactions, placeReviews } from '../../application/schemas'
 import { db } from '@src/infra/database/client'
 import { PlaceReview } from '../../domain/mappers'
 import {
   CreatePlaceReviewCommentInput,
+  PlaceReviewCountByPlace,
   PlaceReviewRepository,
+  SelectedPlaceReviewCountByPlace,
   SetPlaceReviewReactionInput
 } from '../../domain/repositories'
 import { FeedReviewItem, ListPlaceReviewCommentsResult, PlaceReviewComment, ReviewCounts, ReviewInteractionCount, ReviewInteractionUser } from '../../domain/types'
-import { users } from '@src/infra/database/schema'
+import { brands, places, userProfileBadges, users } from '@src/infra/database/schema'
 import { followers } from '@src/modules/follow/application/schemas'
 
 export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
@@ -51,6 +53,62 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
       .where(and(eq(placeReviews.userId, userId), eq(placeReviews.placeId, placeId)))
 
     return Number(row?.value ?? 0)
+  }
+
+  async listReviewCountsByUserGroupedByPlace(userId: string): Promise<PlaceReviewCountByPlace[]> {
+    const placeReviewCountRecords = await db
+      .select({
+        placeId: placeReviews.placeId,
+        placeName: places.name,
+        brandAvatar: brands.avatar,
+        reviewCount: count(placeReviews.id),
+        latestReviewAt: sql<Date>`max(${placeReviews.createdAt})`
+      })
+      .from(placeReviews)
+      .leftJoin(places, eq(placeReviews.placeId, places.id))
+      .leftJoin(brands, eq(places.brandId, brands.id))
+      .where(eq(placeReviews.userId, userId))
+      .groupBy(placeReviews.placeId, places.name, brands.avatar)
+      .orderBy(desc(count(placeReviews.id)))
+
+    return placeReviewCountRecords.map((placeReviewCountRecord) => ({
+      placeId: placeReviewCountRecord.placeId,
+      placeName: placeReviewCountRecord.placeName,
+      brandAvatar: placeReviewCountRecord.brandAvatar,
+      reviewCount: Number(placeReviewCountRecord.reviewCount),
+      latestReviewAt: placeReviewCountRecord.latestReviewAt
+    }))
+  }
+
+  async listSelectedReviewCountsByUserGroupedByPlace(userId: string): Promise<SelectedPlaceReviewCountByPlace[]> {
+    const selectedPlaceReviewCountRecords = await db
+      .select({
+        placeId: placeReviews.placeId,
+        placeName: places.name,
+        brandAvatar: brands.avatar,
+        reviewCount: count(placeReviews.id),
+        latestReviewAt: sql<Date>`max(${placeReviews.createdAt})`,
+        profilePosition: userProfileBadges.position
+      })
+      .from(userProfileBadges)
+      .innerJoin(
+        placeReviews,
+        and(eq(userProfileBadges.userId, placeReviews.userId), eq(userProfileBadges.placeId, placeReviews.placeId))
+      )
+      .leftJoin(places, eq(placeReviews.placeId, places.id))
+      .leftJoin(brands, eq(places.brandId, brands.id))
+      .where(eq(userProfileBadges.userId, userId))
+      .groupBy(placeReviews.placeId, places.name, brands.avatar, userProfileBadges.position)
+      .orderBy(asc(userProfileBadges.position))
+
+    return selectedPlaceReviewCountRecords.map((selectedPlaceReviewCountRecord) => ({
+      placeId: selectedPlaceReviewCountRecord.placeId,
+      placeName: selectedPlaceReviewCountRecord.placeName,
+      brandAvatar: selectedPlaceReviewCountRecord.brandAvatar,
+      reviewCount: Number(selectedPlaceReviewCountRecord.reviewCount),
+      latestReviewAt: selectedPlaceReviewCountRecord.latestReviewAt,
+      profilePosition: selectedPlaceReviewCountRecord.profilePosition
+    }))
   }
 
   async listByPlace(placeId: string, since: Date, page?: number): Promise<FeedReviewItem[]> {

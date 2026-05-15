@@ -5,9 +5,12 @@ import { PlaceReviewRepository } from '@src/modules/place-review/domain/reposito
 import {
   EvaluateUserPlaceBadge,
   GetUserBadgeForPlace,
-  ListUserBadges
+  ListUserBadgeProgress,
+  ListUserBadges,
+  ListVisibleUserBadges,
+  UpdateUserProfileBadges
 } from './application/use-cases'
-import { DrizzleUserPlaceBadgesRepository } from './infrastructure/persistence'
+import { DrizzleUserPlaceBadgesRepository, DrizzleUserProfileBadgesRepository } from './infrastructure/persistence'
 import { BadgesController } from './infrastructure/http/controllers/badges.controller'
 
 export class BadgesModule {
@@ -18,16 +21,27 @@ export class BadgesModule {
     const placeReviewRepo = deps?.placeReviewRepo ?? new DrizzlePlaceReviewRepository()
     const producer = deps?.producer ?? new RabbitMQProducer()
     const userPlaceBadgesRepo = new DrizzleUserPlaceBadgesRepository()
+    const userProfileBadgesRepo = new DrizzleUserProfileBadgesRepository()
 
     this.evaluateUserPlaceBadge = new EvaluateUserPlaceBadge(
       placeReviewRepo,
       userPlaceBadgesRepo,
+      userProfileBadgesRepo,
       producer
     )
 
-    const listUserBadges = new ListUserBadges(userPlaceBadgesRepo, placeReviewRepo)
+    const listUserBadges = new ListUserBadges(userPlaceBadgesRepo, userProfileBadgesRepo, placeReviewRepo)
+    const listVisibleUserBadges = new ListVisibleUserBadges(placeReviewRepo)
+    const listUserBadgeProgress = new ListUserBadgeProgress(placeReviewRepo)
     const getUserBadgeForPlace = new GetUserBadgeForPlace(userPlaceBadgesRepo, placeReviewRepo)
+    const updateUserProfileBadges = new UpdateUserProfileBadges(placeReviewRepo, userProfileBadgesRepo)
 
-    this.controller = new BadgesController(listUserBadges, getUserBadgeForPlace)
+    this.controller = new BadgesController(
+      listUserBadges,
+      listVisibleUserBadges,
+      listUserBadgeProgress,
+      getUserBadgeForPlace,
+      updateUserProfileBadges
+    )
   }
 }

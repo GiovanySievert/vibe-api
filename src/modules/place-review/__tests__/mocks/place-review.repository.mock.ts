@@ -1,7 +1,9 @@
 import { PlaceReview } from '../../domain/mappers'
 import {
   CreatePlaceReviewCommentInput,
+  PlaceReviewCountByPlace,
   PlaceReviewRepository,
+  SelectedPlaceReviewCountByPlace,
   SetPlaceReviewReactionInput
 } from '../../domain/repositories'
 import { FeedReviewItem, ListPlaceReviewCommentsResult, PlaceReviewComment, PlaceReviewReactionType, ReviewCounts, ReviewInteractionCount, ReviewInteractionUser } from '../../domain/types'
@@ -10,6 +12,7 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
   private reviews: PlaceReview[] = []
   private comments: PlaceReviewComment[] = []
   private reactions: Array<{ reviewId: string; userId: string; type: PlaceReviewReactionType }> = []
+  private profileBadgeSelections = new Map<string, Array<{ placeId: string; position: number }>>()
 
   async create(data: Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>): Promise<PlaceReview> {
     const review: PlaceReview = {
@@ -38,6 +41,47 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
 
   async countReviewsByUserAndPlace(userId: string, placeId: string): Promise<number> {
     return this.reviews.filter((r) => r.userId === userId && r.placeId === placeId).length
+  }
+
+  async listReviewCountsByUserGroupedByPlace(userId: string): Promise<PlaceReviewCountByPlace[]> {
+    const reviewCountByPlaceId = new Map<string, PlaceReviewCountByPlace>()
+
+    for (const placeReview of this.reviews.filter((review) => review.userId === userId)) {
+      const placeReviewCount = reviewCountByPlaceId.get(placeReview.placeId)
+      if (placeReviewCount) {
+        placeReviewCount.reviewCount += 1
+        if (placeReview.createdAt > placeReviewCount.latestReviewAt) {
+          placeReviewCount.latestReviewAt = placeReview.createdAt
+        }
+        continue
+      }
+
+      reviewCountByPlaceId.set(placeReview.placeId, {
+        placeId: placeReview.placeId,
+        placeName: placeReview.placeName,
+        brandAvatar: null,
+        reviewCount: 1,
+        latestReviewAt: placeReview.createdAt
+      })
+    }
+
+    return [...reviewCountByPlaceId.values()].sort((a, b) => b.reviewCount - a.reviewCount)
+  }
+
+  async listSelectedReviewCountsByUserGroupedByPlace(userId: string): Promise<SelectedPlaceReviewCountByPlace[]> {
+    const profileBadgeSelections = this.profileBadgeSelections.get(userId) ?? []
+    const profilePositionByPlaceId = new Map(
+      profileBadgeSelections.map((profileBadgeSelection) => [profileBadgeSelection.placeId, profileBadgeSelection.position])
+    )
+    const placeReviewCounts = await this.listReviewCountsByUserGroupedByPlace(userId)
+
+    return placeReviewCounts
+      .filter((placeReviewCount) => profilePositionByPlaceId.has(placeReviewCount.placeId))
+      .map((placeReviewCount) => ({
+        ...placeReviewCount,
+        profilePosition: profilePositionByPlaceId.get(placeReviewCount.placeId) as number
+      }))
+      .sort((a, b) => a.profilePosition - b.profilePosition)
   }
 
   async listByPlace(placeId: string, _since: Date, page?: number): Promise<FeedReviewItem[]> {
@@ -173,10 +217,15 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     this.reviews = []
     this.comments = []
     this.reactions = []
+    this.profileBadgeSelections.clear()
   }
 
   seed(data: PlaceReview[]) {
     this.reviews = [...data]
+  }
+
+  seedProfileBadgeSelections(userId: string, profileBadgeSelections: Array<{ placeId: string; position: number }>) {
+    this.profileBadgeSelections.set(userId, [...profileBadgeSelections])
   }
 
   getAll() {

@@ -13,12 +13,26 @@ export interface SetPlaceReviewReactionInput {
   type: PlaceReviewReactionType
 }
 
+export interface PlaceReviewCountByPlace {
+  placeId: string
+  placeName: string | null
+  brandAvatar: string | null
+  reviewCount: number
+  latestReviewAt: Date
+}
+
+export interface SelectedPlaceReviewCountByPlace extends PlaceReviewCountByPlace {
+  profilePosition: number
+}
+
 export interface PlaceReviewRepository {
   create(data: Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>): Promise<PlaceReview>
   getById(reviewId: string): Promise<PlaceReview | null>
   getByUserAndPlace(userId: string, placeId: string): Promise<PlaceReview | null>
   getLastReviewByUserAndPlace(userId: string, placeId: string): Promise<PlaceReview | null>
   countReviewsByUserAndPlace(userId: string, placeId: string): Promise<number>
+  listReviewCountsByUserGroupedByPlace(userId: string): Promise<PlaceReviewCountByPlace[]>
+  listSelectedReviewCountsByUserGroupedByPlace(userId: string): Promise<SelectedPlaceReviewCountByPlace[]>
   listByPlace(placeId: string, since: Date, page?: number): Promise<FeedReviewItem[]>
   listPopularByPlace(placeId: string, since: Date, limit: number): Promise<FeedReviewItem[]>
   listByUser(userId: string, page?: number): Promise<FeedReviewItem[]>

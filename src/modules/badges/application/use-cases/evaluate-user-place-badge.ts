@@ -4,7 +4,7 @@ import { RabbitMQProducer } from '@src/shared/infra/messaging'
 
 import { tiersAchievedFor } from '../constants/place-review-badge-tiers'
 import { PlaceReviewBadgeTier } from '../../domain/types'
-import { UserPlaceBadgesRepository } from '../../domain/repositories'
+import { UserPlaceBadgesRepository, UserProfileBadgesRepository } from '../../domain/repositories'
 
 export interface EvaluateUserPlaceBadgeInput {
   userId: string
@@ -15,6 +15,7 @@ export class EvaluateUserPlaceBadge {
   constructor(
     private readonly placeReviewRepo: PlaceReviewRepository,
     private readonly userPlaceBadgesRepo: UserPlaceBadgesRepository,
+    private readonly userProfileBadgesRepo: UserProfileBadgesRepository,
     private readonly producer: RabbitMQProducer
   ) {}
 
@@ -49,6 +50,10 @@ export class EvaluateUserPlaceBadge {
     const tiersToRemove = [...existingTiers].filter((t) => !achievedTierSet.has(t))
     if (tiersToRemove.length > 0) {
       await this.userPlaceBadgesRepo.removeTiers({ userId, placeId, tiers: tiersToRemove })
+    }
+
+    if (achieved.length === 0 && existing.length > 0) {
+      await this.userProfileBadgesRepo.removeByUserAndPlace(userId, placeId)
     }
   }
 }
