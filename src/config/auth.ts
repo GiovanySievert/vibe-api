@@ -7,6 +7,8 @@ import { ResendEmailSender } from '@src/modules/notifications/infrastructure/ema
 import { verificationEmail, signInEmail, passwordResetEmail } from '@src/modules/notifications/infrastructure/email/templates/otp-email'
 import { env } from './env'
 import { expo } from '@better-auth/expo'
+import { GenerateUniqueUsername } from '@src/modules/auth/application/use-cases/generate-unique-username'
+import { DrizzleUserRepository } from '@src/modules/auth/infrastructure/persistence/user-repository.drizzle'
 
 enum EMAIL_TYPE {
   SIGN_IN = 'sign-in',
@@ -15,6 +17,31 @@ enum EMAIL_TYPE {
 }
 
 const emailSender = new ResendEmailSender(env.RESEND_API_KEY, env.RESEND_FROM_EMAIL)
+const generateUniqueUsername = new GenerateUniqueUsername(new DrizzleUserRepository())
+
+const appleProvider =
+  env.APPLE_CLIENT_ID && env.APPLE_TEAM_ID && env.APPLE_KEY_ID && env.APPLE_PRIVATE_KEY && env.APPLE_APP_BUNDLE_ID
+    ? {
+        clientId: env.APPLE_CLIENT_ID,
+        clientSecret: env.APPLE_PRIVATE_KEY,
+        appBundleIdentifier: env.APPLE_APP_BUNDLE_ID,
+        teamId: env.APPLE_TEAM_ID,
+        keyId: env.APPLE_KEY_ID
+      }
+    : undefined
+
+const googleProvider =
+  env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
+    ? {
+        clientId: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET
+      }
+    : undefined
+
+const socialProviders = {
+  ...(appleProvider ? { apple: appleProvider } : {}),
+  ...(googleProvider ? { google: googleProvider } : {})
+}
 
 export const auth = betterAuth({
   basePath: '/auth',
@@ -26,6 +53,19 @@ export const auth = betterAuth({
     },
     database: {
       generateId: false
+    }
+  },
+  ...(Object.keys(socialProviders).length > 0 ? { socialProviders } : {}),
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const current = user as typeof user & { username?: string | null }
+          if (current.username && current.username.trim().length > 0) return { data: user }
+          const username = await generateUniqueUsername.execute(current.email)
+          return { data: { ...user, username } }
+        }
+      }
     }
   },
   plugins: [

@@ -39,6 +39,7 @@ src/modules/<feature>/
 - **Controllers**: do NOT call Drizzle directly — always via a use-case.
 - **Repositories**: interface in `domain/`, `Drizzle*Repository` implementation in `infrastructure/persistence/`.
 - **Events**: use `applicationEventBus` (`@src/shared/application/events`) — do not invent emitters.
+- **Naming**: avoid generic collection names like `rows`, `items`, `item`, and `data` when the domain is known; prefer names that describe the business object, such as `badgeRecords`, `profileBadgeSelections`, or `badgeSummaries`.
 - **Migrations**: `bun db:generate` → `bun db:migrate`. NEVER hand-edit generated SQL. Always run the migration reviewer before merging.
 - **Tests**: `__tests__/` folder next to the module. For routes, use `app.handle(new Request(...))` (don't spin up a real server). DB with transaction/rollback or repo mock.
 

@@ -8,6 +8,7 @@
     "typecheck": "bunx tsc --noEmit",
     "db:generate": "bun --env-file .env --bun drizzle-kit generate",
     "db:migrate": "bun --env-file .env --bun drizzle-kit migrate",
+    "db:migrate:prod": "bun --bun drizzle-kit migrate",
     "db:seed": "bun --env-file=.env src/infra/database/seeds/seed.ts",
     "dev": "bun --env-file=.env run --watch src/index.ts",
     "docker:dev": "docker-compose -f docker-compose.dev.yml up -d",

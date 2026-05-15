@@ -9,4 +9,14 @@ export class DrizzleUserRepository implements UserRepository {
 
     return !!result
   }
+
+  async findUsernameOwnerId(username: string): Promise<string | null> {
+    const [result] = await db.select({ id: users.id }).from(users).where(eq(users.username, username)).limit(1)
+
+    return result?.id ?? null
+  }
+
+  async updateUsername(userId: string, username: string): Promise<void> {
+    await db.update(users).set({ username }).where(eq(users.id, userId))
+  }
 }
