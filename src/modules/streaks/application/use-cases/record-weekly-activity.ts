@@ -28,7 +28,8 @@ export class RecordWeeklyActivity {
     const streak = await this.streakRepo.getStreak(userId)
     const threshold = streak?.weeklyThreshold ?? 2
 
-    if (activity.reviewCount !== threshold) return
+    if (activity.reviewCount < threshold) return
+    if (activity.streakContributed) return
 
     const prev = getPreviousISOWeek(isoYear, isoWeek)
     const prevWeekActivity = await this.streakRepo.getWeekActivity(userId, prev.isoYear, prev.isoWeek)
