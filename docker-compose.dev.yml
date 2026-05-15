@@ -90,6 +90,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      minio:
+        condition: service_healthy
     networks:
       - vibe-network-dev
     restart: unless-stopped

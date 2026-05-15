@@ -14,8 +14,7 @@ import {
   DrizzlePlacesRepository,
   DrizzleBrandRepository
 } from './infrastructure/persistence'
-import { RabbitMQProducer } from '@src/shared/infra/messaging'
-import { RabbitMQEventBus } from '@src/shared/infrastructure/rabbitmq-event-bus'
+import { applicationEventBus } from '@src/shared/application/events'
 import { BrandsController } from './infrastructure/http/controllers/brands.controller'
 
 export class BrandsModule {
@@ -28,23 +27,20 @@ export class BrandsModule {
     const placeLocationRepo = new DrizzlePlaceLocationsRepository()
     const brandMenusRepo = new DrizzleBrandMenusRepository()
 
-    const producer = new RabbitMQProducer()
-    const eventBus = new RabbitMQEventBus(producer)
-
     const createBrandService = new CreateBrand(brandRepo)
     const createBrandMenusService = new CreateBrandMenus(brandMenusRepo)
     const createPlaceService = new CreatePlace(placeRepo)
     const createPlaceLocationService = new CreatePlaceLocation(placeLocationRepo)
     const getBrandService = new GetBrand(brandRepo)
     const getPlaceService = new GetPlace(placeRepo)
-    const reindexPlacesService = new ReindexPlaces(placeRepo, eventBus)
+    const reindexPlacesService = new ReindexPlaces(placeRepo, applicationEventBus)
 
     const createBrandWithPlace = new CreateBrandWithPlace(
       createBrandService,
       createBrandMenusService,
       createPlaceService,
       createPlaceLocationService,
-      eventBus
+      applicationEventBus
     )
 
     this.controller = new BrandsController(
