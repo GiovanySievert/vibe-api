@@ -1,47 +1,76 @@
 import { beforeAll, describe, expect, it } from 'bun:test'
 import { Elysia } from 'elysia'
-import { StorageRoutes } from '../../infrastructure/http/routes/storage.routes'
+import { UserProfileRoutes } from '../../infrastructure/http/routes/user-profile.routes'
 
-describe('Storage Routes', () => {
+describe('User Profile Routes', () => {
   let app: Elysia
 
   beforeAll(() => {
-    app = new Elysia().use(StorageRoutes)
+    app = new Elysia().use(UserProfileRoutes)
   })
 
-  describe('POST /storage/upload-url', () => {
+  describe('PATCH /user-profile', () => {
     it('returns 401 when caller is not authenticated with a valid body', async () => {
       const response = await app.handle(
-        new Request('http://localhost/storage/upload-url', {
-          method: 'POST',
+        new Request('http://localhost/user-profile/', {
+          method: 'PATCH',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ contentType: 'image/png' })
+          body: JSON.stringify({ name: 'Alice' })
         })
       )
 
       expect(response.status).toBe(401)
     })
 
-    it('returns 422 when contentType is not in the allowed image union', async () => {
+    it('returns 422 when name is empty', async () => {
       const response = await app.handle(
-        new Request('http://localhost/storage/upload-url', {
-          method: 'POST',
+        new Request('http://localhost/user-profile/', {
+          method: 'PATCH',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ contentType: 'application/pdf' })
+          body: JSON.stringify({ name: '' })
         })
       )
 
       expect(response.status).toBe(422)
       const data = await response.json()
       expect(data.type).toBe('validation')
-      expect(data.on).toBe('body')
-      expect(data.property).toBe('/contentType')
+      expect(data.property).toBe('/name')
     })
 
-    it('returns 422 when contentType is missing from the body', async () => {
+    it('returns 422 when name exceeds 100 chars', async () => {
       const response = await app.handle(
-        new Request('http://localhost/storage/upload-url', {
-          method: 'POST',
+        new Request('http://localhost/user-profile/', {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ name: 'x'.repeat(101) })
+        })
+      )
+
+      expect(response.status).toBe(422)
+      const data = await response.json()
+      expect(data.type).toBe('validation')
+      expect(data.property).toBe('/name')
+    })
+
+    it('returns 422 when bio exceeds 300 chars', async () => {
+      const response = await app.handle(
+        new Request('http://localhost/user-profile/', {
+          method: 'PATCH',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ name: 'Alice', bio: 'x'.repeat(301) })
+        })
+      )
+
+      expect(response.status).toBe(422)
+      const data = await response.json()
+      expect(data.type).toBe('validation')
+      expect(data.property).toBe('/bio')
+    })
+
+    it('returns 422 when name is missing from the body', async () => {
+      const response = await app.handle(
+        new Request('http://localhost/user-profile/', {
+          method: 'PATCH',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({})
         })
@@ -50,35 +79,7 @@ describe('Storage Routes', () => {
       expect(response.status).toBe(422)
       const data = await response.json()
       expect(data.type).toBe('validation')
-      expect(data.property).toBe('/contentType')
-    })
-
-    it('returns 422 when folder violates length bounds', async () => {
-      const response = await app.handle(
-        new Request('http://localhost/storage/upload-url', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ contentType: 'image/jpeg', folder: '' })
-        })
-      )
-
-      expect(response.status).toBe(422)
-      const data = await response.json()
-      expect(data.type).toBe('validation')
-    })
-
-    it('returns 422 when folder contains traversal', async () => {
-      const response = await app.handle(
-        new Request('http://localhost/storage/upload-url', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ contentType: 'image/jpeg', folder: '../private' })
-        })
-      )
-
-      expect(response.status).toBe(422)
-      const data = await response.json()
-      expect(data.type).toBe('validation')
+      expect(data.property).toBe('/name')
     })
   })
 })

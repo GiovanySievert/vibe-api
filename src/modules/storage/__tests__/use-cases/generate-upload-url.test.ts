@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'bun:test'
 import { GenerateUploadUrl } from '../../application/use-cases/generate-upload-url'
-import { UnsupportedContentTypeException } from '../../domain/exceptions'
+import { InvalidStorageFolderException, UnsupportedContentTypeException } from '../../domain/exceptions'
 import {
   GenerateUploadUrlInput,
   GenerateUploadUrlResult,
@@ -78,7 +78,7 @@ describe('GenerateUploadUrl', () => {
     })
 
     const call = storageRepo.calls[0]
-    expect(call.key.startsWith('avatars/user-4/')).toBe(true)
+    expect(call.key.startsWith('uploads/user-4/avatars/')).toBe(true)
   })
 
   it('should default folder to "uploads" when not provided', async () => {
@@ -89,6 +89,41 @@ describe('GenerateUploadUrl', () => {
 
     const call = storageRepo.calls[0]
     expect(call.key.startsWith('uploads/user-5/')).toBe(true)
+  })
+
+  it('should use a custom nested folder under the authenticated user prefix', async () => {
+    await useCase.execute({
+      userId: 'user-5',
+      contentType: 'image/png',
+      folder: 'reviews/selfies'
+    })
+
+    const call = storageRepo.calls[0]
+    expect(call.key.startsWith('uploads/user-5/reviews/selfies/')).toBe(true)
+  })
+
+  it('should reject folder traversal', async () => {
+    expect(async () => {
+      await useCase.execute({
+        userId: 'user-5',
+        contentType: 'image/png',
+        folder: '../private'
+      })
+    }).toThrow(InvalidStorageFolderException)
+
+    expect(storageRepo.calls).toHaveLength(0)
+  })
+
+  it('should reject absolute folders', async () => {
+    expect(async () => {
+      await useCase.execute({
+        userId: 'user-5',
+        contentType: 'image/png',
+        folder: '/avatars'
+      })
+    }).toThrow(InvalidStorageFolderException)
+
+    expect(storageRepo.calls).toHaveLength(0)
   })
 
   it('should generate unique keys across calls for the same user and content type', async () => {

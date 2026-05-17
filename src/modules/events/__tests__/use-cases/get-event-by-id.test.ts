@@ -22,7 +22,7 @@ describe('GetEventById', () => {
       participantIds: ['user-2']
     })
 
-    const result = await getEventById.execute(created.id)
+    const result = await getEventById.execute(created.id, 'user-1')
 
     expect(result).toBeDefined()
     expect(result.id).toBe(created.id)
@@ -38,14 +38,42 @@ describe('GetEventById', () => {
       participantIds: ['user-2', 'user-3']
     })
 
-    const result = await getEventById.execute(created.id)
+    const result = await getEventById.execute(created.id, 'user-2')
 
     expect(result.participants).toHaveLength(2)
   })
 
+  it('should allow the owner to read the event', async () => {
+    const created = await mockEventRepo.create({
+      ownerId: 'user-1',
+      name: 'Festa',
+      date: '15/07/2025',
+      time: '20:00',
+      participantIds: ['user-2']
+    })
+
+    const result = await getEventById.execute(created.id, 'user-1')
+
+    expect(result.id).toBe(created.id)
+  })
+
+  it('should throw EventNotFoundException when the caller is not owner or participant', async () => {
+    const created = await mockEventRepo.create({
+      ownerId: 'user-1',
+      name: 'Festa',
+      date: '15/07/2025',
+      time: '20:00',
+      participantIds: ['user-2']
+    })
+
+    expect(async () => {
+      await getEventById.execute(created.id, 'user-3')
+    }).toThrow(EventNotFoundException)
+  })
+
   it('should throw EventNotFoundException for an unknown id', async () => {
     expect(async () => {
-      await getEventById.execute('id-inexistente')
+      await getEventById.execute('id-inexistente', 'user-1')
     }).toThrow(EventNotFoundException)
   })
 })
