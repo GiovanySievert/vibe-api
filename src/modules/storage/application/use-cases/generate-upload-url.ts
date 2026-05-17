@@ -1,4 +1,4 @@
-import { UnsupportedContentTypeException } from '../../domain/exceptions'
+import { InvalidStorageFolderException, UnsupportedContentTypeException } from '../../domain/exceptions'
 import { StorageRepository, GenerateUploadUrlResult } from '../../domain/repositories'
 
 const ALLOWED_CONTENT_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const
@@ -19,8 +19,10 @@ export class GenerateUploadUrl {
     }
 
     const ext = this.extensionFor(command.contentType as AllowedContentType)
-    const folder = command.folder ?? 'uploads'
-    const key = `${folder}/${command.userId}/${crypto.randomUUID()}${ext}`
+    const folder = this.normalizeFolder(command.folder)
+    const key = folder
+      ? `uploads/${command.userId}/${folder}/${crypto.randomUUID()}${ext}`
+      : `uploads/${command.userId}/${crypto.randomUUID()}${ext}`
 
     return this.storageRepo.generateUploadUrl({
       key,
@@ -35,5 +37,14 @@ export class GenerateUploadUrl {
       'image/webp': '.webp'
     }
     return map[contentType]
+  }
+
+  private normalizeFolder(folder?: string): string | null {
+    if (!folder) return null
+    const normalized = folder.trim()
+    if (!/^[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+)*$/.test(normalized)) {
+      throw new InvalidStorageFolderException(folder)
+    }
+    return normalized
   }
 }

@@ -10,7 +10,9 @@ export const StorageRoutes = (app: Elysia) => {
       auth: true,
       body: t.Object({
         contentType: t.Union([t.Literal('image/jpeg'), t.Literal('image/png'), t.Literal('image/webp')]),
-        folder: t.Optional(t.String({ minLength: 1, maxLength: 64 }))
+        folder: t.Optional(
+          t.String({ minLength: 1, maxLength: 64, pattern: '^[a-zA-Z0-9_-]+(?:/[a-zA-Z0-9_-]+)*$' })
+        )
       }),
       detail: {
         tags: ['Storage'],
