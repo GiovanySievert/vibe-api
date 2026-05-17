@@ -1,6 +1,7 @@
 import { User } from 'better-auth/types'
 
 import { EventNotFoundException } from '@src/modules/events/domain/exceptions'
+import { Event } from '@src/modules/events/domain/mappers'
 import { EventRepository } from '@src/modules/events/domain/repositories'
 import { ApplicationEventBus } from '@src/shared/application/events'
 import { createEventCommentCreatedEvent } from '../../../application/events/event-comment-created.event'
@@ -17,7 +18,10 @@ export class EventCommentController {
     private readonly applicationEventBus: ApplicationEventBus
   ) {}
 
-  async list({ params, query }: { params: { id: string }; query: { page?: string } }) {
+  async list({ params, query, user }: { params: { id: string }; query: { page?: string }; user: User }) {
+    const event = await this.eventRepository.findById(params.id)
+    this.assertEventAccess(event, user.id)
+
     const page = Math.max(1, Number(query.page) || 1)
     const result = await this.listEventComments.execute({ eventId: params.id, page, limit: 20 })
     return EventCommentDtoMapper.fromList(result)
@@ -25,7 +29,7 @@ export class EventCommentController {
 
   async create({ params, body, user }: { params: { id: string }; body: { content: string }; user: User }) {
     const event = await this.eventRepository.findById(params.id)
-    if (!event) throw new EventNotFoundException()
+    this.assertEventAccess(event, user.id)
 
     const comment = await this.createEventComment.execute({
       eventId: params.id,
@@ -57,7 +61,7 @@ export class EventCommentController {
     user: User
   }) {
     const event = await this.eventRepository.findById(params.id)
-    if (!event) throw new EventNotFoundException()
+    this.assertEventAccess(event, user.id)
 
     await this.deleteEventComment.execute({
       commentId: params.commentId,
@@ -66,5 +70,12 @@ export class EventCommentController {
     })
 
     return { success: true }
+  }
+
+  private assertEventAccess(event: Event | null, userId: string): asserts event is Event {
+    if (!event) throw new EventNotFoundException()
+    if (event.ownerId !== userId && !event.participants?.some((participant) => participant.userId === userId)) {
+      throw new EventNotFoundException()
+    }
   }
 }
