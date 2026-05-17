@@ -1,4 +1,4 @@
-import { Users } from '@src/modules/auth/domain/mappers/user.mapper'
+import { PublicUserProfile } from '@src/modules/users/domain/repositories'
 
 export class GetPublicUserByIdDto {
   id: string
@@ -6,14 +6,14 @@ export class GetPublicUserByIdDto {
   username: string
   image?: string
 
-  constructor(data: Users) {
+  constructor(data: PublicUserProfile) {
     this.id = data.id
     this.name = data.name
     this.username = data.username
     this.image = data.image || ''
   }
 
-  static fromData(data: Users) {
+  static fromData(data: PublicUserProfile) {
     return {
       id: data.id,
       username: data.username,

@@ -1,10 +1,9 @@
-import { PublicUserRepository } from '../../domain/repositories'
-import { Users } from '@src/modules/auth/domain/mappers/user.mapper'
+import { PublicUserProfile, PublicUserRepository } from '../../domain/repositories'
 
 export class GetPublicUserById {
   constructor(private readonly publicUserRepo: PublicUserRepository) {}
 
-  async execute(userId: string, loggedUserId: string): Promise<Users | null> {
+  async execute(userId: string, loggedUserId: string): Promise<PublicUserProfile | null> {
     const user = await this.publicUserRepo.getUserById(userId, loggedUserId)
     return user
   }

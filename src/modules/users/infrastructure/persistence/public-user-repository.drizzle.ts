@@ -1,9 +1,8 @@
 import { and, eq, like, ne, isNull, notInArray, inArray, sql } from 'drizzle-orm'
 import { db } from '@src/infra/database/client'
-import { PublicUserRepository, UserSuggestion, TrendingUser, WeekRef } from '../../domain/repositories'
+import { PublicUserProfile, PublicUserRepository, UserSuggestion, TrendingUser, WeekRef } from '../../domain/repositories'
 import { users, userBlocks, userWeeklyActivity } from '@src/infra/database/schema'
 import { followers } from '@src/modules/follow/application/schemas'
-import { Users } from '@src/modules/auth/domain/mappers/user.mapper'
 
 export class DrizzlePublicUserRepository implements PublicUserRepository {
   async getSuggestions(userId: string, limit = 20): Promise<UserSuggestion[]> {
@@ -88,14 +87,12 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
     return result
   }
 
-  async getUserById(userId: string, loggedUserId: string): Promise<Users | null> {
+  async getUserById(userId: string, loggedUserId: string): Promise<PublicUserProfile | null> {
     const [result] = await db
       .select({
         id: users.id,
         name: users.name,
         username: users.username,
-        email: users.email,
-        emailVerified: users.emailVerified,
         image: users.image,
         bio: users.bio,
         createdAt: users.createdAt,
@@ -109,14 +106,12 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
     return result || null
   }
 
-  async getUserByUsername(username: string, userIdToExclude: string): Promise<Users[]> {
+  async getUserByUsername(username: string, userIdToExclude: string): Promise<PublicUserProfile[]> {
     const result = await db
       .select({
         id: users.id,
         name: users.name,
         username: users.username,
-        email: users.email,
-        emailVerified: users.emailVerified,
         image: users.image,
         bio: users.bio,
         createdAt: users.createdAt,

@@ -1,17 +1,17 @@
-import { Users } from '@src/modules/auth/domain/mappers/user.mapper'
+import { PublicUserProfile } from '@src/modules/users/domain/repositories'
 
 export class GetPublicUserByUsernameDto {
   id: string
   username: string
   image: string
 
-  constructor(data: Users) {
+  constructor(data: PublicUserProfile) {
     this.id = data.id
     this.username = data.username
     this.image = data.image || ''
   }
 
-  static fromArray(data: Users[]) {
+  static fromArray(data: PublicUserProfile[]) {
     return data.map((item) => ({
       id: item.id,
       username: item.username,
