@@ -31,6 +31,8 @@ import { NotificationsRoutes } from './modules/notifications/infrastructure/http
 import { NotificationsModule } from './modules/notifications/notifications.module'
 import { applicationEventBus } from './shared/application/events'
 import { rabbitMQConnection } from './shared/infra/messaging/rabbitmq-connection'
+import { PlatformMetricsRoutes } from './modules/analytics/infrastructure/http/routes'
+import { AdminUsersRoutes } from './modules/admin-users/infrastructure/http/routes'
 
 const betterAuthPlugin = new Elysia({ name: 'better-auth' }).mount(auth.handler)
 const notificationsModule = new NotificationsModule()
@@ -63,6 +65,8 @@ const app = new Elysia()
   .use(StorageRoutes)
   .use(NotificationDeviceRoutes)
   .use(NotificationsRoutes)
+  .use(PlatformMetricsRoutes)
+  .use(AdminUsersRoutes)
   .use(
     cors({
       origin: env.CORS_ORIGIN.split(',').map((origin) => origin.trim()).filter(Boolean),

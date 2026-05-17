@@ -11,6 +11,10 @@ export const envSchema = z.object({
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.string(),
   DATABASE_URL: z.string(),
+  ANALYTICS_DATABASE_URL: z.preprocess(
+    (value) => value === '' ? undefined : value,
+    z.string().optional()
+  ),
   RESEND_API_KEY: z.string(),
   RESEND_FROM_EMAIL: z.string(),
   EXPO_PUSH_ACCESS_TOKEN: z.string().optional(),
