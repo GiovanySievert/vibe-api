@@ -126,4 +126,22 @@ describe('Brands Routes', () => {
       expect(data.type).toBe('validation')
     })
   })
+
+  describe('places reindex routes', () => {
+    it('requires authentication for starting reindex', async () => {
+      const response = await app.handle(
+        new Request('http://localhost/brands/places/reindex', {
+          method: 'POST'
+        })
+      )
+
+      expect(response.status).toBe(401)
+    })
+
+    it('requires authentication for checking reindex status', async () => {
+      const response = await app.handle(new Request('http://localhost/brands/places/reindex/job-1'))
+
+      expect(response.status).toBe(401)
+    })
+  })
 })

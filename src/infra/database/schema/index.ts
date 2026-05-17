@@ -29,6 +29,8 @@ export {
   placeReviewCommentsRelations,
   placeReviewReactions,
   placeReviewReactionsRelations,
+  userFavoriteReviews,
+  userFavoriteReviewsRelations,
   placeReviewTypeEnum,
   placeReviewReactionTypeEnum
 } from '@src/modules/place-review/application/schemas'

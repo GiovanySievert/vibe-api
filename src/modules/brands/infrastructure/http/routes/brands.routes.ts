@@ -1,4 +1,5 @@
 import { Elysia, t } from 'elysia'
+import { adminMiddleware } from '@src/shared/middlewares'
 import { BrandsModule } from '../../../brands.module'
 import { validateCreateAllEntities } from '../dtos'
 
@@ -25,22 +26,27 @@ export const brandsRoutes = (app: Elysia) => {
           description: 'Get brand by ID'
         }
       })
+      .use(adminMiddleware)
       .post('/places/reindex', () => controller.reindexPlaces(), {
+        admin: true,
         detail: {
           tags: ['Brands'],
           summary: 'Start reindex job for all places',
           description:
-            'Starts a background job that fetches all places in batches of 100 and publishes them to the Elasticsearch queue. Returns immediately with a job ID for tracking progress.'
+            'Starts a background job that fetches all places in batches of 100 and publishes them to the Elasticsearch queue. Returns immediately with a job ID for tracking progress.',
+          security: [{ cookieAuth: [] }]
         }
       })
       .get('/places/reindex/:jobId', (ctx) => controller.getReindexStatus(ctx), {
+        admin: true,
         params: t.Object({
           jobId: t.String()
         }),
         detail: {
           tags: ['Brands'],
           summary: 'Get reindex job status',
-          description: 'Returns the current status and progress of a reindex job'
+          description: 'Returns the current status and progress of a reindex job',
+          security: [{ cookieAuth: [] }]
         }
       })
   )
