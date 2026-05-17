@@ -15,8 +15,11 @@ describe('RecordWeeklyActivity', () => {
   it('should not update the streak before reaching the weekly threshold', async () => {
     const monday = new Date(Date.UTC(2026, 4, 11))
 
-    await recordWeeklyActivity.execute('user-1', monday)
+    const result = await recordWeeklyActivity.execute('user-1', monday)
 
+    expect(result.triggered).toBe(false)
+    expect(result.currentStreak).toBe(0)
+    expect(result.reviewCount).toBe(1)
     expect(mockRepo.updateStreakCalls).toHaveLength(0)
     expect(mockRepo.activities).toHaveLength(1)
     expect(mockRepo.activities[0].reviewCount).toBe(1)
@@ -26,8 +29,18 @@ describe('RecordWeeklyActivity', () => {
     const monday = new Date(Date.UTC(2026, 4, 11))
 
     await recordWeeklyActivity.execute('user-1', monday)
-    await recordWeeklyActivity.execute('user-1', monday)
+    const result = await recordWeeklyActivity.execute('user-1', monday)
 
+    expect(result).toMatchObject({
+      triggered: true,
+      previousStreak: 0,
+      currentStreak: 1,
+      longestStreak: 1,
+      weeklyThreshold: 2,
+      reviewCount: 2,
+      isoYear: 2026,
+      isoWeek: 20
+    })
     expect(mockRepo.updateStreakCalls).toHaveLength(1)
     expect(mockRepo.updateStreakCalls[0].currentStreak).toBe(1)
     expect(mockRepo.updateStreakCalls[0].longestStreak).toBe(1)
@@ -49,8 +62,10 @@ describe('RecordWeeklyActivity', () => {
 
     const monday = new Date(Date.UTC(2026, 4, 11))
 
-    await recordWeeklyActivity.execute('user-1', monday)
+    const result = await recordWeeklyActivity.execute('user-1', monday)
 
+    expect(result.triggered).toBe(true)
+    expect(result.reviewCount).toBe(3)
     expect(mockRepo.updateStreakCalls).toHaveLength(1)
     expect(mockRepo.activities[0].reviewCount).toBe(3)
     expect(mockRepo.activities[0].streakContributed).toBe(true)
@@ -69,8 +84,10 @@ describe('RecordWeeklyActivity', () => {
 
     const monday = new Date(Date.UTC(2026, 4, 11))
 
-    await recordWeeklyActivity.execute('user-1', monday)
+    const result = await recordWeeklyActivity.execute('user-1', monday)
 
+    expect(result.triggered).toBe(false)
+    expect(result.reviewCount).toBe(3)
     expect(mockRepo.updateStreakCalls).toHaveLength(0)
     expect(mockRepo.activities[0].reviewCount).toBe(3)
   })
@@ -97,8 +114,11 @@ describe('RecordWeeklyActivity', () => {
 
     const monday = new Date(Date.UTC(2026, 4, 11))
     await recordWeeklyActivity.execute('user-1', monday)
-    await recordWeeklyActivity.execute('user-1', monday)
+    const result = await recordWeeklyActivity.execute('user-1', monday)
 
+    expect(result.triggered).toBe(true)
+    expect(result.previousStreak).toBe(4)
+    expect(result.currentStreak).toBe(5)
     expect(mockRepo.updateStreakCalls).toHaveLength(1)
     expect(mockRepo.updateStreakCalls[0].currentStreak).toBe(5)
     expect(mockRepo.updateStreakCalls[0].longestStreak).toBe(5)
@@ -118,8 +138,12 @@ describe('RecordWeeklyActivity', () => {
 
     const monday = new Date(Date.UTC(2026, 4, 11))
     await recordWeeklyActivity.execute('user-1', monday)
-    await recordWeeklyActivity.execute('user-1', monday)
+    const result = await recordWeeklyActivity.execute('user-1', monday)
 
+    expect(result.triggered).toBe(true)
+    expect(result.previousStreak).toBe(7)
+    expect(result.currentStreak).toBe(1)
+    expect(result.longestStreak).toBe(10)
     expect(mockRepo.updateStreakCalls).toHaveLength(1)
     expect(mockRepo.updateStreakCalls[0].currentStreak).toBe(1)
     expect(mockRepo.updateStreakCalls[0].longestStreak).toBe(10)
@@ -131,8 +155,9 @@ describe('RecordWeeklyActivity', () => {
     await recordWeeklyActivity.execute('user-1', monday)
     await recordWeeklyActivity.execute('user-1', monday)
     await recordWeeklyActivity.execute('user-1', monday)
-    await recordWeeklyActivity.execute('user-1', monday)
+    const result = await recordWeeklyActivity.execute('user-1', monday)
 
+    expect(result.triggered).toBe(false)
     expect(mockRepo.updateStreakCalls).toHaveLength(1)
     expect(mockRepo.activities[0].reviewCount).toBe(4)
     expect(mockRepo.updateStreakCalls[0].currentStreak).toBe(1)

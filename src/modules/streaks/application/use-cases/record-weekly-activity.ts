@@ -1,4 +1,5 @@
 import { StreakRepository } from '../../domain/repositories'
+import { StreakUpdateResult } from '../../domain/types'
 
 function getISOWeekAndYear(date: Date): { isoWeek: number; isoYear: number } {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
@@ -20,25 +21,51 @@ function getPreviousISOWeek(isoYear: number, isoWeek: number): { isoYear: number
 export class RecordWeeklyActivity {
   constructor(private readonly streakRepo: StreakRepository) {}
 
-  async execute(userId: string, reviewedAt: Date = new Date()): Promise<void> {
+  async execute(userId: string, reviewedAt: Date = new Date()): Promise<StreakUpdateResult> {
     const { isoWeek, isoYear } = getISOWeekAndYear(reviewedAt)
 
     const activity = await this.streakRepo.upsertWeeklyActivity(userId, isoYear, isoWeek)
 
     const streak = await this.streakRepo.getStreak(userId)
     const threshold = streak?.weeklyThreshold ?? 2
+    const previousStreak = streak?.currentStreak ?? 0
+    const longestBefore = streak?.longestStreak ?? 0
 
-    if (activity.reviewCount < threshold) return
-    if (activity.streakContributed) return
+    const idleResult = (): StreakUpdateResult => ({
+      triggered: false,
+      previousStreak,
+      currentStreak: previousStreak,
+      longestStreak: longestBefore,
+      weeklyThreshold: threshold,
+      reviewCount: activity.reviewCount,
+      isoYear,
+      isoWeek
+    })
+
+    if (activity.reviewCount < threshold) return idleResult()
+    if (activity.streakContributed) return idleResult()
 
     const prev = getPreviousISOWeek(isoYear, isoWeek)
     const prevWeekActivity = await this.streakRepo.getWeekActivity(userId, prev.isoYear, prev.isoWeek)
 
     const prevWasActive = (prevWeekActivity?.reviewCount ?? 0) >= threshold
 
-    const currentStreak = prevWasActive ? (streak?.currentStreak ?? 0) + 1 : 1
-    const longestStreak = Math.max(currentStreak, streak?.longestStreak ?? 0)
+    const currentStreak = prevWasActive ? previousStreak + 1 : 1
+    const longestStreak = Math.max(currentStreak, longestBefore)
 
-    await this.streakRepo.updateStreak(userId, currentStreak, longestStreak, isoYear, isoWeek)
+    const updated = await this.streakRepo.updateStreak(userId, currentStreak, longestStreak, isoYear, isoWeek)
+
+    if (!updated) return idleResult()
+
+    return {
+      triggered: true,
+      previousStreak,
+      currentStreak,
+      longestStreak,
+      weeklyThreshold: threshold,
+      reviewCount: activity.reviewCount,
+      isoYear,
+      isoWeek
+    }
   }
 }

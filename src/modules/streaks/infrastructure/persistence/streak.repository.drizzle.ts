@@ -1,8 +1,11 @@
-import { and, desc, eq, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, sql } from 'drizzle-orm'
 import { db } from '@src/infra/database/client'
+import { followers } from '@src/modules/follow/application/schemas'
+import { users } from '@src/infra/database/schema'
 import { userStreaks, userWeeklyActivity } from '../../application/schemas'
 import { StreakRepository } from '../../domain/repositories'
 import { UserStreak, UserWeeklyActivity } from '../../domain/mappers'
+import { FriendStreakSummary } from '../../domain/types'
 
 export class DrizzleStreakRepository implements StreakRepository {
   async getStreak(userId: string): Promise<UserStreak | null> {
@@ -86,7 +89,24 @@ export class DrizzleStreakRepository implements StreakRepository {
           eq(userWeeklyActivity.isoYear, isoYear),
           eq(userWeeklyActivity.isoWeek, isoWeek)
         )
-      )
+    )
     return result ?? null
+  }
+
+  async getFollowedActiveStreaks(userId: string, limit = 5): Promise<FriendStreakSummary[]> {
+    return db
+      .select({
+        userId: users.id,
+        name: users.name,
+        username: users.username,
+        image: users.image,
+        currentStreak: userStreaks.currentStreak
+      })
+      .from(followers)
+      .innerJoin(users, eq(followers.followingId, users.id))
+      .innerJoin(userStreaks, eq(userStreaks.userId, followers.followingId))
+      .where(and(eq(followers.followerId, userId), gt(userStreaks.currentStreak, 0)))
+      .orderBy(desc(userStreaks.currentStreak), asc(users.username))
+      .limit(limit)
   }
 }

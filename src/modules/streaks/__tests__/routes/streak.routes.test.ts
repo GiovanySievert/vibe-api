@@ -17,6 +17,14 @@ describe('Streak Routes', () => {
     })
   })
 
+  describe('GET /streaks/me/friends', () => {
+    it('returns 401 when caller is not authenticated', async () => {
+      const response = await app.handle(new Request('http://localhost/streaks/me/friends?limit=5'))
+
+      expect(response.status).toBe(401)
+    })
+  })
+
   describe('GET /streaks/:userId', () => {
     it('returns 401 when caller is not authenticated', async () => {
       const response = await app.handle(new Request('http://localhost/streaks/user-1'))

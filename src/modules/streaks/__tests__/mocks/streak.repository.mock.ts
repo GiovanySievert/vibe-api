@@ -1,9 +1,11 @@
 import { UserStreak, UserWeeklyActivity } from '../../domain/mappers'
 import { StreakRepository } from '../../domain/repositories'
+import { FriendStreakSummary } from '../../domain/types'
 
 export class MockStreakRepository implements StreakRepository {
   public streaks = new Map<string, UserStreak>()
   public activities: UserWeeklyActivity[] = []
+  public followedStreaks = new Map<string, FriendStreakSummary[]>()
   public updateStreakCalls: Array<{
     userId: string
     currentStreak: number
@@ -79,11 +81,19 @@ export class MockStreakRepository implements StreakRepository {
     )
   }
 
+  async getFollowedActiveStreaks(userId: string, limit = 5): Promise<FriendStreakSummary[]> {
+    return (this.followedStreaks.get(userId) ?? []).slice(0, limit)
+  }
+
   seedStreak(streak: UserStreak): void {
     this.streaks.set(streak.userId, streak)
   }
 
   seedActivity(activity: UserWeeklyActivity): void {
     this.activities.push(activity)
+  }
+
+  seedFollowedStreaks(userId: string, friends: FriendStreakSummary[]): void {
+    this.followedStreaks.set(userId, friends)
   }
 }

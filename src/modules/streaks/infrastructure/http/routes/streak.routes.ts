@@ -6,6 +6,17 @@ export const StreakRoutes = (app: Elysia) => {
 
   return app.use(authMiddleware).group('/streaks', (app) =>
     app
+      .get('/me/friends', (ctx) => streakController.getMyFriendsStreaks(ctx), {
+        auth: true,
+        query: t.Object({
+          limit: t.Optional(t.Numeric({ minimum: 1, maximum: 5 }))
+        }),
+        detail: {
+          tags: ['Streaks'],
+          summary: 'Get active streaks from followed users',
+          security: [{ cookieAuth: [] }]
+        }
+      })
       .get('/me', (ctx) => streakController.getMyStreak(ctx), {
         auth: true,
         detail: {
