@@ -38,6 +38,17 @@ describe('ListPlaceReviews', () => {
     expect(result.every((r) => r.userId === 'user-1')).toBe(true)
   })
 
+  it('should list the favorite review first for a user', async () => {
+    const older = await mockRepo.create({ userId: 'user-1', placeId: 'place-1', placeName: 'place-1', rating: 'crowded', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null })
+    await mockRepo.create({ userId: 'user-1', placeId: 'place-2', placeName: 'place-2', rating: 'dead', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null })
+    await mockRepo.favoriteReview('user-1', older.id)
+
+    const result = await listPlaceReviews.executeByUser('user-1', undefined, 'viewer-1')
+
+    expect(result[0].id).toBe(older.id)
+    expect(result[0].isFavorite).toBe(true)
+  })
+
   it('should return empty array when no reviews exist for a place', async () => {
     const result = await listPlaceReviews.executeByPlace('place-sem-reviews', since, undefined, 'viewer-1')
 

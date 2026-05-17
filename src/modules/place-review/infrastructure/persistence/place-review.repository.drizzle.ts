@@ -1,6 +1,6 @@
 import { and, asc, count, desc, eq, gte, inArray, isNotNull, or, sql } from 'drizzle-orm'
 
-import { placeReviewComments, placeReviewReactions, placeReviews } from '../../application/schemas'
+import { placeReviewComments, placeReviewReactions, placeReviews, userFavoriteReviews } from '../../application/schemas'
 import { db } from '@src/infra/database/client'
 import { PlaceReview } from '../../domain/mappers'
 import {
@@ -128,6 +128,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
         comment: placeReviews.comment,
         createdAt: placeReviews.createdAt,
         updatedAt: placeReviews.updatedAt,
+        isFavorite: sql<boolean>`false`,
         user: {
           id: users.id,
           username: users.username,
@@ -161,6 +162,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
         comment: placeReviews.comment,
         createdAt: placeReviews.createdAt,
         updatedAt: placeReviews.updatedAt,
+        isFavorite: sql<boolean>`${userFavoriteReviews.reviewId} is not null`,
         user: {
           id: users.id,
           username: users.username,
@@ -169,8 +171,12 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
       })
       .from(placeReviews)
       .innerJoin(users, eq(placeReviews.userId, users.id))
+      .leftJoin(
+        userFavoriteReviews,
+        and(eq(userFavoriteReviews.userId, userId), eq(userFavoriteReviews.reviewId, placeReviews.id))
+      )
       .where(eq(placeReviews.userId, userId))
-      .orderBy(desc(placeReviews.createdAt))
+      .orderBy(desc(sql<number>`case when ${userFavoriteReviews.reviewId} is null then 0 else 1 end`), desc(placeReviews.createdAt))
       .limit(limit)
       .offset(offset)
 
@@ -191,6 +197,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
         comment: placeReviews.comment,
         createdAt: placeReviews.createdAt,
         updatedAt: placeReviews.updatedAt,
+        isFavorite: sql<boolean>`false`,
         user: { id: users.id, username: users.username, image: users.image },
         interactionCount: count(placeReviewReactions.id)
       })
@@ -234,6 +241,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
         comment: placeReviews.comment,
         createdAt: placeReviews.createdAt,
         updatedAt: placeReviews.updatedAt,
+        isFavorite: sql<boolean>`false`,
         user: { id: users.id, username: users.username, image: users.image }
       })
       .from(placeReviews)
@@ -392,6 +400,25 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
     await db
       .delete(placeReviewReactions)
       .where(and(eq(placeReviewReactions.reviewId, reviewId), eq(placeReviewReactions.userId, userId)))
+  }
+
+  async favoriteReview(userId: string, reviewId: string): Promise<void> {
+    await db
+      .insert(userFavoriteReviews)
+      .values({ userId, reviewId })
+      .onConflictDoUpdate({
+        target: userFavoriteReviews.userId,
+        set: {
+          reviewId,
+          createdAt: new Date()
+        }
+      })
+  }
+
+  async unfavoriteReview(userId: string, reviewId: string): Promise<void> {
+    await db
+      .delete(userFavoriteReviews)
+      .where(and(eq(userFavoriteReviews.userId, userId), eq(userFavoriteReviews.reviewId, reviewId)))
   }
 
   async delete(reviewId: string): Promise<void> {

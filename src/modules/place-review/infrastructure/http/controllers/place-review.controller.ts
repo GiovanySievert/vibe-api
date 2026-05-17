@@ -2,6 +2,7 @@ import {
   CreatePlaceReview,
   CreatePlaceReviewComment,
   DeletePlaceReviewComment,
+  FavoritePlaceReview,
   GetPlaceReview,
   GetPlaceReviewCounts,
   GetPlaceReviewEligibility,
@@ -13,7 +14,8 @@ import {
   RemovePlaceReviewReaction,
   SetPlaceReviewReaction,
   UpdatePlaceReview,
-  DeletePlaceReview
+  DeletePlaceReview,
+  UnfavoritePlaceReview
 } from '../../../application/use-cases'
 import { User } from 'better-auth/types'
 import { CreatePlaceReviewDto, UpdatePlaceReviewDto } from '../dtos'
@@ -38,6 +40,8 @@ export class PlaceReviewController {
     private readonly removePlaceReviewReaction: RemovePlaceReviewReaction,
     private readonly updatePlaceReview: UpdatePlaceReview,
     private readonly deletePlaceReview: DeletePlaceReview,
+    private readonly favoritePlaceReview: FavoritePlaceReview,
+    private readonly unfavoritePlaceReview: UnfavoritePlaceReview,
     private readonly applicationEventBus: ApplicationEventBus
   ) {}
 
@@ -203,6 +207,16 @@ export class PlaceReviewController {
 
   async delete({ params, user }: { params: { reviewId: string }; user: User }) {
     await this.deletePlaceReview.execute(params.reviewId, user.id)
+  }
+
+  async favorite({ params, user }: { params: { reviewId: string }; user: User }) {
+    await this.favoritePlaceReview.execute(params.reviewId, user.id)
+    return { success: true }
+  }
+
+  async unfavorite({ params, user }: { params: { reviewId: string }; user: User }) {
+    await this.unfavoritePlaceReview.execute(params.reviewId, user.id)
+    return { success: true }
   }
 
   async listPopularByPlace({ params, user }: { params: { placeId: string }; user: User }) {

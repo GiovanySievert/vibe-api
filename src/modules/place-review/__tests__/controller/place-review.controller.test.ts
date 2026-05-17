@@ -42,6 +42,8 @@ describe('PlaceReviewController', () => {
   let updateCalls: any[]
   let deleteCalls: any[]
   let deleteCommentCalls: any[]
+  let favoriteCalls: any[]
+  let unfavoriteCalls: any[]
   let publishedEvents: ApplicationEvent[]
   let getReviewResult: PlaceReview | null
   let controller: PlaceReviewController
@@ -63,6 +65,8 @@ describe('PlaceReviewController', () => {
     updateCalls = []
     deleteCalls = []
     deleteCommentCalls = []
+    favoriteCalls = []
+    unfavoriteCalls = []
     publishedEvents = []
     getReviewResult = makeReview()
 
@@ -159,6 +163,16 @@ describe('PlaceReviewController', () => {
       {
         async execute(reviewId: string, userId: string) {
           deleteCalls.push({ reviewId, userId })
+        }
+      } as never,
+      {
+        async execute(reviewId: string, userId: string) {
+          favoriteCalls.push({ reviewId, userId })
+        }
+      } as never,
+      {
+        async execute(reviewId: string, userId: string) {
+          unfavoriteCalls.push({ reviewId, userId })
         }
       } as never,
       {
@@ -476,6 +490,26 @@ describe('PlaceReviewController', () => {
     })
 
     expect(deleteCommentCalls[0]).toEqual(['comment-9', 'review-1', 'u-1'])
+  })
+
+  it('favorites review with reviewId and user.id', async () => {
+    const result = await controller.favorite({
+      params: { reviewId: 'review-1' },
+      user: makeUser('owner-1')
+    })
+
+    expect(favoriteCalls[0]).toEqual({ reviewId: 'review-1', userId: 'owner-1' })
+    expect(result).toEqual({ success: true })
+  })
+
+  it('unfavorites review with reviewId and user.id', async () => {
+    const result = await controller.unfavorite({
+      params: { reviewId: 'review-1' },
+      user: makeUser('owner-1')
+    })
+
+    expect(unfavoriteCalls[0]).toEqual({ reviewId: 'review-1', userId: 'owner-1' })
+    expect(result).toEqual({ success: true })
   })
 
   it('listByUser forwards userId, page and viewer id', async () => {

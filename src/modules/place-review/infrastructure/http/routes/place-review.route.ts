@@ -145,6 +145,28 @@ export const PlaceReviewRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
+      .put('/:reviewId/favorite', (ctx) => placeReviewController.favorite(ctx), {
+        auth: true,
+        params: t.Object({
+          reviewId: t.String()
+        }),
+        detail: {
+          tags: ['Place Reviews'],
+          summary: 'Favorite the current user place review',
+          security: [{ cookieAuth: [] }]
+        }
+      })
+      .delete('/:reviewId/favorite', (ctx) => placeReviewController.unfavorite(ctx), {
+        auth: true,
+        params: t.Object({
+          reviewId: t.String()
+        }),
+        detail: {
+          tags: ['Place Reviews'],
+          summary: 'Remove the current user favorite place review',
+          security: [{ cookieAuth: [] }]
+        }
+      })
       .get('/:reviewId', (ctx) => placeReviewController.getById(ctx), {
         auth: true,
         params: t.Object({

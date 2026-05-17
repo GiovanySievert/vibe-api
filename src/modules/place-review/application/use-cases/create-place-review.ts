@@ -3,6 +3,7 @@ import { EvaluateUserPlaceBadge } from '@src/modules/badges/application/use-case
 import { PlaceReview } from '@src/modules/place-review/domain/mappers'
 import { PlaceReviewRepository } from '@src/modules/place-review/domain/repositories'
 import { RecordWeeklyActivity } from '@src/modules/streaks/application/use-cases'
+import { StreakUpdateResult } from '@src/modules/streaks/domain/types'
 import { RabbitMQProducer } from '@src/shared/infra/messaging'
 import { haversineMeters } from '@src/shared/utils/haversine'
 import { appLogger } from '@src/config/logger'
@@ -22,6 +23,10 @@ export interface CreatePlaceReviewConfig {
   maxDistanceMeters: number
 }
 
+export type CreatePlaceReviewResult = PlaceReview & {
+  streakUpdate: StreakUpdateResult | null
+}
+
 export class CreatePlaceReview {
   constructor(
     private readonly placeReviewRepo: PlaceReviewRepository,
@@ -31,17 +36,17 @@ export class CreatePlaceReview {
     private readonly config: CreatePlaceReviewConfig
   ) {}
 
-  async execute(data: CreatePlaceReviewData): Promise<PlaceReview> {
+  async execute(data: CreatePlaceReviewData): Promise<CreatePlaceReviewResult> {
     this.assertDistance(data)
     await this.assertCooldown(data.userId, data.placeId)
 
     const review = await this.placeReviewRepo.create(this.toPersistable(data))
 
     await this.publishCreated(review)
-    await this.recordActivity(review)
+    const streakUpdate = await this.recordActivity(review)
     await this.evaluateBadge(review)
 
-    return review
+    return { ...review, streakUpdate }
   }
 
   private assertDistance(data: CreatePlaceReviewData): void {
@@ -86,11 +91,12 @@ export class CreatePlaceReview {
     }
   }
 
-  private async recordActivity(review: PlaceReview): Promise<void> {
+  private async recordActivity(review: PlaceReview): Promise<StreakUpdateResult | null> {
     try {
-      await this.recordWeeklyActivity.execute(review.userId, review.createdAt)
+      return await this.recordWeeklyActivity.execute(review.userId, review.createdAt)
     } catch (err) {
       appLogger.error('failed to record weekly streak activity', { error: err })
+      return null
     }
   }
 

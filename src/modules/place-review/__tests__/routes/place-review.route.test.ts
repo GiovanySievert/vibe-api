@@ -189,6 +189,30 @@ describe('Place Review Routes', () => {
     })
   })
 
+  describe('PUT /place-reviews/:reviewId/favorite', () => {
+    it('returns 401 when caller is not authenticated', async () => {
+      const response = await app.handle(
+        new Request('http://localhost/place-reviews/review-1/favorite', {
+          method: 'PUT'
+        })
+      )
+
+      expect(response.status).toBe(401)
+    })
+  })
+
+  describe('DELETE /place-reviews/:reviewId/favorite', () => {
+    it('returns 401 when caller is not authenticated', async () => {
+      const response = await app.handle(
+        new Request('http://localhost/place-reviews/review-1/favorite', {
+          method: 'DELETE'
+        })
+      )
+
+      expect(response.status).toBe(401)
+    })
+  })
+
   describe('GET /place-reviews/:reviewId/comments', () => {
     it('returns 401 when caller is not authenticated', async () => {
       const response = await app.handle(

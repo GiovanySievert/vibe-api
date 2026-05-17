@@ -2,6 +2,7 @@ import {
   CreatePlaceReview,
   CreatePlaceReviewComment,
   DeletePlaceReviewComment,
+  FavoritePlaceReview,
   GetPlaceReview,
   GetPlaceReviewCounts,
   GetPlaceReviewEligibility,
@@ -13,7 +14,8 @@ import {
   RemovePlaceReviewReaction,
   SetPlaceReviewReaction,
   UpdatePlaceReview,
-  DeletePlaceReview
+  DeletePlaceReview,
+  UnfavoritePlaceReview
 } from './application/use-cases'
 import { DrizzleFollowChecker, DrizzlePlaceReviewRepository } from './infrastructure/persistence'
 import { PlaceReviewController } from './infrastructure/http/controllers/place-review.controller'
@@ -62,6 +64,8 @@ export class PlaceReviewModule {
     const removePlaceReviewReactionService = new RemovePlaceReviewReaction(placeReviewRepo)
     const updatePlaceReviewService = new UpdatePlaceReview(placeReviewRepo)
     const deletePlaceReviewService = new DeletePlaceReview(placeReviewRepo, evaluateUserPlaceBadge)
+    const favoritePlaceReviewService = new FavoritePlaceReview(placeReviewRepo)
+    const unfavoritePlaceReviewService = new UnfavoritePlaceReview(placeReviewRepo)
 
     this.placeReviewController = new PlaceReviewController(
       createPlaceReviewService,
@@ -79,6 +83,8 @@ export class PlaceReviewModule {
       removePlaceReviewReactionService,
       updatePlaceReviewService,
       deletePlaceReviewService,
+      favoritePlaceReviewService,
+      unfavoritePlaceReviewService,
       applicationEventBus
     )
   }

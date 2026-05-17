@@ -46,6 +46,8 @@ export interface PlaceReviewRepository {
   listReactionUsers(reviewId: string, type: 'on' | 'off', page: number): Promise<ReviewInteractionUser[]>
   setReaction(input: SetPlaceReviewReactionInput): Promise<void>
   removeReaction(reviewId: string, userId: string): Promise<void>
+  favoriteReview(userId: string, reviewId: string): Promise<void>
+  unfavoriteReview(userId: string, reviewId: string): Promise<void>
   update(reviewId: string, data: Partial<Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>>): Promise<PlaceReview>
   delete(reviewId: string): Promise<void>
 }

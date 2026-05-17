@@ -8,5 +8,5 @@ export type FeedReviewItem = PlaceReview & {
     image: string | null
   }
   viewerReaction: PlaceReviewReactionType | null
+  isFavorite: boolean
 }
-

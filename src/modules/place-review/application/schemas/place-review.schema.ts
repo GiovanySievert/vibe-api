@@ -100,11 +100,42 @@ export const placeReviewReactionsRelations = relations(placeReviewReactions, ({ 
   })
 }))
 
+export const userFavoriteReviews = pgTable(
+  'user_favorite_reviews',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    reviewId: uuid('review_id')
+      .notNull()
+      .references(() => placeReviews.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull()
+  },
+  (table) => [
+    unique().on(table.userId),
+    index('user_favorite_review_review_idx').on(table.reviewId)
+  ]
+)
+
+export const userFavoriteReviewsRelations = relations(userFavoriteReviews, ({ one }) => ({
+  review: one(placeReviews, {
+    fields: [userFavoriteReviews.reviewId],
+    references: [placeReviews.id]
+  }),
+  user: one(users, {
+    fields: [userFavoriteReviews.userId],
+    references: [users.id]
+  })
+}))
+
 export type PlaceReviewSelect = InferSelectModel<typeof placeReviews>
 export type PlaceReviewInsert = InferInsertModel<typeof placeReviews>
 export type PlaceReviewCommentSelect = InferSelectModel<typeof placeReviewComments>
 export type PlaceReviewCommentInsert = InferInsertModel<typeof placeReviewComments>
 export type PlaceReviewReactionSelect = InferSelectModel<typeof placeReviewReactions>
 export type PlaceReviewReactionInsert = InferInsertModel<typeof placeReviewReactions>
+export type UserFavoriteReviewSelect = InferSelectModel<typeof userFavoriteReviews>
+export type UserFavoriteReviewInsert = InferInsertModel<typeof userFavoriteReviews>
 export type PlaceReviewType = (typeof placeReviewTypeEnum.enumValues)[number]
 export type PlaceReviewReactionType = (typeof placeReviewReactionTypeEnum.enumValues)[number]
