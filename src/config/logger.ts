@@ -28,8 +28,16 @@ const transports: winston.transport[] = [
   })
 ]
 
+export const logger = winston.createLogger({
+  level: isProduction ? 'info' : 'debug',
+  format: jsonFormat,
+  transports,
+  exceptionHandlers: [new winston.transports.Console({ format: consoleFormat })],
+  rejectionHandlers: [new winston.transports.Console({ format: consoleFormat })]
+})
+
 if (lokiEnabled && process.env.LOKI_HOST && process.env.LOKI_USERNAME && process.env.LOKI_PASSWORD) {
-  transports.push(
+  logger.add(
     new LokiTransport({
       host: process.env.LOKI_HOST,
       labels: {
@@ -43,19 +51,11 @@ if (lokiEnabled && process.env.LOKI_HOST && process.env.LOKI_USERNAME && process
       format: jsonFormat,
       replaceTimestamp: true,
       onConnectionError: (err) => {
-        console.error('Loki connection error:', err)
+        logger.error('Loki connection error', { error: err })
       }
     })
   )
 }
-
-export const logger = winston.createLogger({
-  level: isProduction ? 'info' : 'debug',
-  format: jsonFormat,
-  transports,
-  exceptionHandlers: [new winston.transports.Console({ format: consoleFormat })],
-  rejectionHandlers: [new winston.transports.Console({ format: consoleFormat })]
-})
 
 const logError = (message: string, metadata?: Record<string, any>) => {
   if (!metadata) {

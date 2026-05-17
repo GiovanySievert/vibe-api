@@ -1,11 +1,11 @@
-import { authMiddleware } from '@src/shared/middlewares'
+import { adminMiddleware, authMiddleware } from '@src/shared/middlewares'
 import { Elysia, t } from 'elysia'
 import { ReportsModule } from '../../../reports.module'
 
 export const UserReportRoutes = (app: Elysia) => {
   const { userReportController } = new ReportsModule()
 
-  return app.use(authMiddleware).group('/reports', (app) =>
+  return app.use(authMiddleware).use(adminMiddleware).group('/reports', (app) =>
     app
       .post('/:userId', (ctx) => userReportController.report(ctx), {
         auth: true,
@@ -29,7 +29,7 @@ export const UserReportRoutes = (app: Elysia) => {
         }
       })
       .get('/', (ctx) => userReportController.list(ctx), {
-        auth: true,
+        admin: true,
         detail: {
           tags: ['User Reports'],
           summary: 'List all reports',

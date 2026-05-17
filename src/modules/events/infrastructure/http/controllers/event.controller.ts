@@ -62,8 +62,8 @@ export class EventController {
     return GetEventDtoMapper.fromArray(events)
   }
 
-  async getById({ params }: { params: { id: string } }) {
-    const event = await this.getEventById.execute(params.id)
+  async getById({ params, user }: { params: { id: string }; user: User }) {
+    const event = await this.getEventById.execute(params.id, user.id)
     return GetEventDtoMapper.from(event)
   }
 

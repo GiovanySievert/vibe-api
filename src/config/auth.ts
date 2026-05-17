@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { openAPI } from 'better-auth/plugins'
+import { admin as adminPlugin, openAPI } from 'better-auth/plugins'
 import { db } from '@src/infra/database/client'
 import { emailOTP } from 'better-auth/plugins'
 import { ResendEmailSender } from '@src/modules/notifications/infrastructure/email/resend-email-sender'
@@ -69,6 +69,7 @@ export const auth = betterAuth({
     }
   },
   plugins: [
+    adminPlugin(),
     expo(),
     openAPI(),
     emailOTP({
@@ -102,6 +103,23 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false,
     requireEmailVerification: true,
+    customSyntheticUser: ({
+      coreFields,
+      additionalFields,
+      id
+    }: {
+      coreFields: Record<string, unknown>
+      additionalFields: Record<string, unknown>
+      id: string
+    }) => ({
+      ...coreFields,
+      role: 'user',
+      banned: false,
+      banReason: null,
+      banExpires: null,
+      ...additionalFields,
+      id
+    }),
     password: {
       hash: (password: string) => Bun.password.hash(password),
       verify: ({ password, hash }) => Bun.password.verify(password, hash)

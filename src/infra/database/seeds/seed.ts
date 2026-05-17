@@ -1,4 +1,5 @@
 import { db } from '../client'
+import { appLogger } from '@src/config/logger'
 import {
   users,
   accounts,
@@ -75,9 +76,9 @@ const PLACE_IDS = {
 }
 
 async function seed() {
-  console.log('Seeding database...')
+  appLogger.info('Seeding database...')
 
-  console.log('Clearing existing data...')
+  appLogger.info('Clearing existing data...')
   await db.delete(appNotifications)
   await db.delete(notificationPreferences)
   await db.delete(eventComments)
@@ -100,7 +101,7 @@ async function seed() {
   await db.delete(accounts)
   await db.delete(users)
 
-  console.log('Seeding users...')
+  appLogger.info('Seeding users...')
   await db.insert(users).values([
     {
       id: USER_IDS.joao,
@@ -240,7 +241,7 @@ async function seed() {
     }
   ])
 
-  console.log('Seeding accounts...')
+  appLogger.info('Seeding accounts...')
   await db.insert(accounts).values([
     {
       accountId: USER_IDS.joao,
@@ -363,16 +364,16 @@ async function seed() {
     }
   ])
 
-  console.log('Seeding brands...')
+  appLogger.info('Seeding brands...')
   await db.insert(brands).values(osmBrands)
 
-  console.log('Seeding places...')
+  appLogger.info('Seeding places...')
   await db.insert(places).values(osmPlaces)
 
-  console.log('Seeding place locations...')
+  appLogger.info('Seeding place locations...')
   await db.insert(placeLocations).values(osmPlaceLocations)
 
-  console.log('Seeding brand menus...')
+  appLogger.info('Seeding brand menus...')
   await db.insert(brandMenus).values([
     {
       brandId: BRAND_IDS.botecoBoaPraca,
@@ -560,7 +561,7 @@ async function seed() {
     }
   ])
 
-  console.log('Seeding followers...')
+  appLogger.info('Seeding followers...')
   // joao follows and is followed by all 12 extra users (12 followers + 12 following)
   // plus the original relationships between the 5 base users
   await db.insert(followers).values([
@@ -603,7 +604,7 @@ async function seed() {
     { followerId: USER_IDS.vinicius, followingId: USER_IDS.joao }
   ])
 
-  console.log('Seeding follow stats...')
+  appLogger.info('Seeding follow stats...')
   // joao: 12 extra followers + maria + pedro + lucas = 15 followers; 12 extra following + maria + pedro = 14 following
   await db.insert(followStats).values([
     { userId: USER_IDS.joao, followersCount: 15, followingCount: 14 },
@@ -625,7 +626,7 @@ async function seed() {
     { userId: USER_IDS.vinicius, followersCount: 0, followingCount: 1 }
   ])
 
-  console.log('Seeding user favorites places...')
+  appLogger.info('Seeding user favorites places...')
   await db.insert(userFavoritesPlaces).values([
     { userId: USER_IDS.joao, placeId: PLACE_IDS.botecoBoaPraca },
     { userId: USER_IDS.joao, placeId: PLACE_IDS.jamesBar },
@@ -637,7 +638,7 @@ async function seed() {
     { userId: USER_IDS.lucas, placeId: PLACE_IDS.janelaBar }
   ])
 
-  console.log('Seeding place reviews...')
+  appLogger.info('Seeding place reviews...')
   await db.insert(placeReviews).values([
     {
       userId: USER_IDS.joao,
@@ -874,7 +875,7 @@ async function seed() {
     }
   ])
 
-  console.log('Seeding popular reviews (old, high interactions)...')
+  appLogger.info('Seeding popular reviews (old, high interactions)...')
   const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
   const seventyDaysAgo = new Date(Date.now() - 70 * 24 * 60 * 60 * 1000)
   const fiftyDaysAgo = new Date(Date.now() - 50 * 24 * 60 * 60 * 1000)
@@ -943,7 +944,7 @@ async function seed() {
     { reviewId: reviewC.id, userId: USER_IDS.gabriel, type: 'on' }
   ])
 
-  console.log('Seeding user streaks...')
+  appLogger.info('Seeding user streaks...')
   await db.insert(userStreaks).values([
     {
       userId: USER_IDS.joao,
@@ -987,7 +988,7 @@ async function seed() {
     }
   ])
 
-  console.log('Seeding user weekly activity...')
+  appLogger.info('Seeding user weekly activity...')
   await db.insert(userWeeklyActivity).values([
     { userId: USER_IDS.joao, isoYear: 2026, isoWeek: 13, reviewCount: 2, streakContributed: true },
     { userId: USER_IDS.joao, isoYear: 2026, isoWeek: 14, reviewCount: 3, streakContributed: true },
@@ -1023,7 +1024,7 @@ async function seed() {
     { userId: USER_IDS.lucas, isoYear: 2026, isoWeek: 18, reviewCount: 2, streakContributed: true }
   ])
 
-  console.log('Seeding place opening hours...')
+  appLogger.info('Seeding place opening hours...')
   const barPlaceIds = new Set([
     PLACE_IDS.seuPrudente,
     PLACE_IDS.tesorosDeCuba,
@@ -1060,7 +1061,7 @@ async function seed() {
   }
   await db.insert(placeOpeningHours).values(openingHoursData)
 
-  console.log('Seeding follow requests...')
+  appLogger.info('Seeding follow requests...')
   await db.insert(followRequests).values([
     {
       requesterId: USER_IDS.ana,
@@ -1079,7 +1080,7 @@ async function seed() {
     }
   ])
 
-  console.log('Seeding user blocks...')
+  appLogger.info('Seeding user blocks...')
   await db.insert(userBlocks).values([
     {
       blockerId: USER_IDS.joao,
@@ -1093,7 +1094,7 @@ async function seed() {
     pizza_night: 'eeeeeeee-3333-3333-3333-333333333333'
   }
 
-  console.log('Seeding events...')
+  appLogger.info('Seeding events...')
   await db.insert(events).values([
     {
       id: EVENT_IDS.churrasco,
@@ -1121,7 +1122,7 @@ async function seed() {
     }
   ])
 
-  console.log('Seeding event participants...')
+  appLogger.info('Seeding event participants...')
   await db.insert(eventParticipants).values([
     { eventId: EVENT_IDS.churrasco, userId: USER_IDS.maria, status: 'accepted' },
     { eventId: EVENT_IDS.churrasco, userId: USER_IDS.pedro, status: 'accepted' },
@@ -1132,7 +1133,7 @@ async function seed() {
     { eventId: EVENT_IDS.pizza_night, userId: USER_IDS.ana, status: 'declined' }
   ])
 
-  console.log('Seeding event comments...')
+  appLogger.info('Seeding event comments...')
   await db.insert(eventComments).values([
     {
       eventId: EVENT_IDS.churrasco,
@@ -1156,7 +1157,7 @@ async function seed() {
     }
   ])
 
-  console.log('Seeding notification preferences...')
+  appLogger.info('Seeding notification preferences...')
   await db.insert(notificationPreferences).values([
     {
       userId: USER_IDS.joao,
@@ -1184,7 +1185,7 @@ async function seed() {
     }
   ])
 
-  console.log('Seeding app notifications...')
+  appLogger.info('Seeding app notifications...')
   const now = Date.now()
   const minutesAgo = (n: number) => new Date(now - n * 60 * 1000)
   const hoursAgo = (n: number) => new Date(now - n * 60 * 60 * 1000)
@@ -1347,7 +1348,7 @@ async function seed() {
     }
   ])
 
-  console.log('Seeding user place badges...')
+  appLogger.info('Seeding user place badges...')
   await db.insert(userPlaceBadges).values([
     // Joao: rei do Barelho Bar (20+ reviews históricos) + fã do Starbucks
     { userId: USER_IDS.joao, placeId: PLACE_IDS.seuPrudente, tier: 'regular' },
@@ -1386,11 +1387,11 @@ async function seed() {
     { userId: USER_IDS.lucas, placeId: PLACE_IDS.janelaBar, tier: 'regular' }
   ])
 
-  console.log('Seeding completed!')
+  appLogger.info('Seeding completed!')
   process.exit(0)
 }
 
 seed().catch((err) => {
-  console.error('Seed failed:', err)
+  appLogger.error('Seed failed', { error: err })
   process.exit(1)
 })

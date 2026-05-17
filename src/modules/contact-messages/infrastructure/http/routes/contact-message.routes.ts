@@ -1,11 +1,11 @@
-import { authMiddleware } from '@src/shared/middlewares'
+import { adminMiddleware, authMiddleware } from '@src/shared/middlewares'
 import { Elysia, t } from 'elysia'
 import { ContactMessagesModule } from '../../../contact-messages.module'
 
 export const ContactMessageRoutes = (app: Elysia) => {
   const { contactMessageController } = new ContactMessagesModule()
 
-  return app.use(authMiddleware).group('/contact-messages', (app) =>
+  return app.use(authMiddleware).use(adminMiddleware).group('/contact-messages', (app) =>
     app
       .post('/', (ctx) => contactMessageController.send(ctx), {
         auth: true,
@@ -19,7 +19,7 @@ export const ContactMessageRoutes = (app: Elysia) => {
         }
       })
       .get('/', (ctx) => contactMessageController.list(ctx), {
-        auth: true,
+        admin: true,
         detail: {
           tags: ['Contact Messages'],
           summary: 'List all contact messages',

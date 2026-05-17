@@ -8,6 +8,10 @@ export const users = pgTable('users', {
   emailVerified: boolean('email_verified').default(false).notNull(),
   image: text('image'),
   bio: text('bio'),
+  role: text('role').default('user'),
+  banned: boolean('banned').default(false),
+  banReason: text('ban_reason'),
+  banExpires: timestamp('ban_expires'),
   createdAt: timestamp('created_at')
     .$defaultFn(() => new Date())
     .notNull(),
