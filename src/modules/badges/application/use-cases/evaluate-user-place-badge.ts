@@ -1,4 +1,5 @@
 import { BADGE_EARNED_RK } from '@src/config/rabbitmq.config'
+import { appLogger } from '@src/config/logger'
 import { PlaceReviewRepository } from '@src/modules/place-review/domain/repositories'
 import { RabbitMQProducer } from '@src/shared/infra/messaging'
 
@@ -43,7 +44,7 @@ export class EvaluateUserPlaceBadge {
           BADGE_EARNED_RK
         )
       } catch (err) {
-        console.error('failed to publish badge.earned', err)
+        appLogger.error('failed to publish badge.earned', { error: err })
       }
     }
 

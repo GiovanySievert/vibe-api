@@ -37,6 +37,7 @@ const DOMAIN_ERRORS: Record<string, { status: number; code: string }> = {
   PlaceReviewCooldownException: { status: HttpStatus.TOO_MANY_REQUESTS, code: ErrorCode.RATE_LIMITED },
   PlaceReviewOutOfRangeException: { status: HttpStatus.UNPROCESSABLE_ENTITY, code: ErrorCode.OUT_OF_RANGE },
   PlaceReviewPhotoRequiredException: { status: HttpStatus.UNPROCESSABLE_ENTITY, code: ErrorCode.PHOTO_REQUIRED },
+  InvalidStorageFolderException: { status: HttpStatus.BAD_REQUEST, code: ErrorCode.VALIDATION },
   ProfileBadgeSelectionLimitException: { status: HttpStatus.BAD_REQUEST, code: ErrorCode.VALIDATION },
   InvalidProfileBadgeSelectionException: { status: HttpStatus.BAD_REQUEST, code: ErrorCode.VALIDATION },
   DuplicateProfileBadgeSelectionException: { status: HttpStatus.BAD_REQUEST, code: ErrorCode.VALIDATION },
@@ -56,21 +57,20 @@ const extractDomainErrorDetails = (error: Error): Record<string, unknown> => {
 
 export const errorHandler = (app: Elysia) =>
   app.onError(({ code, error, set, request, path, params }) => {
+    const isProduction = process.env.NODE_ENV === 'production'
     const errorDetails = {
       code,
       method: request.method,
       path,
       params,
-      message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : undefined
+      name: error instanceof Error ? error.name : undefined,
+      ...(!isProduction && {
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      })
     }
 
-    // if (process.env.NODE_ENV === 'development') {
-    console.error('ERROR:', errorDetails)
-    // } else {
-    // appLogger.error('Request failed', errorDetails)
-    // }
+    appLogger.error('Request failed', errorDetails)
 
     if (code === 'VALIDATION') {
       set.status = HttpStatus.BAD_REQUEST
@@ -106,8 +106,12 @@ export const errorHandler = (app: Elysia) =>
     set.status = HttpStatus.INTERNAL_SERVER_ERROR
     return {
       code: ErrorCode.INTERNAL,
-      message: error instanceof Error ? error.message : 'An unexpected error occurred',
-      ...(process.env.NODE_ENV === 'development' && {
+      message: isProduction
+        ? 'An unexpected error occurred'
+        : error instanceof Error
+          ? error.message
+          : 'An unexpected error occurred',
+      ...(!isProduction && {
         details: error instanceof Error ? error.stack : error
       })
     }

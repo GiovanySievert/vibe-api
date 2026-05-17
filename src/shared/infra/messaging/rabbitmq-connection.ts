@@ -2,6 +2,7 @@ import amqpManager, {
   type AmqpConnectionManager,
   type ChannelWrapper,
 } from 'amqp-connection-manager'
+import { appLogger } from '@src/config/logger'
 import { RABBITMQ_URL, ensureExchange } from '@src/config/rabbitmq.config'
 
 class RabbitMQConnection {
@@ -27,11 +28,11 @@ class RabbitMQConnection {
 
     this.connection.on('connect', () => {
       this.connected = true
-      console.log('RabbitMQ connection established')
+      appLogger.info('RabbitMQ connection established')
     })
     this.connection.on('disconnect', ({ err }) => {
       this.connected = false
-      console.warn('RabbitMQ disconnected:', err?.message)
+      appLogger.warn('RabbitMQ disconnected', { error: err })
     })
 
     this.channel = this.connection.createChannel({

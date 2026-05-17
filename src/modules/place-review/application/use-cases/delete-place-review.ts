@@ -1,6 +1,7 @@
 import { EvaluateUserPlaceBadge } from '@src/modules/badges/application/use-cases'
 import { UnauthorizedPlaceReviewActionException } from '@src/modules/place-review/domain/exceptions'
 import { PlaceReviewRepository } from '@src/modules/place-review/domain/repositories'
+import { appLogger } from '@src/config/logger'
 
 export class DeletePlaceReview {
   constructor(
@@ -17,7 +18,7 @@ export class DeletePlaceReview {
     try {
       await this.evaluateUserPlaceBadge.execute({ userId: review.userId, placeId: review.placeId })
     } catch (err) {
-      console.error('failed to evaluate place badge', err)
+      appLogger.error('failed to evaluate place badge', { error: err })
     }
   }
 }

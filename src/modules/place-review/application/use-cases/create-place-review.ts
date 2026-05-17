@@ -5,6 +5,7 @@ import { PlaceReviewRepository } from '@src/modules/place-review/domain/reposito
 import { RecordWeeklyActivity } from '@src/modules/streaks/application/use-cases'
 import { RabbitMQProducer } from '@src/shared/infra/messaging'
 import { haversineMeters } from '@src/shared/utils/haversine'
+import { appLogger } from '@src/config/logger'
 
 import { PlaceReviewCooldownException, PlaceReviewOutOfRangeException } from '../../domain/exceptions'
 
@@ -81,7 +82,7 @@ export class CreatePlaceReview {
         PLACE_REVIEW_CREATED_RK
       )
     } catch (err) {
-      console.error('failed to publish place.review.created', err)
+      appLogger.error('failed to publish place.review.created', { error: err })
     }
   }
 
@@ -89,7 +90,7 @@ export class CreatePlaceReview {
     try {
       await this.recordWeeklyActivity.execute(review.userId, review.createdAt)
     } catch (err) {
-      console.error('failed to record weekly streak activity', err)
+      appLogger.error('failed to record weekly streak activity', { error: err })
     }
   }
 
@@ -97,7 +98,7 @@ export class CreatePlaceReview {
     try {
       await this.evaluateUserPlaceBadge.execute({ userId: review.userId, placeId: review.placeId })
     } catch (err) {
-      console.error('failed to evaluate place badge', err)
+      appLogger.error('failed to evaluate place badge', { error: err })
     }
   }
 }
