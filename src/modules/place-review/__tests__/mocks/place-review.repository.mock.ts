@@ -6,12 +6,26 @@ import {
   SelectedPlaceReviewCountByPlace,
   SetPlaceReviewReactionInput
 } from '../../domain/repositories'
-import { FeedReviewItem, ListPlaceReviewCommentsResult, PlaceReviewComment, PlaceReviewReactionType, ReviewCounts, ReviewInteractionCount, ReviewInteractionUser } from '../../domain/types'
+import {
+  FeedReviewItem,
+  ListPlaceReviewCommentsResult,
+  ListPlaceReviewFriendsResult,
+  PlaceReviewComment,
+  PlaceReviewReactionType,
+  ReviewCounts,
+  ReviewInteractionCount,
+  ReviewInteractionUser
+} from '../../domain/types'
 
 export class MockPlaceReviewRepository implements PlaceReviewRepository {
   private reviews: PlaceReview[] = []
   private comments: PlaceReviewComment[] = []
-  private reactions: Array<{ reviewId: string; userId: string; type: PlaceReviewReactionType }> = []
+  private reactions: Array<{
+    reviewId: string
+    userId: string
+    type: PlaceReviewReactionType
+  }> = []
+  private follows: Array<{ followerId: string; followingId: string }> = []
   private favoriteReviews = new Map<string, string>()
   private profileBadgeSelections = new Map<string, Array<{ placeId: string; position: number }>>()
 
@@ -69,10 +83,15 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     return [...reviewCountByPlaceId.values()].sort((a, b) => b.reviewCount - a.reviewCount)
   }
 
-  async listSelectedReviewCountsByUserGroupedByPlace(userId: string): Promise<SelectedPlaceReviewCountByPlace[]> {
+  async listSelectedReviewCountsByUserGroupedByPlace(
+    userId: string
+  ): Promise<SelectedPlaceReviewCountByPlace[]> {
     const profileBadgeSelections = this.profileBadgeSelections.get(userId) ?? []
     const profilePositionByPlaceId = new Map(
-      profileBadgeSelections.map((profileBadgeSelection) => [profileBadgeSelection.placeId, profileBadgeSelection.position])
+      profileBadgeSelections.map((profileBadgeSelection) => [
+        profileBadgeSelection.placeId,
+        profileBadgeSelection.position
+      ])
     )
     const placeReviewCounts = await this.listReviewCountsByUserGroupedByPlace(userId)
 
@@ -88,17 +107,65 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
   async listByPlace(placeId: string, _since: Date, page?: number): Promise<FeedReviewItem[]> {
     const limit = 10
     const offset = ((page ?? 1) - 1) * limit
-    return this.toFeedItems(this.reviews.filter((r) => r.placeId === placeId).slice(offset, offset + limit))
+    return this.toFeedItems(
+      this.reviews.filter((r) => r.placeId === placeId).slice(offset, offset + limit)
+    )
   }
 
   async listPopularByPlace(placeId: string, since: Date, limit: number): Promise<FeedReviewItem[]> {
-    const reactionCountFor = (reviewId: string) => this.reactions.filter((r) => r.reviewId === reviewId).length
+    const reactionCountFor = (reviewId: string) =>
+      this.reactions.filter((r) => r.reviewId === reviewId).length
     return this.toFeedItems(
       this.reviews
         .filter((r) => r.placeId === placeId && r.createdAt >= since)
         .sort((a, b) => reactionCountFor(b.id) - reactionCountFor(a.id))
         .slice(0, limit)
     )
+  }
+
+  async listFriendsByPlace(
+    placeId: string,
+    viewerId: string,
+    since: Date,
+    page: number,
+    limit: number
+  ): Promise<ListPlaceReviewFriendsResult> {
+    const offset = (page - 1) * limit
+    const followingIds = new Set(
+      this.follows
+        .filter((follow) => follow.followerId === viewerId)
+        .map((follow) => follow.followingId)
+    )
+    const latestReviewAtByUserId = new Map<string, Date>()
+
+    for (const review of this.reviews) {
+      if (review.placeId !== placeId) continue
+      if (review.createdAt < since) continue
+      if (review.userId === viewerId) continue
+      if (!followingIds.has(review.userId)) continue
+
+      const current = latestReviewAtByUserId.get(review.userId)
+      if (!current || review.createdAt > current)
+        latestReviewAtByUserId.set(review.userId, review.createdAt)
+    }
+
+    const data = [...latestReviewAtByUserId.entries()]
+      .map(([userId, latestReviewAt]) => ({
+        id: userId,
+        name: `Name ${userId}`,
+        username: `user-${userId}`,
+        image: null,
+        latestReviewAt
+      }))
+      .sort((a, b) => b.latestReviewAt.getTime() - a.latestReviewAt.getTime())
+
+    return {
+      data: data.slice(offset, offset + limit),
+      total: data.length,
+      hasMore: offset + limit < data.length,
+      page,
+      limit
+    }
   }
 
   async listByUser(userId: string, page?: number): Promise<FeedReviewItem[]> {
@@ -120,7 +187,10 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
   async listFollowingFeed(_userId: string, since: Date, page?: number): Promise<FeedReviewItem[]> {
     const limit = 20
     const offset = ((page ?? 1) - 1) * limit
-    return this.toFeedItems(this.reviews.filter((r) => r.createdAt >= since).slice(offset, offset + limit), _userId)
+    return this.toFeedItems(
+      this.reviews.filter((r) => r.createdAt >= since).slice(offset, offset + limit),
+      _userId
+    )
   }
 
   async listCountsByReviewIds(reviewIds: string[], viewerId?: string): Promise<ReviewCounts[]> {
@@ -128,7 +198,7 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
       const reviewComments = this.comments.filter((c) => c.reviewId === reviewId)
       const reviewReactions = this.reactions.filter((r) => r.reviewId === reviewId)
       const viewerReaction = viewerId
-        ? reviewReactions.find((r) => r.userId === viewerId)?.type ?? null
+        ? (reviewReactions.find((r) => r.userId === viewerId)?.type ?? null)
         : null
       return {
         reviewId,
@@ -158,7 +228,11 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     return comment
   }
 
-  async listComments(reviewId: string, page: number, limit: number): Promise<ListPlaceReviewCommentsResult> {
+  async listComments(
+    reviewId: string,
+    page: number,
+    limit: number
+  ): Promise<ListPlaceReviewCommentsResult> {
     const offset = (page - 1) * limit
     const data = this.comments.filter((comment) => comment.reviewId === reviewId)
 
@@ -183,7 +257,9 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
   }
 
   async removeReaction(reviewId: string, userId: string): Promise<void> {
-    this.reactions = this.reactions.filter((reaction) => !(reaction.reviewId === reviewId && reaction.userId === userId))
+    this.reactions = this.reactions.filter(
+      (reaction) => !(reaction.reviewId === reviewId && reaction.userId === userId)
+    )
   }
 
   async favoriteReview(userId: string, reviewId: string): Promise<void> {
@@ -194,7 +270,10 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     if (this.favoriteReviews.get(userId) === reviewId) this.favoriteReviews.delete(userId)
   }
 
-  async update(reviewId: string, data: Partial<Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>>): Promise<PlaceReview> {
+  async update(
+    reviewId: string,
+    data: Partial<Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>>
+  ): Promise<PlaceReview> {
     this.reviews = this.reviews.map((r) =>
       r.id === reviewId ? { ...r, ...data, updatedAt: new Date() } : r
     )
@@ -219,13 +298,21 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     }
   }
 
-  async listReactionUsers(reviewId: string, type: 'on' | 'off', page: number): Promise<ReviewInteractionUser[]> {
+  async listReactionUsers(
+    reviewId: string,
+    type: 'on' | 'off',
+    page: number
+  ): Promise<ReviewInteractionUser[]> {
     const limit = 20
     const offset = (page - 1) * limit
     return this.reactions
       .filter((r) => r.reviewId === reviewId && r.type === type)
       .slice(offset, offset + limit)
-      .map((r) => ({ id: r.userId, username: `user-${r.userId}`, image: null }))
+      .map((r) => ({
+        id: r.userId,
+        username: `user-${r.userId}`,
+        image: null
+      }))
   }
 
   async delete(reviewId: string): Promise<void> {
@@ -236,6 +323,7 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     this.reviews = []
     this.comments = []
     this.reactions = []
+    this.follows = []
     this.favoriteReviews.clear()
     this.profileBadgeSelections.clear()
   }
@@ -244,8 +332,15 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     this.reviews = [...data]
   }
 
-  seedProfileBadgeSelections(userId: string, profileBadgeSelections: Array<{ placeId: string; position: number }>) {
+  seedProfileBadgeSelections(
+    userId: string,
+    profileBadgeSelections: Array<{ placeId: string; position: number }>
+  ) {
     this.profileBadgeSelections.set(userId, [...profileBadgeSelections])
+  }
+
+  seedFollows(follows: Array<{ followerId: string; followingId: string }>) {
+    this.follows = [...follows]
   }
 
   getAll() {
@@ -258,9 +353,15 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
 
       return {
         ...review,
-        user: { id: review.userId, username: `user-${review.userId}`, image: null },
+        user: {
+          id: review.userId,
+          username: `user-${review.userId}`,
+          image: null
+        },
         place: { id: review.placeId, name: `place-${review.placeId}` },
-        viewerReaction: viewerId ? reviewReactions.find((reaction) => reaction.userId === viewerId)?.type ?? null : null,
+        viewerReaction: viewerId
+          ? (reviewReactions.find((reaction) => reaction.userId === viewerId)?.type ?? null)
+          : null,
         isFavorite: this.favoriteReviews.get(review.userId) === review.id
       }
     })

@@ -1,6 +1,11 @@
-import { and, asc, count, desc, eq, gte, inArray, isNotNull, or, sql } from 'drizzle-orm'
+import { and, asc, count, desc, eq, gte, inArray, isNotNull, ne, or, sql } from 'drizzle-orm'
 
-import { placeReviewComments, placeReviewReactions, placeReviews, userFavoriteReviews } from '../../application/schemas'
+import {
+  placeReviewComments,
+  placeReviewReactions,
+  placeReviews,
+  userFavoriteReviews
+} from '../../application/schemas'
 import { db } from '@src/infra/database/client'
 import { PlaceReview } from '../../domain/mappers'
 import {
@@ -10,7 +15,15 @@ import {
   SelectedPlaceReviewCountByPlace,
   SetPlaceReviewReactionInput
 } from '../../domain/repositories'
-import { FeedReviewItem, ListPlaceReviewCommentsResult, PlaceReviewComment, ReviewCounts, ReviewInteractionCount, ReviewInteractionUser } from '../../domain/types'
+import {
+  FeedReviewItem,
+  ListPlaceReviewCommentsResult,
+  ListPlaceReviewFriendsResult,
+  PlaceReviewComment,
+  ReviewCounts,
+  ReviewInteractionCount,
+  ReviewInteractionUser
+} from '../../domain/types'
 import { brands, places, userProfileBadges, users } from '@src/infra/database/schema'
 import { followers } from '@src/modules/follow/application/schemas'
 
@@ -21,7 +34,11 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
   }
 
   async getById(reviewId: string): Promise<PlaceReview | null> {
-    const [result] = await db.select().from(placeReviews).where(eq(placeReviews.id, reviewId)).limit(1)
+    const [result] = await db
+      .select()
+      .from(placeReviews)
+      .where(eq(placeReviews.id, reviewId))
+      .limit(1)
     return result ?? null
   }
 
@@ -80,7 +97,9 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
     }))
   }
 
-  async listSelectedReviewCountsByUserGroupedByPlace(userId: string): Promise<SelectedPlaceReviewCountByPlace[]> {
+  async listSelectedReviewCountsByUserGroupedByPlace(
+    userId: string
+  ): Promise<SelectedPlaceReviewCountByPlace[]> {
     const selectedPlaceReviewCountRecords = await db
       .select({
         placeId: placeReviews.placeId,
@@ -93,7 +112,10 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
       .from(userProfileBadges)
       .innerJoin(
         placeReviews,
-        and(eq(userProfileBadges.userId, placeReviews.userId), eq(userProfileBadges.placeId, placeReviews.placeId))
+        and(
+          eq(userProfileBadges.userId, placeReviews.userId),
+          eq(userProfileBadges.placeId, placeReviews.placeId)
+        )
       )
       .leftJoin(places, eq(placeReviews.placeId, places.id))
       .leftJoin(brands, eq(places.brandId, brands.id))
@@ -173,10 +195,16 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
       .innerJoin(users, eq(placeReviews.userId, users.id))
       .leftJoin(
         userFavoriteReviews,
-        and(eq(userFavoriteReviews.userId, userId), eq(userFavoriteReviews.reviewId, placeReviews.id))
+        and(
+          eq(userFavoriteReviews.userId, userId),
+          eq(userFavoriteReviews.reviewId, placeReviews.id)
+        )
       )
       .where(eq(placeReviews.userId, userId))
-      .orderBy(desc(sql<number>`case when ${userFavoriteReviews.reviewId} is null then 0 else 1 end`), desc(placeReviews.createdAt))
+      .orderBy(
+        desc(sql<number>`case when ${userFavoriteReviews.reviewId} is null then 0 else 1 end`),
+        desc(placeReviews.createdAt)
+      )
       .limit(limit)
       .offset(offset)
 
@@ -209,7 +237,67 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
       .orderBy(desc(count(placeReviewReactions.id)), desc(placeReviews.createdAt))
       .limit(limit)
 
-    return rows.map(({ interactionCount: _, ...row }) => ({ ...row, viewerReaction: null }))
+    return rows.map(({ interactionCount: _, ...row }) => ({
+      ...row,
+      viewerReaction: null
+    }))
+  }
+
+  async listFriendsByPlace(
+    placeId: string,
+    viewerId: string,
+    since: Date,
+    page: number,
+    limit: number
+  ): Promise<ListPlaceReviewFriendsResult> {
+    const offset = (page - 1) * limit
+    const latestReviewAt = sql<Date>`max(${placeReviews.createdAt})`
+    const where = and(
+      eq(placeReviews.placeId, placeId),
+      gte(placeReviews.createdAt, since),
+      eq(followers.followerId, viewerId),
+      ne(placeReviews.userId, viewerId)
+    )
+
+    const [rows, totalRows] = await Promise.all([
+      db
+        .select({
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          image: users.image,
+          latestReviewAt
+        })
+        .from(placeReviews)
+        .innerJoin(
+          followers,
+          and(eq(followers.followingId, placeReviews.userId), eq(followers.followerId, viewerId))
+        )
+        .innerJoin(users, eq(users.id, placeReviews.userId))
+        .where(where)
+        .groupBy(users.id, users.name, users.username, users.image)
+        .orderBy(desc(latestReviewAt))
+        .limit(limit)
+        .offset(offset),
+      db
+        .select({ value: sql<number>`count(distinct ${placeReviews.userId})` })
+        .from(placeReviews)
+        .innerJoin(
+          followers,
+          and(eq(followers.followingId, placeReviews.userId), eq(followers.followerId, viewerId))
+        )
+        .where(where)
+    ])
+
+    const total = Number(totalRows[0]?.value ?? 0)
+
+    return {
+      data: rows,
+      total,
+      hasMore: offset + rows.length < total,
+      page,
+      limit
+    }
   }
 
   async update(
@@ -246,9 +334,20 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
       })
       .from(placeReviews)
       .innerJoin(users, eq(placeReviews.userId, users.id))
-      .leftJoin(followers, and(eq(followers.followingId, placeReviews.userId), eq(followers.followerId, userId)))
-      .where(and(gte(placeReviews.createdAt, since), or(eq(placeReviews.userId, userId), isNotNull(followers.id))))
-      .orderBy(sql`CASE WHEN ${placeReviews.userId} = ${userId} THEN 0 ELSE 1 END`, desc(placeReviews.createdAt))
+      .leftJoin(
+        followers,
+        and(eq(followers.followingId, placeReviews.userId), eq(followers.followerId, userId))
+      )
+      .where(
+        and(
+          gte(placeReviews.createdAt, since),
+          or(eq(placeReviews.userId, userId), isNotNull(followers.id))
+        )
+      )
+      .orderBy(
+        sql`CASE WHEN ${placeReviews.userId} = ${userId} THEN 0 ELSE 1 END`,
+        desc(placeReviews.createdAt)
+      )
       .limit(limit)
       .offset(offset)
 
@@ -260,9 +359,17 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
 
     const viewerReactionQuery = viewerId
       ? db
-          .select({ reviewId: placeReviewReactions.reviewId, type: placeReviewReactions.type })
+          .select({
+            reviewId: placeReviewReactions.reviewId,
+            type: placeReviewReactions.type
+          })
           .from(placeReviewReactions)
-          .where(and(eq(placeReviewReactions.userId, viewerId), inArray(placeReviewReactions.reviewId, reviewIds)))
+          .where(
+            and(
+              eq(placeReviewReactions.userId, viewerId),
+              inArray(placeReviewReactions.reviewId, reviewIds)
+            )
+          )
       : Promise.resolve([] as { reviewId: string; type: 'on' | 'off' }[])
 
     const [commentCountRows, reactionCountRows, viewerReactionRows] = await Promise.all([
@@ -272,26 +379,40 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
         .where(inArray(placeReviewComments.reviewId, reviewIds))
         .groupBy(placeReviewComments.reviewId),
       db
-        .select({ reviewId: placeReviewReactions.reviewId, type: placeReviewReactions.type, value: count() })
+        .select({
+          reviewId: placeReviewReactions.reviewId,
+          type: placeReviewReactions.type,
+          value: count()
+        })
         .from(placeReviewReactions)
         .where(inArray(placeReviewReactions.reviewId, reviewIds))
         .groupBy(placeReviewReactions.reviewId, placeReviewReactions.type),
       viewerReactionQuery
     ])
 
-    const commentsCountByReviewId = new Map(commentCountRows.map((row) => [row.reviewId, Number(row.value)]))
+    const commentsCountByReviewId = new Map(
+      commentCountRows.map((row) => [row.reviewId, Number(row.value)])
+    )
     const reactionCountsByReviewId = new Map<string, { onCount: number; offCount: number }>()
-    const viewerReactionByReviewId = new Map(viewerReactionRows.map((row) => [row.reviewId, row.type as 'on' | 'off']))
+    const viewerReactionByReviewId = new Map(
+      viewerReactionRows.map((row) => [row.reviewId, row.type as 'on' | 'off'])
+    )
 
     for (const row of reactionCountRows) {
-      const current = reactionCountsByReviewId.get(row.reviewId) ?? { onCount: 0, offCount: 0 }
+      const current = reactionCountsByReviewId.get(row.reviewId) ?? {
+        onCount: 0,
+        offCount: 0
+      }
       if (row.type === 'on') current.onCount = Number(row.value)
       else current.offCount = Number(row.value)
       reactionCountsByReviewId.set(row.reviewId, current)
     }
 
     return reviewIds.map((reviewId) => {
-      const reactions = reactionCountsByReviewId.get(reviewId) ?? { onCount: 0, offCount: 0 }
+      const reactions = reactionCountsByReviewId.get(reviewId) ?? {
+        onCount: 0,
+        offCount: 0
+      }
       return {
         reviewId,
         commentsCount: commentsCountByReviewId.get(reviewId) ?? 0,
@@ -315,7 +436,11 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
     return this.findCommentById(comment.id) as Promise<PlaceReviewComment>
   }
 
-  async listComments(reviewId: string, page: number, limit: number): Promise<ListPlaceReviewCommentsResult> {
+  async listComments(
+    reviewId: string,
+    page: number,
+    limit: number
+  ): Promise<ListPlaceReviewCommentsResult> {
     const offset = (page - 1) * limit
 
     const [rows, [{ value: total }]] = await Promise.all([
@@ -338,7 +463,10 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
         .orderBy(desc(placeReviewComments.createdAt))
         .limit(limit)
         .offset(offset),
-      db.select({ value: count() }).from(placeReviewComments).where(eq(placeReviewComments.reviewId, reviewId))
+      db
+        .select({ value: count() })
+        .from(placeReviewComments)
+        .where(eq(placeReviewComments.reviewId, reviewId))
     ])
 
     return {
@@ -365,7 +493,11 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
     return { reviewId, onCount, offCount, total: onCount + offCount }
   }
 
-  async listReactionUsers(reviewId: string, type: 'on' | 'off', page: number): Promise<ReviewInteractionUser[]> {
+  async listReactionUsers(
+    reviewId: string,
+    type: 'on' | 'off',
+    page: number
+  ): Promise<ReviewInteractionUser[]> {
     const limit = 20
     const offset = (page - 1) * limit
 
@@ -399,7 +531,9 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
   async removeReaction(reviewId: string, userId: string): Promise<void> {
     await db
       .delete(placeReviewReactions)
-      .where(and(eq(placeReviewReactions.reviewId, reviewId), eq(placeReviewReactions.userId, userId)))
+      .where(
+        and(eq(placeReviewReactions.reviewId, reviewId), eq(placeReviewReactions.userId, userId))
+      )
   }
 
   async favoriteReview(userId: string, reviewId: string): Promise<void> {
@@ -418,7 +552,9 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
   async unfavoriteReview(userId: string, reviewId: string): Promise<void> {
     await db
       .delete(userFavoriteReviews)
-      .where(and(eq(userFavoriteReviews.userId, userId), eq(userFavoriteReviews.reviewId, reviewId)))
+      .where(
+        and(eq(userFavoriteReviews.userId, userId), eq(userFavoriteReviews.reviewId, reviewId))
+      )
   }
 
   async delete(reviewId: string): Promise<void> {

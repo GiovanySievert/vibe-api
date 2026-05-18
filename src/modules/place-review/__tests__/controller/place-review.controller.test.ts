@@ -8,7 +8,8 @@ import { PLACE_REVIEW_REACTION_SET_EVENT } from '../../application/events/place-
 import { PlaceReviewController } from '../../infrastructure/http/controllers/place-review.controller'
 import { PlaceReview } from '../../domain/mappers'
 
-const makeUser = (id: string): User => ({ id, name: `user-${id}`, email: `${id}@example.com` }) as User
+const makeUser = (id: string): User =>
+  ({ id, name: `user-${id}`, email: `${id}@example.com` }) as User
 
 const makeReview = (overrides: Partial<PlaceReview> = {}): PlaceReview => ({
   id: 'review-1',
@@ -30,6 +31,7 @@ describe('PlaceReviewController', () => {
   let eligibilityCalls: any[]
   let getCalls: string[]
   let countsCalls: any[]
+  let listFriendsByPlaceCalls: any[]
   let listByPlaceCalls: any[]
   let listByUserCalls: any[]
   let feedCalls: any[]
@@ -53,6 +55,7 @@ describe('PlaceReviewController', () => {
     eligibilityCalls = []
     getCalls = []
     countsCalls = []
+    listFriendsByPlaceCalls = []
     listByPlaceCalls = []
     listByUserCalls = []
     feedCalls = []
@@ -80,7 +83,12 @@ describe('PlaceReviewController', () => {
       {
         async execute(input: any) {
           createCommentCalls.push(input)
-          return { id: 'comment-1', reviewId: input.reviewId, userId: input.userId, content: input.content }
+          return {
+            id: 'comment-1',
+            reviewId: input.reviewId,
+            userId: input.userId,
+            content: input.content
+          }
         }
       } as never,
       {
@@ -97,7 +105,12 @@ describe('PlaceReviewController', () => {
       {
         async execute(ids: string[], userId: string) {
           countsCalls.push({ ids, userId })
-          return ids.map((id) => ({ reviewId: id, on: 1, off: 0, comments: 0 }))
+          return ids.map((id) => ({
+            reviewId: id,
+            on: 1,
+            off: 0,
+            comments: 0
+          }))
         }
       } as never,
       {
@@ -110,6 +123,18 @@ describe('PlaceReviewController', () => {
         async execute(reviewId: string) {
           getInteractionCountCalls.push(reviewId)
           return { on: 3, off: 1 }
+        }
+      } as never,
+      {
+        async execute(input: any) {
+          listFriendsByPlaceCalls.push(input)
+          return {
+            data: [],
+            total: 0,
+            hasMore: false,
+            page: input.page,
+            limit: input.limit
+          }
         }
       } as never,
       {
@@ -271,6 +296,35 @@ describe('PlaceReviewController', () => {
     expect(page).toBe(2)
   })
 
+  it('uses since=now-90d and defaults when listing friends by place', async () => {
+    const before = Date.now()
+    await controller.listFriendsByPlace({
+      params: { placeId: 'p-1' },
+      query: {},
+      user: makeUser('u-1')
+    })
+    const after = Date.now()
+
+    expect(listFriendsByPlaceCalls[0].placeId).toBe('p-1')
+    expect(listFriendsByPlaceCalls[0].viewerId).toBe('u-1')
+    expect(listFriendsByPlaceCalls[0].page).toBe(1)
+    expect(listFriendsByPlaceCalls[0].limit).toBe(10)
+    const sinceMs = (listFriendsByPlaceCalls[0].since as Date).getTime()
+    expect(sinceMs).toBeGreaterThanOrEqual(before - 90 * 24 * 60 * 60 * 1000 - 5)
+    expect(sinceMs).toBeLessThanOrEqual(after - 90 * 24 * 60 * 60 * 1000 + 5)
+  })
+
+  it('passes page and caps limit when listing friends by place', async () => {
+    await controller.listFriendsByPlace({
+      params: { placeId: 'p-1' },
+      query: { page: 3, limit: 50 },
+      user: makeUser('u-1')
+    })
+
+    expect(listFriendsByPlaceCalls[0].page).toBe(3)
+    expect(listFriendsByPlaceCalls[0].limit).toBe(20)
+  })
+
   it('uses since=now-90d when listing popular by place', async () => {
     const before = Date.now()
     await controller.listPopularByPlace({
@@ -297,7 +351,12 @@ describe('PlaceReviewController', () => {
     })
 
     expect(countsCalls[0]).toEqual({ ids: ['review-1'], userId: 'u-1' })
-    expect(result).toEqual({ reviewId: 'review-1', on: 1, off: 0, comments: 0 })
+    expect(result).toEqual({
+      reviewId: 'review-1',
+      on: 1,
+      off: 0,
+      comments: 0
+    })
   })
 
   it('publishes comment-created event when commenter is not review owner', async () => {
@@ -358,7 +417,11 @@ describe('PlaceReviewController', () => {
       user: makeUser('reactor-1')
     })
 
-    expect(reactCalls[0]).toEqual({ reviewId: 'review-1', userId: 'reactor-1', type: 'on' })
+    expect(reactCalls[0]).toEqual({
+      reviewId: 'review-1',
+      userId: 'reactor-1',
+      type: 'on'
+    })
     expect(publishedEvents).toHaveLength(1)
     expect(publishedEvents[0].name).toBe(PLACE_REVIEW_REACTION_SET_EVENT)
     expect(result).toEqual({ success: true })
@@ -409,7 +472,10 @@ describe('PlaceReviewController', () => {
       user: makeUser('u-1')
     })
 
-    expect(removeReactCalls[0]).toEqual({ reviewId: 'review-1', userId: 'u-1' })
+    expect(removeReactCalls[0]).toEqual({
+      reviewId: 'review-1',
+      userId: 'u-1'
+    })
     expect(result).toEqual({ success: true })
   })
 
@@ -419,7 +485,11 @@ describe('PlaceReviewController', () => {
       query: {}
     })
 
-    expect(listCommentsCalls[0]).toEqual({ reviewId: 'review-1', page: 1, limit: 20 })
+    expect(listCommentsCalls[0]).toEqual({
+      reviewId: 'review-1',
+      page: 1,
+      limit: 20
+    })
   })
 
   it('passes provided page when listing comments', async () => {
@@ -470,7 +540,10 @@ describe('PlaceReviewController', () => {
       body: { comment: 'changed' } as any
     })
 
-    expect(updateCalls[0]).toEqual({ reviewId: 'review-1', body: { comment: 'changed' } })
+    expect(updateCalls[0]).toEqual({
+      reviewId: 'review-1',
+      body: { comment: 'changed' }
+    })
     expect(result.id).toBe('review-1')
   })
 
@@ -498,7 +571,10 @@ describe('PlaceReviewController', () => {
       user: makeUser('owner-1')
     })
 
-    expect(favoriteCalls[0]).toEqual({ reviewId: 'review-1', userId: 'owner-1' })
+    expect(favoriteCalls[0]).toEqual({
+      reviewId: 'review-1',
+      userId: 'owner-1'
+    })
     expect(result).toEqual({ success: true })
   })
 
@@ -508,7 +584,10 @@ describe('PlaceReviewController', () => {
       user: makeUser('owner-1')
     })
 
-    expect(unfavoriteCalls[0]).toEqual({ reviewId: 'review-1', userId: 'owner-1' })
+    expect(unfavoriteCalls[0]).toEqual({
+      reviewId: 'review-1',
+      userId: 'owner-1'
+    })
     expect(result).toEqual({ success: true })
   })
 

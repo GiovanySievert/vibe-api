@@ -26,7 +26,8 @@ export const placeReviews = pgTable(
   },
   (table) => [
     index('place_review_user_idx').on(table.userId),
-    index('place_review_place_idx').on(table.placeId)
+    index('place_review_place_idx').on(table.placeId),
+    index('place_review_place_user_created_idx').on(table.placeId, table.userId, table.createdAt)
   ]
 )
 

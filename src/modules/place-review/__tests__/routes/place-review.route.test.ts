@@ -139,6 +139,36 @@ describe('Place Review Routes', () => {
     })
   })
 
+  describe('GET /place-reviews/place/:placeId/friends', () => {
+    it('returns 401 when caller is not authenticated', async () => {
+      const response = await app.handle(
+        new Request('http://localhost/place-reviews/place/place-1/friends')
+      )
+
+      expect(response.status).toBe(401)
+    })
+
+    it('returns 422 when page is below the minimum', async () => {
+      const response = await app.handle(
+        new Request('http://localhost/place-reviews/place/place-1/friends?page=0')
+      )
+
+      expect(response.status).toBe(422)
+      const data = await response.json()
+      expect(data.type).toBe('validation')
+    })
+
+    it('returns 422 when limit is above the maximum', async () => {
+      const response = await app.handle(
+        new Request('http://localhost/place-reviews/place/place-1/friends?limit=21')
+      )
+
+      expect(response.status).toBe(422)
+      const data = await response.json()
+      expect(data.type).toBe('validation')
+    })
+  })
+
   describe('GET /place-reviews/:reviewId/interactions/count', () => {
     it('returns 401 when caller is not authenticated', async () => {
       const response = await app.handle(

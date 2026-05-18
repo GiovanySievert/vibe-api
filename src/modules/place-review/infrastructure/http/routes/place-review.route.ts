@@ -50,15 +50,34 @@ export const PlaceReviewRoutes = (app: Elysia) => {
           security: [{ cookieAuth: [] }]
         }
       })
-      .get('/:reviewId/interactions/count', (ctx) => placeReviewController.getInteractionCount(ctx), {
+      .get('/place/:placeId/friends', (ctx) => placeReviewController.listFriendsByPlace(ctx), {
         auth: true,
-        params: t.Object({ reviewId: t.String() }),
+        params: t.Object({
+          placeId: t.String()
+        }),
+        query: t.Object({
+          page: t.Optional(t.Numeric({ minimum: 1 })),
+          limit: t.Optional(t.Numeric({ minimum: 1, maximum: 20 }))
+        }),
         detail: {
           tags: ['Place Reviews'],
-          summary: 'Get reaction counts (on/off/total) for a place review',
+          summary: 'List followed users who reviewed a place in the last 90 days',
           security: [{ cookieAuth: [] }]
         }
       })
+      .get(
+        '/:reviewId/interactions/count',
+        (ctx) => placeReviewController.getInteractionCount(ctx),
+        {
+          auth: true,
+          params: t.Object({ reviewId: t.String() }),
+          detail: {
+            tags: ['Place Reviews'],
+            summary: 'Get reaction counts (on/off/total) for a place review',
+            security: [{ cookieAuth: [] }]
+          }
+        }
+      )
       .get('/:reviewId/interactions', (ctx) => placeReviewController.listInteractions(ctx), {
         auth: true,
         params: t.Object({ reviewId: t.String() }),

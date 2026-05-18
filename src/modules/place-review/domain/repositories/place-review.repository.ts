@@ -1,5 +1,14 @@
 import { PlaceReview } from '../mappers'
-import { FeedReviewItem, ListPlaceReviewCommentsResult, PlaceReviewComment, PlaceReviewReactionType, ReviewCounts, ReviewInteractionCount, ReviewInteractionUser } from '../types'
+import {
+  FeedReviewItem,
+  ListPlaceReviewCommentsResult,
+  ListPlaceReviewFriendsResult,
+  PlaceReviewComment,
+  PlaceReviewReactionType,
+  ReviewCounts,
+  ReviewInteractionCount,
+  ReviewInteractionUser
+} from '../types'
 
 export interface CreatePlaceReviewCommentInput {
   reviewId: string
@@ -32,22 +41,42 @@ export interface PlaceReviewRepository {
   getLastReviewByUserAndPlace(userId: string, placeId: string): Promise<PlaceReview | null>
   countReviewsByUserAndPlace(userId: string, placeId: string): Promise<number>
   listReviewCountsByUserGroupedByPlace(userId: string): Promise<PlaceReviewCountByPlace[]>
-  listSelectedReviewCountsByUserGroupedByPlace(userId: string): Promise<SelectedPlaceReviewCountByPlace[]>
+  listSelectedReviewCountsByUserGroupedByPlace(
+    userId: string
+  ): Promise<SelectedPlaceReviewCountByPlace[]>
   listByPlace(placeId: string, since: Date, page?: number): Promise<FeedReviewItem[]>
   listPopularByPlace(placeId: string, since: Date, limit: number): Promise<FeedReviewItem[]>
+  listFriendsByPlace(
+    placeId: string,
+    viewerId: string,
+    since: Date,
+    page: number,
+    limit: number
+  ): Promise<ListPlaceReviewFriendsResult>
   listByUser(userId: string, page?: number): Promise<FeedReviewItem[]>
   listFollowingFeed(userId: string, since: Date, page?: number): Promise<FeedReviewItem[]>
   listCountsByReviewIds(reviewIds: string[], viewerId?: string): Promise<ReviewCounts[]>
   createComment(input: CreatePlaceReviewCommentInput): Promise<PlaceReviewComment>
   getCommentById(commentId: string): Promise<PlaceReviewComment | null>
-  listComments(reviewId: string, page: number, limit: number): Promise<ListPlaceReviewCommentsResult>
+  listComments(
+    reviewId: string,
+    page: number,
+    limit: number
+  ): Promise<ListPlaceReviewCommentsResult>
   deleteComment(commentId: string): Promise<void>
   countReactions(reviewId: string): Promise<ReviewInteractionCount>
-  listReactionUsers(reviewId: string, type: 'on' | 'off', page: number): Promise<ReviewInteractionUser[]>
+  listReactionUsers(
+    reviewId: string,
+    type: 'on' | 'off',
+    page: number
+  ): Promise<ReviewInteractionUser[]>
   setReaction(input: SetPlaceReviewReactionInput): Promise<void>
   removeReaction(reviewId: string, userId: string): Promise<void>
   favoriteReview(userId: string, reviewId: string): Promise<void>
   unfavoriteReview(userId: string, reviewId: string): Promise<void>
-  update(reviewId: string, data: Partial<Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>>): Promise<PlaceReview>
+  update(
+    reviewId: string,
+    data: Partial<Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>>
+  ): Promise<PlaceReview>
   delete(reviewId: string): Promise<void>
 }

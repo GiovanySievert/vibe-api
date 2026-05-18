@@ -7,6 +7,7 @@ import {
   GetPlaceReviewCounts,
   GetPlaceReviewEligibility,
   GetReviewInteractionCount,
+  ListPlaceReviewFriends,
   ListPlaceReviews,
   ListFollowingFeed,
   ListPlaceReviewComments,
@@ -32,6 +33,7 @@ export class PlaceReviewController {
     private readonly getPlaceReviewCounts: GetPlaceReviewCounts,
     private readonly getPlaceReviewEligibility: GetPlaceReviewEligibility,
     private readonly getReviewInteractionCount: GetReviewInteractionCount,
+    private readonly listPlaceReviewFriends: ListPlaceReviewFriends,
     private readonly listPlaceReviews: ListPlaceReviews,
     private readonly listFollowingFeed: ListFollowingFeed,
     private readonly listPlaceReviewComments: ListPlaceReviewComments,
@@ -89,6 +91,27 @@ export class PlaceReviewController {
   }) {
     const since = query.since ? new Date(query.since) : new Date(Date.now() - 24 * 60 * 60 * 1000)
     return await this.listPlaceReviews.executeByPlace(params.placeId, since, query.page, user.id)
+  }
+
+  async listFriendsByPlace({
+    params,
+    query,
+    user
+  }: {
+    params: { placeId: string }
+    query: { page?: number; limit?: number }
+    user: User
+  }) {
+    const page = query.page ?? 1
+    const limit = Math.min(query.limit ?? 10, 20)
+    const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
+    return await this.listPlaceReviewFriends.execute({
+      placeId: params.placeId,
+      viewerId: user.id,
+      since,
+      page,
+      limit
+    })
   }
 
   async listByUser({ params, query, user }: { params: { userId: string }; query: { page?: number }; user: User }) {

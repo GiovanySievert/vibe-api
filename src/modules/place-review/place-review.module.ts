@@ -7,6 +7,7 @@ import {
   GetPlaceReviewCounts,
   GetPlaceReviewEligibility,
   GetReviewInteractionCount,
+  ListPlaceReviewFriends,
   ListPlaceReviews,
   ListFollowingFeed,
   ListPlaceReviewComments,
@@ -42,6 +43,7 @@ export class PlaceReviewModule {
 
     const getPlaceReviewCountsService = new GetPlaceReviewCounts(placeReviewRepo)
     const getReviewInteractionCountService = new GetReviewInteractionCount(placeReviewRepo)
+    const listPlaceReviewFriendsService = new ListPlaceReviewFriends(placeReviewRepo)
     const listReviewInteractionsService = new ListReviewInteractions(placeReviewRepo)
     const deletePlaceReviewCommentService = new DeletePlaceReviewComment(placeReviewRepo)
 
@@ -75,6 +77,7 @@ export class PlaceReviewModule {
       getPlaceReviewCountsService,
       getPlaceReviewEligibilityService,
       getReviewInteractionCountService,
+      listPlaceReviewFriendsService,
       listPlaceReviewsService,
       listFollowingFeedService,
       listPlaceReviewCommentsService,
