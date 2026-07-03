@@ -1,12 +1,15 @@
 import { beforeAll, describe, expect, it } from 'bun:test'
 import { Elysia } from 'elysia'
-import { authRoutes } from '../../infrastructure/http/routes/auth.routes'
+import { AuthModule } from '../../auth.module'
+import { createAuthRoutes } from '../../infrastructure/http/routes/auth.routes'
+import { MockUserRepository } from '../mocks/user.repository.mock'
 
 describe('Auth Routes', () => {
   let app: Elysia
 
   beforeAll(() => {
-    app = new Elysia().use(authRoutes)
+    const module = new AuthModule(new MockUserRepository())
+    app = new Elysia().use(createAuthRoutes(module))
   })
 
   describe('GET /auth/check-username', () => {

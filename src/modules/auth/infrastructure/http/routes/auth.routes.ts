@@ -4,8 +4,8 @@ import { UsernameAlreadyTakenException } from '@src/modules/auth/domain/exceptio
 import { checkUsernameQuery, parse, updateUsernameBody } from '@src/modules/auth/interface/validators'
 import { authMiddleware } from '@src/shared/middlewares'
 
-export const authRoutes = (app: Elysia) => {
-  const { checkUsernameAvailability: checkUsername, updateUsername } = new AuthModule()
+export const createAuthRoutes = (module: AuthModule) => (app: Elysia) => {
+  const { checkUsernameAvailability: checkUsername, updateUsername } = module
 
   return app.use(authMiddleware).group('/auth', (app) =>
     app
@@ -53,3 +53,5 @@ export const authRoutes = (app: Elysia) => {
       )
   )
 }
+
+export const authRoutes = createAuthRoutes(new AuthModule())
