@@ -3,5 +3,6 @@ export interface UserProfile {
   name: string
   bio: string | null
   image: string | null
+  imageThumbnail: string | null
   updatedAt: Date
 }

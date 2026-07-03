@@ -41,6 +41,20 @@ describe('UserProfileController', () => {
       expect(result.bio).toBeNull()
     })
 
+    it('should update profile image variants', async () => {
+      const user = makeUser(crypto.randomUUID())
+      const body = {
+        name: 'New Name',
+        image: 'https://cdn.example.com/avatar.jpg',
+        imageThumbnail: 'https://cdn.example.com/avatar-thumb.jpg'
+      }
+
+      const result = await controller.update({ body, user })
+
+      expect(result.image).toBe(body.image)
+      expect(result.imageThumbnail).toBe(body.imageThumbnail)
+    })
+
     it('should use authenticated user id from context', async () => {
       const userId = crypto.randomUUID()
       const user = makeUser(userId)

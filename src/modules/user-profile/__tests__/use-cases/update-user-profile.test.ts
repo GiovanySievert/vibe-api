@@ -36,6 +36,21 @@ describe('UpdateUserProfile', () => {
     expect(result.bio).toBeNull()
   })
 
+  it('should update profile image variants', async () => {
+    const userId = crypto.randomUUID()
+    const data = {
+      name: 'Jane Doe',
+      bio: null,
+      image: 'https://cdn.example.com/avatar.jpg',
+      imageThumbnail: 'https://cdn.example.com/avatar-thumb.jpg'
+    }
+
+    const result = await updateUserProfile.execute(userId, data)
+
+    expect(result.image).toBe(data.image)
+    expect(result.imageThumbnail).toBe(data.imageThumbnail)
+  })
+
   it('should persist the updated profile in the repository', async () => {
     const userId = crypto.randomUUID()
 

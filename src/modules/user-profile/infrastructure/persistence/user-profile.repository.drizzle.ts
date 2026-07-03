@@ -5,12 +5,27 @@ import { UserProfile } from '../../domain/mappers'
 import { UserProfileRepository } from '../../domain/repositories'
 
 export class DrizzleUserProfileRepository implements UserProfileRepository {
-  async update(userId: string, data: { name: string; bio: string | null; image: string | null }): Promise<UserProfile> {
+  async update(
+    userId: string,
+    data: { name: string; bio: string | null; image?: string | null; imageThumbnail?: string | null }
+  ): Promise<UserProfile> {
     const [result] = await db
       .update(users)
-      .set({ name: data.name, bio: data.bio, image: data.image })
+      .set({
+        name: data.name,
+        bio: data.bio,
+        image: data.image ?? null,
+        imageThumbnail: data.imageThumbnail ?? null
+      })
       .where(eq(users.id, userId))
-      .returning({ id: users.id, name: users.name, bio: users.bio, image: users.image, updatedAt: users.updatedAt })
+      .returning({
+        id: users.id,
+        name: users.name,
+        bio: users.bio,
+        image: users.image,
+        imageThumbnail: users.imageThumbnail,
+        updatedAt: users.updatedAt
+      })
 
     return result
   }

@@ -4,11 +4,18 @@ import { UpdateUserProfile } from '../../../application/use-cases'
 export class UserProfileController {
   constructor(private readonly updateUserProfile: UpdateUserProfile) {}
 
-  async update({ body, user }: { body: { name: string; bio?: string; image?: string }; user: User }) {
+  async update({
+    body,
+    user
+  }: {
+    body: { name: string; bio?: string; image?: string; imageThumbnail?: string }
+    user: User
+  }) {
     return await this.updateUserProfile.execute(user.id, {
       name: body.name,
       bio: body.bio ?? null,
-      image: body.image ?? null
+      image: body.image ?? null,
+      imageThumbnail: body.imageThumbnail ?? null
     })
   }
 }
