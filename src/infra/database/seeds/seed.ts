@@ -25,6 +25,7 @@ import {
   userPlaceBadges
 } from '../schema'
 import { osmBrands, osmPlaces, osmPlaceLocations } from './data/curitiba-osm-places'
+import { osmPlaceOpeningHours } from './data/curitiba-osm-opening-hours'
 
 const USER_IDS = {
   joao: '11111111-1111-1111-1111-111111111111',
@@ -75,6 +76,30 @@ const PLACE_IDS = {
   ottroRole: '50eea33c-4b9c-447b-ac0e-54425e6b5663'
 }
 
+const resizedPicsumUrl = (url: string, width: number, height: number) =>
+  url.replace(/\/\d+\/\d+\?/, `/${width}/${height}?`)
+
+const withUserThumbnails = <T extends { image?: string | null }>(items: T[]) =>
+  items.map((item) => ({
+    ...item,
+    imageThumbnail: item.image ? resizedPicsumUrl(item.image, 192, 192) : null
+  }))
+
+const withReviewThumbnails = <
+  T extends {
+    rating: 'crowded' | 'dead'
+    placeImageUrl?: string | null
+    selfieUrl?: string | null
+  }
+>(
+  items: T[]
+) =>
+  items.map((item) => ({
+    ...item,
+    placeImageThumbnailUrl: item.placeImageUrl ? resizedPicsumUrl(item.placeImageUrl, 480, 360) : null,
+    selfieThumbnailUrl: item.selfieUrl ? resizedPicsumUrl(item.selfieUrl, 192, 192) : null
+  }))
+
 async function seed() {
   appLogger.info('Seeding database...')
 
@@ -102,7 +127,7 @@ async function seed() {
   await db.delete(users)
 
   appLogger.info('Seeding users...')
-  await db.insert(users).values([
+  await db.insert(users).values(withUserThumbnails([
     {
       id: USER_IDS.joao,
       name: 'Joao Silva',
@@ -239,7 +264,7 @@ async function seed() {
       emailVerified: true,
       image: 'https://picsum.photos/200/200?random=17&place=review'
     }
-  ])
+  ]))
 
   appLogger.info('Seeding accounts...')
   await db.insert(accounts).values([
@@ -639,7 +664,7 @@ async function seed() {
   ])
 
   appLogger.info('Seeding place reviews...')
-  await db.insert(placeReviews).values([
+  await db.insert(placeReviews).values(withReviewThumbnails([
     {
       userId: USER_IDS.joao,
       placeId: PLACE_IDS.botecoBoaPraca,
@@ -873,7 +898,7 @@ async function seed() {
       selfieUrl: 'https://picsum.photos/200/200?random=2&place=review',
       selfieFriendsOnly: true
     }
-  ])
+  ]))
 
   appLogger.info('Seeding popular reviews (old, high interactions)...')
   const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
@@ -882,7 +907,7 @@ async function seed() {
 
   const popularReviews = await db
     .insert(placeReviews)
-    .values([
+    .values(withReviewThumbnails([
       {
         userId: USER_IDS.joao,
         placeId: PLACE_IDS.ottroRole,
@@ -916,7 +941,7 @@ async function seed() {
         createdAt: fiftyDaysAgo,
         updatedAt: fiftyDaysAgo
       }
-    ])
+    ]))
     .returning()
 
   const [reviewA, reviewB, reviewC] = popularReviews
@@ -1025,41 +1050,7 @@ async function seed() {
   ])
 
   appLogger.info('Seeding place opening hours...')
-  const barPlaceIds = new Set([
-    PLACE_IDS.seuPrudente,
-    PLACE_IDS.tesorosDeCuba,
-    PLACE_IDS.jatai,
-    PLACE_IDS.ottroRole,
-    PLACE_IDS.barOtelo,
-    PLACE_IDS.amarelinho
-  ])
-  const openingHoursData: { placeId: string; weekday: number; opensAt: string; closesAt: string; isClosed: boolean }[] =
-    []
-  const allPlaceIds = Object.values(PLACE_IDS)
-  for (const placeId of allPlaceIds) {
-    const isBar = barPlaceIds.has(placeId)
-    for (let weekday = 0; weekday <= 6; weekday++) {
-      if (isBar) {
-        openingHoursData.push({
-          placeId,
-          weekday,
-
-          opensAt: weekday === 1 ? '00:00:00' : '18:00:00',
-          closesAt: weekday >= 4 ? '02:00:00' : '00:00:00',
-          isClosed: weekday === 1
-        })
-      } else {
-        openingHoursData.push({
-          placeId,
-          weekday,
-          opensAt: weekday === 0 ? '10:00:00' : '09:00:00',
-          closesAt: weekday === 0 ? '22:00:00' : '23:00:00',
-          isClosed: false
-        })
-      }
-    }
-  }
-  await db.insert(placeOpeningHours).values(openingHoursData)
+  await db.insert(placeOpeningHours).values(osmPlaceOpeningHours)
 
   appLogger.info('Seeding follow requests...')
   await db.insert(followRequests).values([

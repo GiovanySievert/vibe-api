@@ -7,7 +7,8 @@ export {
   placeOpeningHours,
   placesRelations,
   brandsRelations,
-  brandMenusRelations
+  brandMenusRelations,
+  placeOpeningHoursRelations
 } from '@src/modules/brands/application/schemas'
 
 export { userFavoritesPlaces } from '@src/modules/user-favorites-places/application/schemas'
