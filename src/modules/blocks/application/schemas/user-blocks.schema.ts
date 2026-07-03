@@ -1,4 +1,4 @@
-import { index, pgTable, uuid, timestamp } from 'drizzle-orm/pg-core'
+import { index, pgTable, uuid, timestamp, unique } from 'drizzle-orm/pg-core'
 
 export const userBlocks = pgTable(
   'user_blocks',
@@ -10,6 +10,7 @@ export const userBlocks = pgTable(
   },
   (table) => [
     index('user_blocks_blocker_idx').on(table.blockerId),
-    index('user_blocks_blocked_idx').on(table.blockedId)
+    index('user_blocks_blocked_idx').on(table.blockedId),
+    unique('user_blocks_blocker_blocked_unique').on(table.blockerId, table.blockedId)
   ]
 )

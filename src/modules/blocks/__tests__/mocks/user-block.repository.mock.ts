@@ -29,6 +29,14 @@ export class MockUserBlockRepository implements UserBlockRepository {
     return !!block
   }
 
+  async isBlockedEitherWay(userAId: string, userBId: string): Promise<boolean> {
+    return this.blocks.some(
+      (block) =>
+        (block.blockerId === userAId && block.blockedId === userBId) ||
+        (block.blockerId === userBId && block.blockedId === userAId)
+    )
+  }
+
   async listBlockedUsers(blockerId: string, page?: number, limit?: number): Promise<GetBlockedUserDto[]> {
     const all = this.blocks
       .filter((b) => b.blockerId === blockerId)

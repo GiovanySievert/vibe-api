@@ -1,5 +1,5 @@
 import { db } from '@src/infra/database/client'
-import { and, eq } from 'drizzle-orm'
+import { and, eq, or } from 'drizzle-orm'
 import { userBlocks } from '../../application/schemas'
 import { users } from '@src/modules/auth/application/schemas'
 import { UserBlock } from '../../domain/mappers'
@@ -34,6 +34,21 @@ export class DrizzleUserBlockRepository implements UserBlockRepository {
 
   async isBlocked(blockerId: string, blockedId: string): Promise<boolean> {
     const block = await this.findBlock(blockerId, blockedId)
+    return !!block
+  }
+
+  async isBlockedEitherWay(userAId: string, userBId: string): Promise<boolean> {
+    const [block] = await db
+      .select({ id: userBlocks.id })
+      .from(userBlocks)
+      .where(
+        or(
+          and(eq(userBlocks.blockerId, userAId), eq(userBlocks.blockedId, userBId)),
+          and(eq(userBlocks.blockerId, userBId), eq(userBlocks.blockedId, userAId))
+        )
+      )
+      .limit(1)
+
     return !!block
   }
 

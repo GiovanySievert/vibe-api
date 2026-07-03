@@ -26,6 +26,14 @@ describe('BlockUser', () => {
     expect(isBlocked).toBe(true)
   })
 
+  it('should report the block in either direction', async () => {
+    await blockUser.execute('user-1', 'user-2')
+
+    expect(await mockUserBlockRepo.isBlockedEitherWay('user-1', 'user-2')).toBe(true)
+    expect(await mockUserBlockRepo.isBlockedEitherWay('user-2', 'user-1')).toBe(true)
+    expect(await mockUserBlockRepo.isBlockedEitherWay('user-1', 'user-3')).toBe(false)
+  })
+
   it('should throw CannotBlockYourselfException when trying to block yourself', async () => {
     const userId = 'user-1'
 
