@@ -7,6 +7,7 @@ import { CannotFollowYourselfException } from '../../domain/exceptions/cannot-fo
 import { AlreadyFollowingException } from '../../domain/exceptions/already-following.exception'
 import { FollowRequestAlreadyExistsException } from '../../domain/exceptions/follow-request-already-exists.exception'
 import { InMemoryApplicationEventBus } from '@src/shared/application/events'
+import { UserIsBlockedException } from '@src/modules/blocks/domain/exceptions'
 
 describe('CreateFollowRequest', () => {
   let followRequestRepo: MockFollowRequestRepository
@@ -90,6 +91,32 @@ describe('CreateFollowRequest', () => {
     expect(async () => {
       await useCase.execute(data)
     }).toThrow(FollowRequestAlreadyExistsException)
+  })
+
+  it('should throw UserIsBlockedException when requester blocked requested user', async () => {
+    await userBlockRepo.create('user-1', 'user-2')
+
+    await expect(
+      useCase.execute({
+        requesterId: 'user-1',
+        requesterName: 'User One',
+        requestedId: 'user-2',
+        status: 'pending'
+      })
+    ).rejects.toBeInstanceOf(UserIsBlockedException)
+  })
+
+  it('should throw UserIsBlockedException when requested user blocked requester', async () => {
+    await userBlockRepo.create('user-2', 'user-1')
+
+    await expect(
+      useCase.execute({
+        requesterId: 'user-1',
+        requesterName: 'User One',
+        requestedId: 'user-2',
+        status: 'pending'
+      })
+    ).rejects.toBeInstanceOf(UserIsBlockedException)
   })
 
   it('should allow creating a new request if previous was rejected', async () => {

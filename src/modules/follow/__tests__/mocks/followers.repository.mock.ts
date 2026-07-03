@@ -22,7 +22,7 @@ export class MockFollowersRepository implements FollowersRepository {
     return newFollower
   }
 
-  async listFollowers(userId: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+  async listFollowers(userId: string, page?: number, limit?: number, _viewerId?: string): Promise<ListUserFollowResponseDto[]> {
     const pageSize = limit ?? 10
     const currentPage = page ?? 1
     const offset = (currentPage - 1) * pageSize
@@ -32,7 +32,7 @@ export class MockFollowersRepository implements FollowersRepository {
       .slice(offset, offset + pageSize)
   }
 
-  async listFollowings(userId: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+  async listFollowings(userId: string, page?: number, limit?: number, _viewerId?: string): Promise<ListUserFollowResponseDto[]> {
     const pageSize = limit ?? 10
     const currentPage = page ?? 1
     const offset = (currentPage - 1) * pageSize
@@ -42,7 +42,7 @@ export class MockFollowersRepository implements FollowersRepository {
       .slice(offset, offset + pageSize)
   }
 
-  async searchFollowers(userId: string, q: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+  async searchFollowers(userId: string, q: string, page?: number, limit?: number, _viewerId?: string): Promise<ListUserFollowResponseDto[]> {
     const lower = q.toLowerCase()
     const pageSize = limit ?? 10
     const currentPage = page ?? 1
@@ -54,7 +54,7 @@ export class MockFollowersRepository implements FollowersRepository {
       .slice(offset, offset + pageSize)
   }
 
-  async searchFollowings(userId: string, q: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+  async searchFollowings(userId: string, q: string, page?: number, limit?: number, _viewerId?: string): Promise<ListUserFollowResponseDto[]> {
     const lower = q.toLowerCase()
     const pageSize = limit ?? 10
     const currentPage = page ?? 1

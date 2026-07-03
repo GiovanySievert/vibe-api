@@ -11,6 +11,7 @@ import {
 import { FollowersRepository } from '../../domain/repositories'
 import { users } from '@src/infra/database/schema'
 import { FollowStatus, FollowRequestStatus } from '../../domain/types'
+import { noUserBlockBetween } from '@src/modules/blocks/infrastructure/persistence/user-block.conditions'
 
 export class DrizzleFollowRepository implements FollowersRepository {
   async create(data: Omit<Followers, 'id' | 'createdAt'>): Promise<Followers> {
@@ -49,7 +50,7 @@ export class DrizzleFollowRepository implements FollowersRepository {
     return result || null
   }
 
-  async listFollowers(userId: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+  async listFollowers(userId: string, page?: number, limit?: number, viewerId?: string): Promise<ListUserFollowResponseDto[]> {
     const pageSize = limit ?? 10
     const currentPage = page ?? 1
     const offset = (currentPage - 1) * pageSize
@@ -64,14 +65,18 @@ export class DrizzleFollowRepository implements FollowersRepository {
       })
       .from(followers)
       .innerJoin(users, eq(followers.followerId, users.id))
-      .where(eq(followers.followingId, userId))
+      .where(
+        viewerId
+          ? and(eq(followers.followingId, userId), noUserBlockBetween(viewerId, users.id))
+          : eq(followers.followingId, userId)
+      )
       .limit(pageSize)
       .offset(offset)
 
     return ListUserFollowResponseDto.fromArray(result)
   }
 
-  async listFollowings(userId: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+  async listFollowings(userId: string, page?: number, limit?: number, viewerId?: string): Promise<ListUserFollowResponseDto[]> {
     const pageSize = limit ?? 10
     const currentPage = page ?? 1
     const offset = (currentPage - 1) * pageSize
@@ -86,14 +91,18 @@ export class DrizzleFollowRepository implements FollowersRepository {
       })
       .from(followers)
       .innerJoin(users, eq(followers.followingId, users.id))
-      .where(eq(followers.followerId, userId))
+      .where(
+        viewerId
+          ? and(eq(followers.followerId, userId), noUserBlockBetween(viewerId, users.id))
+          : eq(followers.followerId, userId)
+      )
       .limit(pageSize)
       .offset(offset)
 
     return ListUserFollowResponseDto.fromArray(result)
   }
 
-  async searchFollowers(userId: string, q: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+  async searchFollowers(userId: string, q: string, page?: number, limit?: number, viewerId?: string): Promise<ListUserFollowResponseDto[]> {
     const pageSize = limit ?? 10
     const currentPage = page ?? 1
     const offset = (currentPage - 1) * pageSize
@@ -109,14 +118,20 @@ export class DrizzleFollowRepository implements FollowersRepository {
       })
       .from(followers)
       .innerJoin(users, eq(followers.followerId, users.id))
-      .where(and(eq(followers.followingId, userId), or(ilike(users.username, pattern), ilike(users.name, pattern))))
+      .where(
+        and(
+          eq(followers.followingId, userId),
+          or(ilike(users.username, pattern), ilike(users.name, pattern)),
+          viewerId ? noUserBlockBetween(viewerId, users.id) : undefined
+        )
+      )
       .limit(pageSize)
       .offset(offset)
 
     return ListUserFollowResponseDto.fromArray(result)
   }
 
-  async searchFollowings(userId: string, q: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
+  async searchFollowings(userId: string, q: string, page?: number, limit?: number, viewerId?: string): Promise<ListUserFollowResponseDto[]> {
     const pageSize = limit ?? 10
     const currentPage = page ?? 1
     const offset = (currentPage - 1) * pageSize
@@ -132,7 +147,13 @@ export class DrizzleFollowRepository implements FollowersRepository {
       })
       .from(followers)
       .innerJoin(users, eq(followers.followingId, users.id))
-      .where(and(eq(followers.followerId, userId), or(ilike(users.username, pattern), ilike(users.name, pattern))))
+      .where(
+        and(
+          eq(followers.followerId, userId),
+          or(ilike(users.username, pattern), ilike(users.name, pattern)),
+          viewerId ? noUserBlockBetween(viewerId, users.id) : undefined
+        )
+      )
       .limit(pageSize)
       .offset(offset)
 
@@ -143,7 +164,7 @@ export class DrizzleFollowRepository implements FollowersRepository {
     const [follow] = await db
       .select()
       .from(followers)
-      .where(and(eq(followers.followerId, followerId), eq(followers.followingId, followingId)))
+      .where(and(eq(followers.followerId, followerId), eq(followers.followingId, followingId), noUserBlockBetween(followerId, followingId)))
       .limit(1)
 
     if (follow) {
@@ -153,7 +174,7 @@ export class DrizzleFollowRepository implements FollowersRepository {
     const [request] = await db
       .select()
       .from(followRequests)
-      .where(and(eq(followRequests.requesterId, followerId), eq(followRequests.requestedId, followingId)))
+      .where(and(eq(followRequests.requesterId, followerId), eq(followRequests.requestedId, followingId), noUserBlockBetween(followerId, followingId)))
       .orderBy(desc(followRequests.createdAt))
       .limit(1)
 

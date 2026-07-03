@@ -4,7 +4,7 @@ import { ListUserFollowResponseDto } from '@src/modules/follow/infrastructure/ht
 export class SearchFollowings {
   constructor(private readonly followersRepo: FollowersRepository) {}
 
-  async execute(userId: string, q: string, page?: number, limit?: number): Promise<ListUserFollowResponseDto[]> {
-    return this.followersRepo.searchFollowings(userId, q, page, limit)
+  async execute(userId: string, q: string, page?: number, limit?: number, viewerId?: string): Promise<ListUserFollowResponseDto[]> {
+    return this.followersRepo.searchFollowings(userId, q, page, limit, viewerId)
   }
 }

@@ -31,7 +31,7 @@ export class CreateFollowRequest {
       throw new CannotFollowYourselfException(data.requesterId)
     }
 
-    const isBlockedByRequested = await this.userBlockRepo.isBlocked(data.requestedId, data.requesterId)
+    const isBlockedByRequested = await this.userBlockRepo.isBlockedEitherWay(data.requestedId, data.requesterId)
 
     if (isBlockedByRequested) {
       throw new UserIsBlockedException()

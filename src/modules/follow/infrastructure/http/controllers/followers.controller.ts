@@ -32,19 +32,19 @@ export class FollowersController {
     await this.removeFollower.execute(user.id, params.followId)
   }
 
-  async getFollowers({ params, query }: { params: { userId: string }; query: { page?: number; limit?: number } }) {
-    return await this.listFollowers.execute(params.userId, query.page, query.limit)
+  async getFollowers({ params, query, user }: { params: { userId: string }; query: { page?: number; limit?: number }; user: User }) {
+    return await this.listFollowers.execute(params.userId, query.page, query.limit, user.id)
   }
 
-  async getFollowings({ params, query }: { params: { userId: string }; query: { page?: number; limit?: number } }) {
-    return await this.listFollowings.execute(params.userId, query.page, query.limit)
+  async getFollowings({ params, query, user }: { params: { userId: string }; query: { page?: number; limit?: number }; user: User }) {
+    return await this.listFollowings.execute(params.userId, query.page, query.limit, user.id)
   }
 
-  async searchFollowers({ params, query }: { params: { userId: string }; query: { q: string; page?: number; limit?: number } }) {
-    return await this.searchFollowersUseCase.execute(params.userId, query.q, query.page, query.limit)
+  async searchFollowers({ params, query, user }: { params: { userId: string }; query: { q: string; page?: number; limit?: number }; user: User }) {
+    return await this.searchFollowersUseCase.execute(params.userId, query.q, query.page, query.limit, user.id)
   }
 
-  async searchFollowings({ params, query }: { params: { userId: string }; query: { q: string; page?: number; limit?: number } }) {
-    return await this.searchFollowingsUseCase.execute(params.userId, query.q, query.page, query.limit)
+  async searchFollowings({ params, query, user }: { params: { userId: string }; query: { q: string; page?: number; limit?: number }; user: User }) {
+    return await this.searchFollowingsUseCase.execute(params.userId, query.q, query.page, query.limit, user.id)
   }
 }
