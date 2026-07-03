@@ -4,7 +4,7 @@ import { PlaceReviewRepository } from '@src/modules/place-review/domain/reposito
 export class GetPlaceReview {
   constructor(private readonly placeReviewRepo: PlaceReviewRepository) {}
 
-  async execute(reviewId: string): Promise<PlaceReview | null> {
-    return await this.placeReviewRepo.getById(reviewId)
+  async execute(reviewId: string, viewerId?: string): Promise<PlaceReview | null> {
+    return await this.placeReviewRepo.getById(reviewId, viewerId)
   }
 }

@@ -28,7 +28,9 @@ const baseInput = {
   placeName: 'place-1',
   rating: 'crowded' as const,
   placeImageUrl: 'http://example.com/place.jpg',
-  selfieUrl: null,
+  placeImageThumbnailUrl: 'http://example.com/place-thumb.jpg',
+  selfieUrl: 'http://example.com/selfie.jpg',
+  selfieThumbnailUrl: 'http://example.com/selfie-thumb.jpg',
   selfieFriendsOnly: false,
   comment: null,
   userLat: NEARBY_USER_COORDS.lat,
@@ -59,6 +61,9 @@ describe('CreatePlaceReview', () => {
     expect(result.id).toBeDefined()
     expect(result.userId).toBe('user-1')
     expect(result.placeImageUrl).toBe('http://example.com/place.jpg')
+    expect(result.placeImageThumbnailUrl).toBe('http://example.com/place-thumb.jpg')
+    expect(result.selfieUrl).toBe('http://example.com/selfie.jpg')
+    expect(result.selfieThumbnailUrl).toBe('http://example.com/selfie-thumb.jpg')
     expect(mockRepo.getAll()).toHaveLength(1)
   })
 
@@ -81,7 +86,9 @@ describe('CreatePlaceReview', () => {
         placeName: 'place-1',
         rating: 'crowded',
         placeImageUrl: 'http://example.com/place.jpg',
+        placeImageThumbnailUrl: null,
         selfieUrl: null,
+        selfieThumbnailUrl: null,
         selfieFriendsOnly: false,
         comment: null,
         createdAt: new Date(Date.now() - 30 * 60 * 1000),
@@ -110,7 +117,9 @@ describe('CreatePlaceReview', () => {
         placeName: 'place-1',
         rating: 'crowded',
         placeImageUrl: 'http://example.com/place.jpg',
+        placeImageThumbnailUrl: null,
         selfieUrl: null,
+        selfieThumbnailUrl: null,
         selfieFriendsOnly: false,
         comment: null,
         createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),

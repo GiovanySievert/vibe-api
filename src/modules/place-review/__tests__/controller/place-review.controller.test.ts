@@ -216,6 +216,7 @@ describe('PlaceReviewController', () => {
         placeName: 'Bar',
         rating: 'crowded',
         placeImageUrl: 'http://img',
+        placeImageThumbnailUrl: 'http://img-thumb',
         userLat: 1,
         userLng: 2,
         placeLat: 3,
@@ -230,11 +231,13 @@ describe('PlaceReviewController', () => {
       placeName: 'Bar',
       rating: 'crowded',
       placeImageUrl: 'http://img',
+      placeImageThumbnailUrl: 'http://img-thumb',
       userLat: 1,
       userLng: 2,
       placeLat: 3,
       placeLng: 4,
       selfieUrl: null,
+      selfieThumbnailUrl: null,
       selfieFriendsOnly: false,
       comment: null
     })
@@ -252,6 +255,7 @@ describe('PlaceReviewController', () => {
         placeLat: 3,
         placeLng: 4,
         selfieUrl: 'http://selfie',
+        selfieThumbnailUrl: 'http://selfie-thumb',
         selfieFriendsOnly: true,
         comment: 'great'
       },
@@ -260,6 +264,7 @@ describe('PlaceReviewController', () => {
 
     expect(createCalls[0]).toMatchObject({
       selfieUrl: 'http://selfie',
+      selfieThumbnailUrl: 'http://selfie-thumb',
       selfieFriendsOnly: true,
       comment: 'great'
     })
@@ -482,11 +487,13 @@ describe('PlaceReviewController', () => {
   it('defaults page to 1 when listing comments without query.page', async () => {
     await controller.listComments({
       params: { reviewId: 'review-1' },
-      query: {}
+      query: {},
+      user: makeUser('u-1')
     })
 
     expect(listCommentsCalls[0]).toEqual({
       reviewId: 'review-1',
+      viewerId: 'u-1',
       page: 1,
       limit: 20
     })
@@ -495,7 +502,8 @@ describe('PlaceReviewController', () => {
   it('passes provided page when listing comments', async () => {
     await controller.listComments({
       params: { reviewId: 'review-1' },
-      query: { page: 3 }
+      query: { page: 3 },
+      user: makeUser('u-1')
     })
 
     expect(listCommentsCalls[0].page).toBe(3)
@@ -508,7 +516,7 @@ describe('PlaceReviewController', () => {
       user: makeUser('u-1')
     })
 
-    expect(listInteractionsCalls[0]).toEqual(['review-1', 'on', 1])
+    expect(listInteractionsCalls[0]).toEqual(['review-1', 'on', 1, 'u-1'])
   })
 
   it('forwards eligibility request with user and place', async () => {

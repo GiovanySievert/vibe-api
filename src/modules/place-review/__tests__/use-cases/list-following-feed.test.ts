@@ -24,6 +24,7 @@ describe('ListFollowingFeed', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: 'http://example.com/selfie.jpg',
+      selfieThumbnailUrl: 'http://example.com/selfie-thumb.jpg',
       selfieFriendsOnly: false,
       comment: null
     })
@@ -32,6 +33,7 @@ describe('ListFollowingFeed', () => {
 
     expect(result).toHaveLength(1)
     expect(result[0].selfieUrl).toBe('http://example.com/selfie.jpg')
+    expect(result[0].selfieThumbnailUrl).toBe('http://example.com/selfie-thumb.jpg')
   })
 
   it('shows a friendsOnly selfie when the viewer follows the author (one-way is enough)', async () => {

@@ -10,8 +10,13 @@ import { appLogger } from '@src/config/logger'
 
 import { PlaceReviewCooldownException, PlaceReviewOutOfRangeException } from '../../domain/exceptions'
 
-export type CreatePlaceReviewData = Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt' | 'placeImageUrl'> & {
+export type CreatePlaceReviewData = Omit<
+  PlaceReview,
+  'id' | 'createdAt' | 'updatedAt' | 'placeImageUrl' | 'placeImageThumbnailUrl' | 'selfieThumbnailUrl'
+> & {
   placeImageUrl: string
+  placeImageThumbnailUrl?: string | null
+  selfieThumbnailUrl?: string | null
   userLat: number
   userLng: number
   placeLat: number
@@ -77,7 +82,11 @@ export class CreatePlaceReview {
     void _userLng
     void _placeLat
     void _placeLng
-    return rest
+    return {
+      ...rest,
+      placeImageThumbnailUrl: rest.placeImageThumbnailUrl ?? null,
+      selfieThumbnailUrl: rest.selfieThumbnailUrl ?? null
+    }
   }
 
   private async publishCreated(review: PlaceReview): Promise<void> {

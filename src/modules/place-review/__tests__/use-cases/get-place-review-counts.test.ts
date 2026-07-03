@@ -45,6 +45,25 @@ describe('GetPlaceReviewCounts', () => {
     expect(counts.commentsCount).toBe(2)
   })
 
+  it('should not count comments or reactions hidden by viewer blocks', async () => {
+    const review = await mockRepo.create({
+      userId: 'user-1', placeId: 'place-1', placeName: 'Place 1',
+      rating: 'crowded', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null
+    })
+
+    await createComment.execute({ reviewId: review.id, userId: 'user-2', content: 'visible' })
+    await createComment.execute({ reviewId: review.id, userId: 'user-3', content: 'hidden' })
+    await setReaction.execute({ reviewId: review.id, userId: 'user-2', type: 'on' })
+    await setReaction.execute({ reviewId: review.id, userId: 'user-3', type: 'off' })
+    mockRepo.seedBlocks([{ blockerId: 'viewer-1', blockedId: 'user-3' }])
+
+    const [counts] = await getPlaceReviewCounts.execute([review.id], 'viewer-1')
+
+    expect(counts.commentsCount).toBe(1)
+    expect(counts.onCount).toBe(1)
+    expect(counts.offCount).toBe(0)
+  })
+
   it('should count on and off reactions separately', async () => {
     const review = await mockRepo.create({
       userId: 'user-1', placeId: 'place-1', placeName: 'Place 1',

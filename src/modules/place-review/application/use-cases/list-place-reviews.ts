@@ -9,17 +9,17 @@ export class ListPlaceReviews {
   ) {}
 
   async executeByPlace(placeId: string, since: Date, page: number | undefined, viewerId: string): Promise<FeedReviewItem[]> {
-    const items = await this.placeReviewRepo.listByPlace(placeId, since, page)
+    const items = await this.placeReviewRepo.listByPlace(placeId, since, page, viewerId)
     return applySelfieVisibility(items, viewerId, this.followChecker)
   }
 
   async executeByUser(userId: string, page: number | undefined, viewerId: string): Promise<FeedReviewItem[]> {
-    const items = await this.placeReviewRepo.listByUser(userId, page)
+    const items = await this.placeReviewRepo.listByUser(userId, page, viewerId)
     return applySelfieVisibility(items, viewerId, this.followChecker)
   }
 
   async executePopularByPlace(placeId: string, since: Date, limit: number, viewerId: string): Promise<FeedReviewItem[]> {
-    const items = await this.placeReviewRepo.listPopularByPlace(placeId, since, limit)
+    const items = await this.placeReviewRepo.listPopularByPlace(placeId, since, limit, viewerId)
     return applySelfieVisibility(items, viewerId, this.followChecker)
   }
 }

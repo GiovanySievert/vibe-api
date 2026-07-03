@@ -1,6 +1,7 @@
 import { PlaceReview } from '../../domain/mappers'
 import {
   CreatePlaceReviewCommentInput,
+  CreatePlaceReviewRecord,
   PlaceReviewCountByPlace,
   PlaceReviewRepository,
   SelectedPlaceReviewCountByPlace,
@@ -26,13 +27,16 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     type: PlaceReviewReactionType
   }> = []
   private follows: Array<{ followerId: string; followingId: string }> = []
+  private blocks: Array<{ blockerId: string; blockedId: string }> = []
   private favoriteReviews = new Map<string, string>()
   private profileBadgeSelections = new Map<string, Array<{ placeId: string; position: number }>>()
 
-  async create(data: Omit<PlaceReview, 'id' | 'createdAt' | 'updatedAt'>): Promise<PlaceReview> {
+  async create(data: CreatePlaceReviewRecord): Promise<PlaceReview> {
     const review: PlaceReview = {
       id: crypto.randomUUID(),
       ...data,
+      placeImageThumbnailUrl: data.placeImageThumbnailUrl ?? null,
+      selfieThumbnailUrl: data.selfieThumbnailUrl ?? null,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -40,8 +44,8 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     return review
   }
 
-  async getById(reviewId: string): Promise<PlaceReview | null> {
-    return this.reviews.find((r) => r.id === reviewId) ?? null
+  async getById(reviewId: string, viewerId?: string): Promise<PlaceReview | null> {
+    return this.reviews.find((r) => r.id === reviewId && this.isVisibleTo(r.userId, viewerId)) ?? null
   }
 
   async getByUserAndPlace(userId: string, placeId: string): Promise<PlaceReview | null> {
@@ -104,22 +108,24 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
       .sort((a, b) => a.profilePosition - b.profilePosition)
   }
 
-  async listByPlace(placeId: string, _since: Date, page?: number): Promise<FeedReviewItem[]> {
+  async listByPlace(placeId: string, _since: Date, page?: number, viewerId?: string): Promise<FeedReviewItem[]> {
     const limit = 10
     const offset = ((page ?? 1) - 1) * limit
     return this.toFeedItems(
-      this.reviews.filter((r) => r.placeId === placeId).slice(offset, offset + limit)
+      this.reviews.filter((r) => r.placeId === placeId && this.isVisibleTo(r.userId, viewerId)).slice(offset, offset + limit),
+      viewerId
     )
   }
 
-  async listPopularByPlace(placeId: string, since: Date, limit: number): Promise<FeedReviewItem[]> {
+  async listPopularByPlace(placeId: string, since: Date, limit: number, viewerId?: string): Promise<FeedReviewItem[]> {
     const reactionCountFor = (reviewId: string) =>
-      this.reactions.filter((r) => r.reviewId === reviewId).length
+      this.reactions.filter((r) => r.reviewId === reviewId && this.isVisibleTo(r.userId, viewerId)).length
     return this.toFeedItems(
       this.reviews
-        .filter((r) => r.placeId === placeId && r.createdAt >= since)
+        .filter((r) => r.placeId === placeId && r.createdAt >= since && this.isVisibleTo(r.userId, viewerId))
         .sort((a, b) => reactionCountFor(b.id) - reactionCountFor(a.id))
-        .slice(0, limit)
+        .slice(0, limit),
+      viewerId
     )
   }
 
@@ -143,6 +149,7 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
       if (review.createdAt < since) continue
       if (review.userId === viewerId) continue
       if (!followingIds.has(review.userId)) continue
+      if (!this.isVisibleTo(review.userId, viewerId)) continue
 
       const current = latestReviewAtByUserId.get(review.userId)
       if (!current || review.createdAt > current)
@@ -168,19 +175,20 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     }
   }
 
-  async listByUser(userId: string, page?: number): Promise<FeedReviewItem[]> {
+  async listByUser(userId: string, page?: number, viewerId?: string): Promise<FeedReviewItem[]> {
     const limit = 10
     const offset = ((page ?? 1) - 1) * limit
     const favoriteReviewId = this.favoriteReviews.get(userId)
     return this.toFeedItems(
       this.reviews
-        .filter((r) => r.userId === userId)
+        .filter((r) => r.userId === userId && this.isVisibleTo(r.userId, viewerId))
         .sort((a, b) => {
           if (a.id === favoriteReviewId && b.id !== favoriteReviewId) return -1
           if (b.id === favoriteReviewId && a.id !== favoriteReviewId) return 1
           return b.createdAt.getTime() - a.createdAt.getTime()
         })
-        .slice(offset, offset + limit)
+        .slice(offset, offset + limit),
+      viewerId
     )
   }
 
@@ -188,15 +196,21 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     const limit = 20
     const offset = ((page ?? 1) - 1) * limit
     return this.toFeedItems(
-      this.reviews.filter((r) => r.createdAt >= since).slice(offset, offset + limit),
+      this.reviews.filter((r) => r.createdAt >= since && this.isVisibleTo(r.userId, _userId)).slice(offset, offset + limit),
       _userId
     )
   }
 
   async listCountsByReviewIds(reviewIds: string[], viewerId?: string): Promise<ReviewCounts[]> {
     return reviewIds.map((reviewId) => {
-      const reviewComments = this.comments.filter((c) => c.reviewId === reviewId)
-      const reviewReactions = this.reactions.filter((r) => r.reviewId === reviewId)
+      const review = this.reviews.find((r) => r.id === reviewId)
+      const reviewVisible = !review || this.isVisibleTo(review.userId, viewerId)
+      const reviewComments = reviewVisible
+        ? this.comments.filter((c) => c.reviewId === reviewId && this.isVisibleTo(c.userId, viewerId))
+        : []
+      const reviewReactions = reviewVisible
+        ? this.reactions.filter((r) => r.reviewId === reviewId && this.isVisibleTo(r.userId, viewerId))
+        : []
       const viewerReaction = viewerId
         ? (reviewReactions.find((r) => r.userId === viewerId)?.type ?? null)
         : null
@@ -231,10 +245,14 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
   async listComments(
     reviewId: string,
     page: number,
-    limit: number
+    limit: number,
+    viewerId?: string
   ): Promise<ListPlaceReviewCommentsResult> {
     const offset = (page - 1) * limit
-    const data = this.comments.filter((comment) => comment.reviewId === reviewId)
+    const review = this.reviews.find((r) => r.id === reviewId)
+    const data = review && this.isVisibleTo(review.userId, viewerId)
+      ? this.comments.filter((comment) => comment.reviewId === reviewId && this.isVisibleTo(comment.userId, viewerId))
+      : []
 
     return {
       data: data.slice(offset, offset + limit),
@@ -288,8 +306,11 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     this.comments = this.comments.filter((c) => c.id !== commentId)
   }
 
-  async countReactions(reviewId: string): Promise<ReviewInteractionCount> {
-    const reviewReactions = this.reactions.filter((r) => r.reviewId === reviewId)
+  async countReactions(reviewId: string, viewerId?: string): Promise<ReviewInteractionCount> {
+    const review = this.reviews.find((r) => r.id === reviewId)
+    const reviewReactions = review && this.isVisibleTo(review.userId, viewerId)
+      ? this.reactions.filter((r) => r.reviewId === reviewId && this.isVisibleTo(r.userId, viewerId))
+      : []
     return {
       reviewId,
       onCount: reviewReactions.filter((r) => r.type === 'on').length,
@@ -301,12 +322,15 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
   async listReactionUsers(
     reviewId: string,
     type: 'on' | 'off',
-    page: number
+    page: number,
+    viewerId?: string
   ): Promise<ReviewInteractionUser[]> {
     const limit = 20
     const offset = (page - 1) * limit
+    const review = this.reviews.find((r) => r.id === reviewId)
+    if (!review || !this.isVisibleTo(review.userId, viewerId)) return []
     return this.reactions
-      .filter((r) => r.reviewId === reviewId && r.type === type)
+      .filter((r) => r.reviewId === reviewId && r.type === type && this.isVisibleTo(r.userId, viewerId))
       .slice(offset, offset + limit)
       .map((r) => ({
         id: r.userId,
@@ -324,6 +348,7 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     this.comments = []
     this.reactions = []
     this.follows = []
+    this.blocks = []
     this.favoriteReviews.clear()
     this.profileBadgeSelections.clear()
   }
@@ -343,6 +368,10 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     this.follows = [...follows]
   }
 
+  seedBlocks(blocks: Array<{ blockerId: string; blockedId: string }>) {
+    this.blocks = [...blocks]
+  }
+
   getAll() {
     return [...this.reviews]
   }
@@ -356,7 +385,8 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
         user: {
           id: review.userId,
           username: `user-${review.userId}`,
-          image: null
+          image: null,
+          imageThumbnail: null
         },
         place: { id: review.placeId, name: `place-${review.placeId}` },
         viewerReaction: viewerId
@@ -365,5 +395,14 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
         isFavorite: this.favoriteReviews.get(review.userId) === review.id
       }
     })
+  }
+
+  private isVisibleTo(userId: string, viewerId?: string): boolean {
+    if (!viewerId || userId === viewerId) return true
+    return !this.blocks.some(
+      (block) =>
+        (block.blockerId === userId && block.blockedId === viewerId) ||
+        (block.blockerId === viewerId && block.blockedId === userId)
+    )
   }
 }

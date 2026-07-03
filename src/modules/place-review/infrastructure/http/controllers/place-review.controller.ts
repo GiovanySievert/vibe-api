@@ -54,11 +54,13 @@ export class PlaceReviewController {
       placeName: body.placeName,
       rating: body.rating,
       placeImageUrl: body.placeImageUrl,
+      placeImageThumbnailUrl: body.placeImageThumbnailUrl ?? null,
       userLat: body.userLat,
       userLng: body.userLng,
       placeLat: body.placeLat,
       placeLng: body.placeLng,
       selfieUrl: body.selfieUrl ?? null,
+      selfieThumbnailUrl: body.selfieThumbnailUrl ?? null,
       selfieFriendsOnly: body.selfieFriendsOnly ?? false,
       comment: body.comment ?? null
     })
@@ -71,8 +73,8 @@ export class PlaceReviewController {
     })
   }
 
-  async getById({ params }: { params: { reviewId: string }; user: User }) {
-    return await this.getPlaceReview.execute(params.reviewId)
+  async getById({ params, user }: { params: { reviewId: string }; user: User }) {
+    return await this.getPlaceReview.execute(params.reviewId, user.id)
   }
 
   async getCounts({ params, user }: { params: { reviewId: string }; user: User }) {
@@ -122,9 +124,10 @@ export class PlaceReviewController {
     return await this.listFollowingFeed.execute(user.id, query.page)
   }
 
-  async listComments({ params, query }: { params: { reviewId: string }; query: { page?: number } }) {
+  async listComments({ params, query, user }: { params: { reviewId: string }; query: { page?: number }; user: User }) {
     return await this.listPlaceReviewComments.execute({
       reviewId: params.reviewId,
+      viewerId: user.id,
       page: query.page ?? 1,
       limit: 20
     })
@@ -139,7 +142,7 @@ export class PlaceReviewController {
     body: { content: string }
     user: User
   }) {
-    const review = await this.getPlaceReview.execute(params.reviewId)
+    const review = await this.getPlaceReview.execute(params.reviewId, user.id)
     if (!review) throw new Error('Place review not found')
 
     const comment = await this.createPlaceReviewComment.execute({
@@ -172,7 +175,7 @@ export class PlaceReviewController {
     body: { type: 'on' | 'off' }
     user: User
   }) {
-    const review = await this.getPlaceReview.execute(params.reviewId)
+    const review = await this.getPlaceReview.execute(params.reviewId, user.id)
     if (!review) throw new Error('Place review not found')
 
     await this.setPlaceReviewReaction.execute({
@@ -205,19 +208,20 @@ export class PlaceReviewController {
     return { success: true }
   }
 
-  async getInteractionCount({ params }: { params: { reviewId: string }; user: User }) {
-    return this.getReviewInteractionCount.execute(params.reviewId)
+  async getInteractionCount({ params, user }: { params: { reviewId: string }; user: User }) {
+    return this.getReviewInteractionCount.execute(params.reviewId, user.id)
   }
 
   async listInteractions({
     params,
-    query
+    query,
+    user
   }: {
     params: { reviewId: string }
     query: { type: 'on' | 'off'; page?: number }
     user: User
   }) {
-    return this.listReviewInteractions.execute(params.reviewId, query.type, query.page ?? 1)
+    return this.listReviewInteractions.execute(params.reviewId, query.type, query.page ?? 1, user.id)
   }
 
   async deleteComment({ params, user }: { params: { reviewId: string; commentId: string }; user: User }) {

@@ -4,6 +4,7 @@ import { ListPlaceReviewCommentsResult } from '@src/modules/place-review/domain/
 
 type ListPlaceReviewCommentsInput = {
   reviewId: string
+  viewerId?: string
   page: number
   limit: number
 }
@@ -12,12 +13,12 @@ export class ListPlaceReviewComments {
   constructor(private readonly placeReviewRepo: PlaceReviewRepository) {}
 
   async execute(input: ListPlaceReviewCommentsInput): Promise<ListPlaceReviewCommentsResult> {
-    const review = await this.placeReviewRepo.getById(input.reviewId)
+    const review = await this.placeReviewRepo.getById(input.reviewId, input.viewerId)
 
     if (!review) {
       throw new PlaceReviewNotFoundException(input.reviewId)
     }
 
-    return this.placeReviewRepo.listComments(input.reviewId, input.page, input.limit)
+    return this.placeReviewRepo.listComments(input.reviewId, input.page, input.limit, input.viewerId)
   }
 }

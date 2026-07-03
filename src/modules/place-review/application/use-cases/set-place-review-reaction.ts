@@ -12,7 +12,7 @@ export class SetPlaceReviewReaction {
   constructor(private readonly placeReviewRepo: PlaceReviewRepository) {}
 
   async execute(input: SetPlaceReviewReactionInput): Promise<void> {
-    const review = await this.placeReviewRepo.getById(input.reviewId)
+    const review = await this.placeReviewRepo.getById(input.reviewId, input.userId)
 
     if (!review) {
       throw new PlaceReviewNotFoundException(input.reviewId)

@@ -45,4 +45,26 @@ describe('CreatePlaceReviewComment', () => {
       })
     ).rejects.toBeInstanceOf(PlaceReviewNotFoundException)
   })
+
+  it('should throw when commenter and review owner are blocked', async () => {
+    const review = await mockRepo.create({
+      userId: 'user-1',
+      placeId: 'place-1',
+      placeName: 'place-1',
+      rating: 'crowded',
+      placeImageUrl: null,
+      selfieUrl: null,
+      selfieFriendsOnly: false,
+      comment: null
+    })
+    mockRepo.seedBlocks([{ blockerId: 'user-1', blockedId: 'user-2' }])
+
+    await expect(
+      createPlaceReviewComment.execute({
+        reviewId: review.id,
+        userId: 'user-2',
+        content: 'Teste'
+      })
+    ).rejects.toBeInstanceOf(PlaceReviewNotFoundException)
+  })
 })

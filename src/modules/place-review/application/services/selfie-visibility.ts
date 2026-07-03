@@ -3,6 +3,7 @@ import { FollowChecker } from '@src/modules/place-review/domain/repositories'
 type SelfieVisibilityRow = {
   userId: string
   selfieUrl: string | null
+  selfieThumbnailUrl: string | null
   selfieFriendsOnly: boolean
 }
 
@@ -29,6 +30,6 @@ export async function applySelfieVisibility<T extends SelfieVisibilityRow>(
     if (!row.selfieFriendsOnly || row.userId === viewerId || !row.selfieUrl || followedUserIds.has(row.userId)) {
       return row
     }
-    return { ...row, selfieUrl: null }
+    return { ...row, selfieUrl: null, selfieThumbnailUrl: null }
   })
 }

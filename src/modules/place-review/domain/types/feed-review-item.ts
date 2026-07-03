@@ -6,6 +6,7 @@ export type FeedReviewItem = PlaceReview & {
     id: string
     username: string
     image: string | null
+    imageThumbnail: string | null
   }
   viewerReaction: PlaceReviewReactionType | null
   isFavorite: boolean

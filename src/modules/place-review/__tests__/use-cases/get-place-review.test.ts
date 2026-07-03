@@ -37,6 +37,24 @@ describe('GetPlaceReview', () => {
     expect(result).toBeNull()
   })
 
+  it('should return null when viewer and author are blocked', async () => {
+    const created = await mockRepo.create({
+      userId: 'user-1',
+      placeId: 'place-1',
+      placeName: 'place-1',
+      rating: 'crowded',
+      placeImageUrl: null,
+      selfieUrl: null,
+      selfieFriendsOnly: false,
+      comment: null
+    })
+    mockRepo.seedBlocks([{ blockerId: 'user-1', blockedId: 'viewer-1' }])
+
+    const result = await getPlaceReview.execute(created.id, 'viewer-1')
+
+    expect(result).toBeNull()
+  })
+
   it('should return review with selfieUrl intact (visibility is handled by use cases, not this method)', async () => {
     const created = await mockRepo.create({
       userId: 'user-1',

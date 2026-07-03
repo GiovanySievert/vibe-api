@@ -39,4 +39,39 @@ describe('ListPlaceReviewComments', () => {
     expect(result.total).toBe(1)
     expect(result.data[0]?.content).toBe('Esse lugar lota cedo?')
   })
+
+  it('should hide comments from users blocked by the viewer', async () => {
+    const review = await mockRepo.create({
+      userId: 'user-1',
+      placeId: 'place-1',
+      placeName: 'place-1',
+      rating: 'crowded',
+      placeImageUrl: null,
+      selfieUrl: null,
+      selfieFriendsOnly: false,
+      comment: null
+    })
+
+    await mockRepo.createComment({
+      reviewId: review.id,
+      userId: 'user-2',
+      content: 'visivel'
+    })
+    await mockRepo.createComment({
+      reviewId: review.id,
+      userId: 'user-3',
+      content: 'bloqueado'
+    })
+    mockRepo.seedBlocks([{ blockerId: 'viewer-1', blockedId: 'user-3' }])
+
+    const result = await listPlaceReviewComments.execute({
+      reviewId: review.id,
+      viewerId: 'viewer-1',
+      page: 1,
+      limit: 20
+    })
+
+    expect(result.total).toBe(1)
+    expect(result.data[0]?.userId).toBe('user-2')
+  })
 })

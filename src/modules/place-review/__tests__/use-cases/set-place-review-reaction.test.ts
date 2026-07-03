@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'bun:test'
 import { ListFollowingFeed, RemovePlaceReviewReaction, SetPlaceReviewReaction } from '../../application/use-cases'
 import { MockPlaceReviewRepository } from '../mocks/place-review.repository.mock'
 import { MockFollowChecker } from '../mocks/follow-checker.mock'
+import { PlaceReviewNotFoundException } from '../../domain/exceptions'
 
 describe('SetPlaceReviewReaction', () => {
   let listFollowingFeed: ListFollowingFeed
@@ -76,6 +77,56 @@ describe('SetPlaceReviewReaction', () => {
     const [counts] = await mockRepo.listCountsByReviewIds([review.id])
 
     expect(item?.viewerReaction).toBeNull()
+    expect(counts?.onCount).toBe(0)
+  })
+
+  it('should throw when reactor and review owner are blocked', async () => {
+    const review = await mockRepo.create({
+      userId: 'author-1',
+      placeId: 'place-1',
+      placeName: 'place-1',
+      rating: 'crowded',
+      placeImageUrl: null,
+      selfieUrl: null,
+      selfieFriendsOnly: false,
+      comment: null
+    })
+    mockRepo.seedBlocks([{ blockerId: 'viewer-1', blockedId: 'author-1' }])
+
+    await expect(
+      setPlaceReviewReaction.execute({
+        reviewId: review.id,
+        userId: 'viewer-1',
+        type: 'on'
+      })
+    ).rejects.toBeInstanceOf(PlaceReviewNotFoundException)
+  })
+
+  it('should still remove the current user reaction after a block', async () => {
+    const review = await mockRepo.create({
+      userId: 'author-1',
+      placeId: 'place-1',
+      placeName: 'place-1',
+      rating: 'crowded',
+      placeImageUrl: null,
+      selfieUrl: null,
+      selfieFriendsOnly: false,
+      comment: null
+    })
+
+    await setPlaceReviewReaction.execute({
+      reviewId: review.id,
+      userId: 'viewer-1',
+      type: 'on'
+    })
+    mockRepo.seedBlocks([{ blockerId: 'author-1', blockedId: 'viewer-1' }])
+
+    await removePlaceReviewReaction.execute({
+      reviewId: review.id,
+      userId: 'viewer-1'
+    })
+
+    const [counts] = await mockRepo.listCountsByReviewIds([review.id])
     expect(counts?.onCount).toBe(0)
   })
 })

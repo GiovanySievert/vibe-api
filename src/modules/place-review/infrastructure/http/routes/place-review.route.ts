@@ -25,11 +25,13 @@ export const PlaceReviewRoutes = (app: Elysia) => {
           placeName: t.String({ minLength: 1 }),
           rating: t.Union([t.Literal('crowded'), t.Literal('dead')]),
           placeImageUrl: t.String({ minLength: 1 }),
+          placeImageThumbnailUrl: t.Optional(t.String()),
           userLat: t.Number({ minimum: -90, maximum: 90 }),
           userLng: t.Number({ minimum: -180, maximum: 180 }),
           placeLat: t.Number({ minimum: -90, maximum: 90 }),
           placeLng: t.Number({ minimum: -180, maximum: 180 }),
           selfieUrl: t.Optional(t.String()),
+          selfieThumbnailUrl: t.Optional(t.String()),
           selfieFriendsOnly: t.Optional(t.Boolean()),
           comment: t.Optional(t.String())
         }),
