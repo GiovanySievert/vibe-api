@@ -5,12 +5,14 @@ export class GetPublicUserByIdDto {
   name: string
   username: string
   image?: string
+  imageThumbnail?: string
 
   constructor(data: PublicUserProfile) {
     this.id = data.id
     this.name = data.name
     this.username = data.username
     this.image = data.image || ''
+    this.imageThumbnail = data.imageThumbnail || ''
   }
 
   static fromData(data: PublicUserProfile) {
@@ -18,6 +20,7 @@ export class GetPublicUserByIdDto {
       id: data.id,
       username: data.username,
       image: data.image,
+      imageThumbnail: data.imageThumbnail,
       bio: data.bio ?? null
     }
   }

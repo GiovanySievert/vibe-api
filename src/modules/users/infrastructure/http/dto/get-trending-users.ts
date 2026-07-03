@@ -6,6 +6,7 @@ export class GetTrendingUsersDto {
       id: item.id,
       username: item.username,
       image: item.image,
+      imageThumbnail: item.imageThumbnail,
       reviewsCount: item.reviewsCount
     }))
   }

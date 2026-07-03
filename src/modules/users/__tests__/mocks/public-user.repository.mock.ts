@@ -44,7 +44,7 @@ export class MockPublicUserRepository implements PublicUserRepository {
       .slice(0, limit)
       .map(([id, reviewsCount]) => {
         const user = this.users.find((u) => u.id === id)!
-        return { id, username: user.username, image: user.image, reviewsCount }
+        return { id, username: user.username, image: user.image, imageThumbnail: user.imageThumbnail, reviewsCount }
       })
   }
 
@@ -70,7 +70,7 @@ export class MockPublicUserRepository implements PublicUserRepository {
       .slice(0, limit)
       .map(([id, mutualCount]) => {
         const user = this.users.find((u) => u.id === id)!
-        return { id, username: user.username, image: user.image, mutualCount }
+        return { id, username: user.username, image: user.image, imageThumbnail: user.imageThumbnail, mutualCount }
       })
   }
 
@@ -79,7 +79,11 @@ export class MockPublicUserRepository implements PublicUserRepository {
 
     if (!user) return null
 
-    const isBlocked = this.blocks.some((b) => b.blockerId === userId && b.blockedId === loggedUserId)
+    const isBlocked = this.blocks.some(
+      (b) =>
+        (b.blockerId === userId && b.blockedId === loggedUserId) ||
+        (b.blockerId === loggedUserId && b.blockedId === userId)
+    )
 
     if (isBlocked) return null
 
@@ -91,7 +95,11 @@ export class MockPublicUserRepository implements PublicUserRepository {
       if (!u.username.includes(username)) return false
       if (u.id === userIdToExclude) return false
 
-      const isBlocked = this.blocks.some((b) => b.blockerId === u.id && b.blockedId === userIdToExclude)
+      const isBlocked = this.blocks.some(
+        (b) =>
+          (b.blockerId === u.id && b.blockedId === userIdToExclude) ||
+          (b.blockerId === userIdToExclude && b.blockedId === u.id)
+      )
 
       return !isBlocked
     })

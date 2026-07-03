@@ -6,6 +6,7 @@ export class GetUserSuggestionsDto {
       id: item.id,
       username: item.username,
       image: item.image,
+      imageThumbnail: item.imageThumbnail,
       mutualCount: item.mutualCount
     }))
   }

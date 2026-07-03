@@ -114,6 +114,7 @@ describe('GetPublicUserById', () => {
       email: 'complete@example.com',
       emailVerified: true,
       image: 'https://example.com/complete.jpg',
+      imageThumbnail: 'https://example.com/complete-thumb.jpg',
       createdAt: now,
       updatedAt: now
     }
@@ -123,6 +124,7 @@ describe('GetPublicUserById', () => {
     const result = await useCase.execute(user.id, 'logged-user-id')
 
     expect(result).toEqual(user)
+    expect(result?.imageThumbnail).toBe('https://example.com/complete-thumb.jpg')
   })
 
   it('should return null when user has blocked the logged user', async () => {
@@ -145,7 +147,7 @@ describe('GetPublicUserById', () => {
     expect(result).toBeNull()
   })
 
-  it('should return user when logged user has blocked the target user', async () => {
+  it('should return null when logged user has blocked the target user', async () => {
     const user: Users = {
       id: 'user-1',
       name: 'Blocked User',
@@ -162,8 +164,6 @@ describe('GetPublicUserById', () => {
 
     const result = await useCase.execute('user-1', 'logged-user-id')
 
-    expect(result).toBeDefined()
-    expect(result?.id).toBe('user-1')
-    expect(result?.username).toBe('blocked')
+    expect(result).toBeNull()
   })
 })

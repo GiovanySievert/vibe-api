@@ -189,6 +189,7 @@ describe('GetPublicUserByUsername', () => {
       email: 'test@example.com',
       emailVerified: true,
       image: 'https://example.com/avatar.jpg',
+      imageThumbnail: 'https://example.com/avatar-thumb.jpg',
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -203,6 +204,7 @@ describe('GetPublicUserByUsername', () => {
     expect(result[0].email).toBe('test@example.com')
     expect(result[0].emailVerified).toBe(true)
     expect(result[0].image).toBe('https://example.com/avatar.jpg')
+    expect(result[0].imageThumbnail).toBe('https://example.com/avatar-thumb.jpg')
   })
 
   it('should exclude users who have blocked the logged user', async () => {
@@ -239,7 +241,7 @@ describe('GetPublicUserByUsername', () => {
     expect(result[0].username).toBe('usertwo')
   })
 
-  it('should include users that logged user has blocked', async () => {
+  it('should exclude users that logged user has blocked', async () => {
     const users: Users[] = [
       {
         id: 'user-1',
@@ -268,8 +270,8 @@ describe('GetPublicUserByUsername', () => {
 
     const result = await useCase.execute('user', 'logged-user-id')
 
-    expect(result).toHaveLength(2)
-    expect(result.some((u) => u.id === 'user-1')).toBe(true)
+    expect(result).toHaveLength(1)
+    expect(result.some((u) => u.id === 'user-1')).toBe(false)
     expect(result.some((u) => u.id === 'user-2')).toBe(true)
   })
 

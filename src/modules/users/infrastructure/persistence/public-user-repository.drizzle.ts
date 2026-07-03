@@ -3,6 +3,7 @@ import { db } from '@src/infra/database/client'
 import { PublicUserProfile, PublicUserRepository, UserSuggestion, TrendingUser, WeekRef } from '../../domain/repositories'
 import { users, userBlocks, userWeeklyActivity } from '@src/infra/database/schema'
 import { followers } from '@src/modules/follow/application/schemas'
+import { noUserBlockBetween } from '@src/modules/blocks/infrastructure/persistence/user-block.conditions'
 
 export class DrizzlePublicUserRepository implements PublicUserRepository {
   async getSuggestions(userId: string, limit = 20): Promise<UserSuggestion[]> {
@@ -29,6 +30,7 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
         id: users.id,
         username: users.username,
         image: users.image,
+        imageThumbnail: users.imageThumbnail,
         mutualCount: sql<number>`count(*)::int`
       })
       .from(followers)
@@ -42,7 +44,7 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
           notInArray(followers.followingId, blockedBy)
         )
       )
-      .groupBy(users.id, users.username, users.image)
+      .groupBy(users.id, users.username, users.image, users.imageThumbnail)
       .orderBy(sql`count(*) desc`)
       .limit(limit)
 
@@ -67,6 +69,7 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
         id: users.id,
         username: users.username,
         image: users.image,
+        imageThumbnail: users.imageThumbnail,
         reviewsCount: sql<number>`sum(${userWeeklyActivity.reviewCount})::int`
       })
       .from(userWeeklyActivity)
@@ -80,7 +83,7 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
           notInArray(userWeeklyActivity.userId, alreadyFollowing)
         )
       )
-      .groupBy(users.id, users.username, users.image)
+      .groupBy(users.id, users.username, users.image, users.imageThumbnail)
       .orderBy(sql`sum(${userWeeklyActivity.reviewCount}) desc`)
       .limit(limit)
 
@@ -94,13 +97,13 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
         name: users.name,
         username: users.username,
         image: users.image,
+        imageThumbnail: users.imageThumbnail,
         bio: users.bio,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt
       })
       .from(users)
-      .leftJoin(userBlocks, and(eq(userBlocks.blockerId, users.id), eq(userBlocks.blockedId, loggedUserId)))
-      .where(and(eq(users.id, userId), isNull(userBlocks.id)))
+      .where(and(eq(users.id, userId), noUserBlockBetween(loggedUserId, users.id)))
       .limit(1)
 
     return result || null
@@ -113,13 +116,13 @@ export class DrizzlePublicUserRepository implements PublicUserRepository {
         name: users.name,
         username: users.username,
         image: users.image,
+        imageThumbnail: users.imageThumbnail,
         bio: users.bio,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt
       })
       .from(users)
-      .leftJoin(userBlocks, and(eq(userBlocks.blockerId, users.id), eq(userBlocks.blockedId, userIdToExclude)))
-      .where(and(like(users.username, `%${username}%`), ne(users.id, userIdToExclude), isNull(userBlocks.id)))
+      .where(and(like(users.username, `%${username}%`), ne(users.id, userIdToExclude), noUserBlockBetween(userIdToExclude, users.id)))
       .limit(10)
 
     return result

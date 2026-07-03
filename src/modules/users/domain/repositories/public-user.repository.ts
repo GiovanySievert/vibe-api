@@ -2,6 +2,7 @@ export type UserSuggestion = {
   id: string
   username: string
   image: string | null
+  imageThumbnail: string | null
   mutualCount: number
 }
 
@@ -9,6 +10,7 @@ export type TrendingUser = {
   id: string
   username: string
   image: string | null
+  imageThumbnail: string | null
   reviewsCount: number
 }
 
@@ -19,6 +21,7 @@ export type PublicUserProfile = {
   name: string
   username: string
   image: string | null
+  imageThumbnail: string | null
   bio: string | null
   createdAt: Date
   updatedAt: Date
