@@ -38,6 +38,7 @@ import { DrizzleAppNotificationRepository } from './infrastructure/persistence/a
 import { DrizzleDevicePushTokenRepository } from './infrastructure/persistence/device-push-token.repository.drizzle'
 import { DrizzleNotificationPreferencesRepository } from './infrastructure/persistence/notification-preferences.repository.drizzle'
 import { ExpoPushSender } from './infrastructure/push/expo-push-sender'
+import { DrizzleUserBlockRepository } from '@src/modules/blocks/infrastructure/persistence'
 
 export class NotificationsModule {
   public readonly emailSender: EmailSender
@@ -61,6 +62,7 @@ export class NotificationsModule {
     const devicePushTokenRepository = new DrizzleDevicePushTokenRepository()
     const appNotificationRepository = new DrizzleAppNotificationRepository()
     const preferencesRepository = new DrizzleNotificationPreferencesRepository()
+    const userBlockRepository = new DrizzleUserBlockRepository()
 
     const registerDevicePushToken = new RegisterDevicePushToken(devicePushTokenRepository)
     const unregisterDevicePushToken = new UnregisterDevicePushToken(devicePushTokenRepository)
@@ -82,8 +84,8 @@ export class NotificationsModule {
     this.dispatchFollowRequestHandler = new DispatchFollowRequestHandler(this.dispatchNotification)
     this.dispatchFollowRequestAcceptedHandler = new DispatchFollowRequestAcceptedHandler(this.dispatchNotification)
     this.dispatchEventCommentHandler = new DispatchEventCommentHandler(this.dispatchNotification)
-    this.dispatchPlaceReviewCommentHandler = new DispatchPlaceReviewCommentHandler(this.dispatchNotification)
-    this.dispatchPlaceReviewReactionHandler = new DispatchPlaceReviewReactionHandler(this.dispatchNotification)
+    this.dispatchPlaceReviewCommentHandler = new DispatchPlaceReviewCommentHandler(this.dispatchNotification, userBlockRepository)
+    this.dispatchPlaceReviewReactionHandler = new DispatchPlaceReviewReactionHandler(this.dispatchNotification, userBlockRepository)
 
     this.notificationDeviceController = new NotificationDeviceController(
       registerDevicePushToken,

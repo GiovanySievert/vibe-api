@@ -4,16 +4,29 @@ import {
   PlaceReviewReactionSetEvent
 } from '@src/modules/place-review/application/events/place-review-reaction-set.event'
 import { ApplicationEventHandler } from '@src/shared/application/events'
+import { UserBlockRepository } from '@src/modules/blocks/domain/repositories'
 import { placeReviewReactionTemplate } from '../templates/place-review-reaction.template'
 import { DispatchNotification } from '../use-cases/dispatch-notification'
 
 export class DispatchPlaceReviewReactionHandler
   implements ApplicationEventHandler<PlaceReviewReactionSetEvent>
 {
-  constructor(private readonly dispatchNotification: DispatchNotification) {}
+  constructor(
+    private readonly dispatchNotification: DispatchNotification,
+    private readonly userBlockRepository: UserBlockRepository
+  ) {}
 
   async handle(event: PlaceReviewReactionSetEvent): Promise<void> {
     if (event.name !== PLACE_REVIEW_REACTION_SET_EVENT) {
+      return
+    }
+
+    const blocked = await this.userBlockRepository.isBlockedEitherWay(
+      event.payload.reviewOwnerId,
+      event.payload.reactorId
+    )
+
+    if (blocked) {
       return
     }
 
