@@ -23,7 +23,8 @@ export class DrizzlePlacesRepository implements PlacesRepository {
             menus: true
           }
         },
-        location: true
+        location: true,
+        openingHours: true
       }
     })
 

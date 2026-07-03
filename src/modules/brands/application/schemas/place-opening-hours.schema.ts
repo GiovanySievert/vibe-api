@@ -1,4 +1,5 @@
 import { pgTable, integer, timestamp, time, boolean, uuid } from 'drizzle-orm/pg-core'
+import { relations } from 'drizzle-orm'
 import { places } from './places.schema'
 
 export const placeOpeningHours = pgTable('place_opening_hours', {
@@ -15,3 +16,10 @@ export const placeOpeningHours = pgTable('place_opening_hours', {
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull()
 })
+
+export const placeOpeningHoursRelations = relations(placeOpeningHours, ({ one }) => ({
+  place: one(places, {
+    fields: [placeOpeningHours.placeId],
+    references: [places.id]
+  })
+}))
