@@ -20,7 +20,7 @@ describe('GetPlaceReview', () => {
       rating: 'crowded',
       placeImageUrl: 'http://example.com/photo.jpg',
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -45,7 +45,7 @@ describe('GetPlaceReview', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
     mockRepo.seedBlocks([{ blockerId: 'user-1', blockedId: 'viewer-1' }])
@@ -63,7 +63,7 @@ describe('GetPlaceReview', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: 'http://example.com/selfie.jpg',
-      selfieFriendsOnly: true,
+      isAnonymous: false,
       comment: null
     })
 

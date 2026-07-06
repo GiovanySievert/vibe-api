@@ -182,6 +182,7 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
     return this.toFeedItems(
       this.reviews
         .filter((r) => r.userId === userId && this.isVisibleTo(r.userId, viewerId))
+        .filter((r) => viewerId === userId || !r.isAnonymous)
         .sort((a, b) => {
           if (a.id === favoriteReviewId && b.id !== favoriteReviewId) return -1
           if (b.id === favoriteReviewId && a.id !== favoriteReviewId) return 1
@@ -389,6 +390,7 @@ export class MockPlaceReviewRepository implements PlaceReviewRepository {
           imageThumbnail: null
         },
         place: { id: review.placeId, name: `place-${review.placeId}` },
+        isOwnAnonymous: false,
         viewerReaction: viewerId
           ? (reviewReactions.find((reaction) => reaction.userId === viewerId)?.type ?? null)
           : null,

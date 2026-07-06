@@ -20,7 +20,7 @@ describe('DeletePlaceReviewComment', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -44,7 +44,7 @@ describe('DeletePlaceReviewComment', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -68,7 +68,7 @@ describe('DeletePlaceReviewComment', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -85,7 +85,7 @@ describe('DeletePlaceReviewComment', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -108,7 +108,7 @@ describe('DeletePlaceReviewComment', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 

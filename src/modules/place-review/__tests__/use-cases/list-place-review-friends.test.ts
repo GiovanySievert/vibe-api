@@ -12,7 +12,7 @@ const makeReview = (overrides: Partial<PlaceReview> = {}): PlaceReview => ({
   rating: 'crowded',
   placeImageUrl: null,
   selfieUrl: null,
-  selfieFriendsOnly: false,
+  isAnonymous: false,
   comment: null,
   createdAt: new Date('2026-05-01T00:00:00Z'),
   updatedAt: new Date('2026-05-01T00:00:00Z'),

@@ -21,7 +21,7 @@ describe('CreatePlaceReviewComment', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -54,7 +54,7 @@ describe('CreatePlaceReviewComment', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
     mockRepo.seedBlocks([{ blockerId: 'user-1', blockedId: 'user-2' }])

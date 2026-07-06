@@ -33,7 +33,7 @@ describe('GetPlaceReviewEligibility', () => {
         rating: 'crowded',
         placeImageUrl: 'http://example.com/place.jpg',
         selfieUrl: null,
-        selfieFriendsOnly: false,
+        isAnonymous: false,
         comment: null,
         createdAt: lastReviewAt,
         updatedAt: lastReviewAt
@@ -61,7 +61,7 @@ describe('GetPlaceReviewEligibility', () => {
         rating: 'crowded',
         placeImageUrl: 'http://example.com/place.jpg',
         selfieUrl: null,
-        selfieFriendsOnly: false,
+        isAnonymous: false,
         comment: null,
         createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
         updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000)

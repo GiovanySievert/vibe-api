@@ -21,7 +21,7 @@ describe('GetPlaceReviewCounts', () => {
   it('should return zero counts for a review with no interactions', async () => {
     const review = await mockRepo.create({
       userId: 'user-1', placeId: 'place-1', placeName: 'Place 1',
-      rating: 'crowded', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null
+      rating: 'crowded', placeImageUrl: null, selfieUrl: null, isAnonymous: false, comment: null
     })
 
     const [counts] = await getPlaceReviewCounts.execute([review.id])
@@ -34,7 +34,7 @@ describe('GetPlaceReviewCounts', () => {
   it('should count comments correctly', async () => {
     const review = await mockRepo.create({
       userId: 'user-1', placeId: 'place-1', placeName: 'Place 1',
-      rating: 'crowded', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null
+      rating: 'crowded', placeImageUrl: null, selfieUrl: null, isAnonymous: false, comment: null
     })
 
     await createComment.execute({ reviewId: review.id, userId: 'user-2', content: 'nice!' })
@@ -48,7 +48,7 @@ describe('GetPlaceReviewCounts', () => {
   it('should not count comments or reactions hidden by viewer blocks', async () => {
     const review = await mockRepo.create({
       userId: 'user-1', placeId: 'place-1', placeName: 'Place 1',
-      rating: 'crowded', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null
+      rating: 'crowded', placeImageUrl: null, selfieUrl: null, isAnonymous: false, comment: null
     })
 
     await createComment.execute({ reviewId: review.id, userId: 'user-2', content: 'visible' })
@@ -67,7 +67,7 @@ describe('GetPlaceReviewCounts', () => {
   it('should count on and off reactions separately', async () => {
     const review = await mockRepo.create({
       userId: 'user-1', placeId: 'place-1', placeName: 'Place 1',
-      rating: 'crowded', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null
+      rating: 'crowded', placeImageUrl: null, selfieUrl: null, isAnonymous: false, comment: null
     })
 
     await setReaction.execute({ reviewId: review.id, userId: 'user-2', type: 'on' })
@@ -83,11 +83,11 @@ describe('GetPlaceReviewCounts', () => {
   it('should return counts for multiple reviews in one call', async () => {
     const r1 = await mockRepo.create({
       userId: 'user-1', placeId: 'place-1', placeName: 'Place 1',
-      rating: 'crowded', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null
+      rating: 'crowded', placeImageUrl: null, selfieUrl: null, isAnonymous: false, comment: null
     })
     const r2 = await mockRepo.create({
       userId: 'user-1', placeId: 'place-1', placeName: 'Place 1',
-      rating: 'dead', placeImageUrl: null, selfieUrl: null, selfieFriendsOnly: false, comment: null
+      rating: 'dead', placeImageUrl: null, selfieUrl: null, isAnonymous: false, comment: null
     })
 
     await setReaction.execute({ reviewId: r1.id, userId: 'user-2', type: 'on' })

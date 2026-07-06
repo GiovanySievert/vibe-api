@@ -672,8 +672,7 @@ async function seed() {
       rating: 'crowded',
       comment: 'Melhor Whopper que ja comi! Atendimento rapido.',
       placeImageUrl: 'https://picsum.photos/800/600?random=100&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review',
-      selfieFriendsOnly: true
+      isAnonymous: true
     },
     {
       userId: USER_IDS.maria,
@@ -701,8 +700,7 @@ async function seed() {
       rating: 'dead',
       comment: 'Mais tranquilo que o da Paulista, prefiro esse.',
       placeImageUrl: 'https://picsum.photos/800/600?random=102&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review',
-      selfieFriendsOnly: true
+      isAnonymous: true
     },
     {
       userId: USER_IDS.ana,
@@ -730,8 +728,7 @@ async function seed() {
       rating: 'crowded',
       comment: 'Pepperoni incrivel, mas cheio no fim de semana.',
       placeImageUrl: 'https://picsum.photos/800/600?random=104&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review',
-      selfieFriendsOnly: true
+      isAnonymous: true
     },
 
     {
@@ -807,8 +804,7 @@ async function seed() {
       rating: 'crowded',
       comment: 'Negroni impecavel, musica ao vivo na sexta e o lugar lotou rapido.',
       placeImageUrl: 'https://picsum.photos/800/600?random=110&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review',
-      selfieFriendsOnly: true
+      selfieUrl: 'https://picsum.photos/200/200?random=1&place=review'
     },
     {
       userId: USER_IDS.maria,
@@ -827,8 +823,7 @@ async function seed() {
       rating: 'crowded',
       comment: 'Melhor IPA da cidade, porcao de bolinha de queijo enorme. Vai sempre cheio.',
       placeImageUrl: 'https://picsum.photos/800/600?random=112&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review',
-      selfieFriendsOnly: true
+      selfieUrl: 'https://picsum.photos/200/200?random=3&place=review'
     },
     {
       userId: USER_IDS.lucas,
@@ -875,8 +870,7 @@ async function seed() {
       rating: 'dead',
       comment: 'Lugar sofisticado, tranquilo e com uma selecao de vinhos que voce nao acha em outro lugar.',
       placeImageUrl: 'https://picsum.photos/800/600?random=117&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=4&place=review',
-      selfieFriendsOnly: true
+      selfieUrl: 'https://picsum.photos/200/200?random=4&place=review'
     },
 
     {
@@ -895,8 +889,7 @@ async function seed() {
       rating: 'dead',
       comment: 'Fui numa segunda e tinha quase ninguem, ótimo pra bater papo. Mandioca frita e delicia.',
       placeImageUrl: 'https://picsum.photos/800/600?random=206&place=review',
-      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review',
-      selfieFriendsOnly: true
+      selfieUrl: 'https://picsum.photos/200/200?random=2&place=review'
     }
   ]))
 

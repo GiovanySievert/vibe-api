@@ -13,7 +13,7 @@ const makeReviewData = (overrides: Partial<PlaceReview> = {}): Omit<PlaceReview,
   rating: 'crowded',
   placeImageUrl: null,
   selfieUrl: null,
-  selfieFriendsOnly: false,
+  isAnonymous: false,
   comment: null,
   ...overrides
 })

@@ -37,6 +37,7 @@ const DOMAIN_ERRORS: Record<string, { status: number; code: string }> = {
   PlaceReviewCooldownException: { status: HttpStatus.TOO_MANY_REQUESTS, code: ErrorCode.RATE_LIMITED },
   PlaceReviewOutOfRangeException: { status: HttpStatus.UNPROCESSABLE_ENTITY, code: ErrorCode.OUT_OF_RANGE },
   PlaceReviewPhotoRequiredException: { status: HttpStatus.UNPROCESSABLE_ENTITY, code: ErrorCode.PHOTO_REQUIRED },
+  AnonymousReviewWithSelfieException: { status: HttpStatus.UNPROCESSABLE_ENTITY, code: ErrorCode.VALIDATION },
   InvalidStorageFolderException: { status: HttpStatus.BAD_REQUEST, code: ErrorCode.VALIDATION },
   ProfileBadgeSelectionLimitException: { status: HttpStatus.BAD_REQUEST, code: ErrorCode.VALIDATION },
   InvalidProfileBadgeSelectionException: { status: HttpStatus.BAD_REQUEST, code: ErrorCode.VALIDATION },

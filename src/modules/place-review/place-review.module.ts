@@ -18,7 +18,7 @@ import {
   DeletePlaceReview,
   UnfavoritePlaceReview
 } from './application/use-cases'
-import { DrizzleFollowChecker, DrizzlePlaceReviewRepository } from './infrastructure/persistence'
+import { DrizzlePlaceReviewRepository } from './infrastructure/persistence'
 import { PlaceReviewController } from './infrastructure/http/controllers/place-review.controller'
 import { RabbitMQProducer } from '@src/shared/infra/messaging'
 import { applicationEventBus } from '@src/shared/application/events'
@@ -31,7 +31,6 @@ export class PlaceReviewModule {
 
   constructor() {
     const placeReviewRepo = new DrizzlePlaceReviewRepository()
-    const followChecker = new DrizzleFollowChecker()
     const producer = new RabbitMQProducer()
     const badgesModule = new BadgesModule({ placeReviewRepo, producer })
     const evaluateUserPlaceBadge = badgesModule.evaluateUserPlaceBadge
@@ -59,8 +58,8 @@ export class PlaceReviewModule {
     })
     const createPlaceReviewCommentService = new CreatePlaceReviewComment(placeReviewRepo)
     const getPlaceReviewService = new GetPlaceReview(placeReviewRepo)
-    const listPlaceReviewsService = new ListPlaceReviews(placeReviewRepo, followChecker)
-    const listFollowingFeedService = new ListFollowingFeed(placeReviewRepo, followChecker)
+    const listPlaceReviewsService = new ListPlaceReviews(placeReviewRepo)
+    const listFollowingFeedService = new ListFollowingFeed(placeReviewRepo)
     const listPlaceReviewCommentsService = new ListPlaceReviewComments(placeReviewRepo)
     const setPlaceReviewReactionService = new SetPlaceReviewReaction(placeReviewRepo)
     const removePlaceReviewReactionService = new RemovePlaceReviewReaction(placeReviewRepo)

@@ -4,7 +4,11 @@ import { CreatePlaceReview } from '../../application/use-cases/create-place-revi
 import { MockPlaceReviewRepository } from '../mocks/place-review.repository.mock'
 import { RabbitMQProducer } from '@src/shared/infra/messaging'
 import { EvaluateUserPlaceBadge } from '@src/modules/badges/application/use-cases'
-import { PlaceReviewCooldownException, PlaceReviewOutOfRangeException } from '../../domain/exceptions'
+import {
+  AnonymousReviewWithSelfieException,
+  PlaceReviewCooldownException,
+  PlaceReviewOutOfRangeException
+} from '../../domain/exceptions'
 
 class NoopProducer {
   async publish(): Promise<void> {}
@@ -31,7 +35,7 @@ const baseInput = {
   placeImageThumbnailUrl: 'http://example.com/place-thumb.jpg',
   selfieUrl: 'http://example.com/selfie.jpg',
   selfieThumbnailUrl: 'http://example.com/selfie-thumb.jpg',
-  selfieFriendsOnly: false,
+  isAnonymous: false,
   comment: null,
   userLat: NEARBY_USER_COORDS.lat,
   userLng: NEARBY_USER_COORDS.lng,
@@ -89,7 +93,7 @@ describe('CreatePlaceReview', () => {
         placeImageThumbnailUrl: null,
         selfieUrl: null,
         selfieThumbnailUrl: null,
-        selfieFriendsOnly: false,
+        isAnonymous: false,
         comment: null,
         createdAt: new Date(Date.now() - 30 * 60 * 1000),
         updatedAt: new Date(Date.now() - 30 * 60 * 1000)
@@ -120,7 +124,7 @@ describe('CreatePlaceReview', () => {
         placeImageThumbnailUrl: null,
         selfieUrl: null,
         selfieThumbnailUrl: null,
-        selfieFriendsOnly: false,
+        isAnonymous: false,
         comment: null,
         createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
         updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000)
@@ -139,5 +143,30 @@ describe('CreatePlaceReview', () => {
     expect(persisted.userLng).toBeUndefined()
     expect(persisted.placeLat).toBeUndefined()
     expect(persisted.placeLng).toBeUndefined()
+  })
+
+  it('rejects an anonymous review that includes a selfie and persists nothing', async () => {
+    const promise = createPlaceReview.execute({
+      ...baseInput,
+      isAnonymous: true,
+      selfieUrl: 'http://example.com/selfie.jpg'
+    })
+
+    await expect(promise).rejects.toBeInstanceOf(AnonymousReviewWithSelfieException)
+    expect(mockRepo.getAll()).toHaveLength(0)
+  })
+
+  it('creates an anonymous review when no selfie is provided', async () => {
+    const result = await createPlaceReview.execute({
+      ...baseInput,
+      isAnonymous: true,
+      selfieUrl: null,
+      selfieThumbnailUrl: null
+    })
+
+    expect(result.id).toBeDefined()
+    expect(result.isAnonymous).toBe(true)
+    expect(result.selfieUrl).toBeNull()
+    expect(mockRepo.getAll()).toHaveLength(1)
   })
 })

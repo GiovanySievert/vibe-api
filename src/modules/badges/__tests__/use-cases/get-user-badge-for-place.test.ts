@@ -29,7 +29,7 @@ const makeReview = (userId: string, placeId: string): PlaceReview => ({
   rating: 'crowded',
   placeImageUrl: null,
   selfieUrl: null,
-  selfieFriendsOnly: false,
+  isAnonymous: false,
   comment: null,
   createdAt: new Date('2026-01-01'),
   updatedAt: new Date('2026-01-01')

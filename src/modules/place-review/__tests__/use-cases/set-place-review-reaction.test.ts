@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it } from 'bun:test'
 
 import { ListFollowingFeed, RemovePlaceReviewReaction, SetPlaceReviewReaction } from '../../application/use-cases'
 import { MockPlaceReviewRepository } from '../mocks/place-review.repository.mock'
-import { MockFollowChecker } from '../mocks/follow-checker.mock'
 import { PlaceReviewNotFoundException } from '../../domain/exceptions'
 
 describe('SetPlaceReviewReaction', () => {
@@ -13,7 +12,7 @@ describe('SetPlaceReviewReaction', () => {
 
   beforeEach(() => {
     mockRepo = new MockPlaceReviewRepository()
-    listFollowingFeed = new ListFollowingFeed(mockRepo, new MockFollowChecker())
+    listFollowingFeed = new ListFollowingFeed(mockRepo)
     setPlaceReviewReaction = new SetPlaceReviewReaction(mockRepo)
     removePlaceReviewReaction = new RemovePlaceReviewReaction(mockRepo)
   })
@@ -26,7 +25,7 @@ describe('SetPlaceReviewReaction', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -58,7 +57,7 @@ describe('SetPlaceReviewReaction', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -88,7 +87,7 @@ describe('SetPlaceReviewReaction', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
     mockRepo.seedBlocks([{ blockerId: 'viewer-1', blockedId: 'author-1' }])
@@ -110,7 +109,7 @@ describe('SetPlaceReviewReaction', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 

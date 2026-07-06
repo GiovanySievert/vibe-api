@@ -20,7 +20,7 @@ describe('UpdatePlaceReview', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -39,7 +39,7 @@ describe('UpdatePlaceReview', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -57,7 +57,7 @@ describe('UpdatePlaceReview', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: 'Boa noite'
     })
 

@@ -32,7 +32,7 @@ export const PlaceReviewRoutes = (app: Elysia) => {
           placeLng: t.Number({ minimum: -180, maximum: 180 }),
           selfieUrl: t.Optional(t.String()),
           selfieThumbnailUrl: t.Optional(t.String()),
-          selfieFriendsOnly: t.Optional(t.Boolean()),
+          isAnonymous: t.Optional(t.Boolean()),
           comment: t.Optional(t.String())
         }),
         detail: {

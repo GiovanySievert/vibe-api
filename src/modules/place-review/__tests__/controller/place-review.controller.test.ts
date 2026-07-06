@@ -19,7 +19,7 @@ const makeReview = (overrides: Partial<PlaceReview> = {}): PlaceReview => ({
   rating: 'crowded',
   placeImageUrl: null,
   selfieUrl: null,
-  selfieFriendsOnly: false,
+  isAnonymous: false,
   comment: null,
   createdAt: new Date('2026-01-01T00:00:00Z'),
   updatedAt: new Date('2026-01-01T00:00:00Z'),
@@ -238,12 +238,12 @@ describe('PlaceReviewController', () => {
       placeLng: 4,
       selfieUrl: null,
       selfieThumbnailUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
   })
 
-  it('preserves optional selfieUrl, selfieFriendsOnly, comment when provided', async () => {
+  it('preserves optional selfieUrl, isAnonymous, comment when provided', async () => {
     await controller.create({
       body: {
         placeId: 'p-1',
@@ -256,7 +256,7 @@ describe('PlaceReviewController', () => {
         placeLng: 4,
         selfieUrl: 'http://selfie',
         selfieThumbnailUrl: 'http://selfie-thumb',
-        selfieFriendsOnly: true,
+        isAnonymous: false,
         comment: 'great'
       },
       user: makeUser('u-1')
@@ -265,7 +265,7 @@ describe('PlaceReviewController', () => {
     expect(createCalls[0]).toMatchObject({
       selfieUrl: 'http://selfie',
       selfieThumbnailUrl: 'http://selfie-thumb',
-      selfieFriendsOnly: true,
+      isAnonymous: false,
       comment: 'great'
     })
   })

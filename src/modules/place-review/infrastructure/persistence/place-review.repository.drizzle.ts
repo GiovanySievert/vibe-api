@@ -161,7 +161,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
         placeImageThumbnailUrl: placeReviews.placeImageThumbnailUrl,
         selfieUrl: placeReviews.selfieUrl,
         selfieThumbnailUrl: placeReviews.selfieThumbnailUrl,
-        selfieFriendsOnly: placeReviews.selfieFriendsOnly,
+        isAnonymous: placeReviews.isAnonymous,
         comment: placeReviews.comment,
         createdAt: placeReviews.createdAt,
         updatedAt: placeReviews.updatedAt,
@@ -180,7 +180,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
       .limit(limit)
       .offset(offset)
 
-    return rows.map((row) => ({ ...row, viewerReaction: null }))
+    return rows.map((row) => ({ ...row, viewerReaction: null, isOwnAnonymous: false }))
   }
 
   async listByUser(userId: string, page?: number, viewerId?: string): Promise<FeedReviewItem[]> {
@@ -198,7 +198,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
         placeImageThumbnailUrl: placeReviews.placeImageThumbnailUrl,
         selfieUrl: placeReviews.selfieUrl,
         selfieThumbnailUrl: placeReviews.selfieThumbnailUrl,
-        selfieFriendsOnly: placeReviews.selfieFriendsOnly,
+        isAnonymous: placeReviews.isAnonymous,
         comment: placeReviews.comment,
         createdAt: placeReviews.createdAt,
         updatedAt: placeReviews.updatedAt,
@@ -219,7 +219,13 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
           eq(userFavoriteReviews.reviewId, placeReviews.id)
         )
       )
-      .where(and(eq(placeReviews.userId, userId), viewerId ? noUserBlockBetween(viewerId, placeReviews.userId) : undefined))
+      .where(
+        and(
+          eq(placeReviews.userId, userId),
+          viewerId ? noUserBlockBetween(viewerId, placeReviews.userId) : undefined,
+          viewerId === userId ? undefined : eq(placeReviews.isAnonymous, false)
+        )
+      )
       .orderBy(
         desc(sql<number>`case when ${userFavoriteReviews.reviewId} is null then 0 else 1 end`),
         desc(placeReviews.createdAt)
@@ -227,7 +233,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
       .limit(limit)
       .offset(offset)
 
-    return rows.map((row) => ({ ...row, viewerReaction: null }))
+    return rows.map((row) => ({ ...row, viewerReaction: null, isOwnAnonymous: false }))
   }
 
   async listPopularByPlace(placeId: string, since: Date, limit: number, viewerId?: string): Promise<FeedReviewItem[]> {
@@ -242,7 +248,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
         placeImageThumbnailUrl: placeReviews.placeImageThumbnailUrl,
         selfieUrl: placeReviews.selfieUrl,
         selfieThumbnailUrl: placeReviews.selfieThumbnailUrl,
-        selfieFriendsOnly: placeReviews.selfieFriendsOnly,
+        isAnonymous: placeReviews.isAnonymous,
         comment: placeReviews.comment,
         createdAt: placeReviews.createdAt,
         updatedAt: placeReviews.updatedAt,
@@ -263,7 +269,8 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
 
     return rows.map(({ interactionCount: _, ...row }) => ({
       ...row,
-      viewerReaction: null
+      viewerReaction: null,
+      isOwnAnonymous: false
     }))
   }
 
@@ -352,7 +359,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
         placeImageThumbnailUrl: placeReviews.placeImageThumbnailUrl,
         selfieUrl: placeReviews.selfieUrl,
         selfieThumbnailUrl: placeReviews.selfieThumbnailUrl,
-        selfieFriendsOnly: placeReviews.selfieFriendsOnly,
+        isAnonymous: placeReviews.isAnonymous,
         comment: placeReviews.comment,
         createdAt: placeReviews.createdAt,
         updatedAt: placeReviews.updatedAt,
@@ -379,7 +386,7 @@ export class DrizzlePlaceReviewRepository implements PlaceReviewRepository {
       .limit(limit)
       .offset(offset)
 
-    return rows.map((row) => ({ ...row, viewerReaction: null }))
+    return rows.map((row) => ({ ...row, viewerReaction: null, isOwnAnonymous: false }))
   }
 
   async listCountsByReviewIds(reviewIds: string[], viewerId?: string): Promise<ReviewCounts[]> {

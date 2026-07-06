@@ -8,7 +8,11 @@ import { RabbitMQProducer } from '@src/shared/infra/messaging'
 import { haversineMeters } from '@src/shared/utils/haversine'
 import { appLogger } from '@src/config/logger'
 
-import { PlaceReviewCooldownException, PlaceReviewOutOfRangeException } from '../../domain/exceptions'
+import {
+  AnonymousReviewWithSelfieException,
+  PlaceReviewCooldownException,
+  PlaceReviewOutOfRangeException
+} from '../../domain/exceptions'
 
 export type CreatePlaceReviewData = Omit<
   PlaceReview,
@@ -42,6 +46,9 @@ export class CreatePlaceReview {
   ) {}
 
   async execute(data: CreatePlaceReviewData): Promise<CreatePlaceReviewResult> {
+    if (data.isAnonymous && data.selfieUrl) {
+      throw new AnonymousReviewWithSelfieException()
+    }
     this.assertDistance(data)
     await this.assertCooldown(data.userId, data.placeId)
 

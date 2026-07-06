@@ -61,7 +61,7 @@ export class PlaceReviewController {
       placeLng: body.placeLng,
       selfieUrl: body.selfieUrl ?? null,
       selfieThumbnailUrl: body.selfieThumbnailUrl ?? null,
-      selfieFriendsOnly: body.selfieFriendsOnly ?? false,
+      isAnonymous: body.isAnonymous ?? false,
       comment: body.comment ?? null
     })
   }

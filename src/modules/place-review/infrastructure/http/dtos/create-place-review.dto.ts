@@ -10,6 +10,6 @@ export interface CreatePlaceReviewDto {
   placeLng: number
   selfieUrl?: string
   selfieThumbnailUrl?: string
-  selfieFriendsOnly?: boolean
+  isAnonymous?: boolean
   comment?: string
 }

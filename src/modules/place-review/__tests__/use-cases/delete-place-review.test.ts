@@ -28,7 +28,7 @@ describe('DeletePlaceReview', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -46,7 +46,7 @@ describe('DeletePlaceReview', () => {
       rating: 'crowded',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
     const r2 = await mockRepo.create({
@@ -56,7 +56,7 @@ describe('DeletePlaceReview', () => {
       rating: 'dead',
       placeImageUrl: null,
       selfieUrl: null,
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 

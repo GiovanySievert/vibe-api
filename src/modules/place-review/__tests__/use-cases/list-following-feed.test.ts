@@ -2,21 +2,17 @@ import { describe, it, expect, beforeEach } from 'bun:test'
 
 import { ListFollowingFeed } from '../../application/use-cases/list-following-feed'
 import { MockPlaceReviewRepository } from '../mocks/place-review.repository.mock'
-import { MockFollowChecker } from '../mocks/follow-checker.mock'
 
 describe('ListFollowingFeed', () => {
   let listFollowingFeed: ListFollowingFeed
   let mockRepo: MockPlaceReviewRepository
-  let mockFollowChecker: MockFollowChecker
 
   beforeEach(() => {
     mockRepo = new MockPlaceReviewRepository()
-    mockFollowChecker = new MockFollowChecker()
-    listFollowingFeed = new ListFollowingFeed(mockRepo, mockFollowChecker)
+    listFollowingFeed = new ListFollowingFeed(mockRepo)
   })
 
-  it('shows a public selfie from a followed author', async () => {
-    mockFollowChecker.addFollow('viewer-1', 'user-1')
+  it('shows a public selfie and the author on a non-anonymous review', async () => {
     await mockRepo.create({
       userId: 'user-1',
       placeId: 'place-1',
@@ -25,7 +21,7 @@ describe('ListFollowingFeed', () => {
       placeImageUrl: null,
       selfieUrl: 'http://example.com/selfie.jpg',
       selfieThumbnailUrl: 'http://example.com/selfie-thumb.jpg',
-      selfieFriendsOnly: false,
+      isAnonymous: false,
       comment: null
     })
 
@@ -33,43 +29,48 @@ describe('ListFollowingFeed', () => {
 
     expect(result).toHaveLength(1)
     expect(result[0].selfieUrl).toBe('http://example.com/selfie.jpg')
-    expect(result[0].selfieThumbnailUrl).toBe('http://example.com/selfie-thumb.jpg')
+    expect(result[0].user?.username).toBe('user-user-1')
+    expect(result[0].isAnonymous).toBe(false)
   })
 
-  it('shows a friendsOnly selfie when the viewer follows the author (one-way is enough)', async () => {
-    mockFollowChecker.addFollow('viewer-1', 'user-1')
+  it('de-identifies an anonymous review from another author', async () => {
     await mockRepo.create({
       userId: 'user-1',
       placeId: 'place-1',
       placeName: 'place-1',
       rating: 'crowded',
-      placeImageUrl: null,
-      selfieUrl: 'http://example.com/selfie.jpg',
-      selfieFriendsOnly: true,
+      placeImageUrl: 'http://example.com/place.jpg',
+      selfieUrl: null,
+      isAnonymous: true,
       comment: null
     })
 
     const result = await listFollowingFeed.execute('viewer-1')
 
     expect(result).toHaveLength(1)
-    expect(result[0].selfieUrl).toBe('http://example.com/selfie.jpg')
+    expect(result[0].userId).toBeNull()
+    expect(result[0].user).toBeNull()
+    expect(result[0].isAnonymous).toBe(true)
+    expect(result[0].isOwnAnonymous).toBe(false)
   })
 
-  it('keeps the friendsOnly selfie when the viewer is the author', async () => {
+  it('marks the own anonymous review with isOwnAnonymous while still hiding identity', async () => {
     await mockRepo.create({
       userId: 'viewer-1',
       placeId: 'place-1',
       placeName: 'place-1',
       rating: 'crowded',
-      placeImageUrl: null,
-      selfieUrl: 'http://example.com/self.jpg',
-      selfieFriendsOnly: true,
+      placeImageUrl: 'http://example.com/place.jpg',
+      selfieUrl: null,
+      isAnonymous: true,
       comment: null
     })
 
     const result = await listFollowingFeed.execute('viewer-1')
 
     expect(result).toHaveLength(1)
-    expect(result[0].selfieUrl).toBe('http://example.com/self.jpg')
+    expect(result[0].userId).toBeNull()
+    expect(result[0].user).toBeNull()
+    expect(result[0].isOwnAnonymous).toBe(true)
   })
 })
